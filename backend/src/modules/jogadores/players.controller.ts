@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Patch, Post, Put, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Post,
+  Put,
+  Res,
+} from '@nestjs/common';
 import type { Response } from 'express';
 import { IdParam } from '../../core/decorators/id-param.decorator.js';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
@@ -48,5 +59,11 @@ export class PlayersController {
       dto.condition,
     );
     return new PlayerResponseDto(player);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@IdParam() id: number): Promise<void> {
+    await this.playersService.remove(id);
   }
 }

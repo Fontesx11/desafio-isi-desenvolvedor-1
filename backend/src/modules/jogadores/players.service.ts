@@ -98,6 +98,16 @@ export class PlayersService {
     return this.calculateDynamicValues(player);
   }
 
+  async remove(id: number): Promise<void> {
+    const player = await this.findOne({ id });
+
+    if (player.clubId !== null) {
+      throw new ConflictException('a player with a club cannot be deleted');
+    }
+
+    await this.playersRepository.softRemove(player);
+  }
+
   async findOne(condition: FindOptionsWhere<Player>): Promise<Player> {
     const player = await this.playersRepository.findOneBy(condition);
 
