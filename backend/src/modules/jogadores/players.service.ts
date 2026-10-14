@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
 import { PlayerWithDynamicValues } from './dtos/player-response.dto.js';
+import { UpdatePlayerDto } from './dtos/update-player.dto.js';
 import { Player } from './entities/player.entity.js';
 import { PlayerCondition } from './enums/players.enum.js';
 import {
@@ -43,6 +48,28 @@ export class PlayersService {
       clubId: null,
     });
 
+    await this.playersRepository.save(player);
+
+    return this.calculateDynamicValues(player);
+  }
+
+  async update(
+    id: number,
+    dto: UpdatePlayerDto,
+  ): Promise<PlayerWithDynamicValues> {
+    const player = await this.findOne({ id });
+
+    if (player.clubId !== null && dto.position !== player.position) {
+      throw new ConflictException(
+        'a player with a club cannot change position',
+      );
+    }
+
+    if (dto.age < player.age) {
+      throw new ConflictException('age cannot be lower than the current age');
+    }
+
+    this.playersRepository.merge(player, dto);
     await this.playersRepository.save(player);
 
     return this.calculateDynamicValues(player);
