@@ -16,7 +16,12 @@ export class Player {
   @Column({ name: 'nome', type: 'varchar', length: 100 })
   name: string;
 
-  @Column({ name: 'posicao', type: 'varchar', length: 3 })
+  @Column({
+    name: 'posicao',
+    type: 'enum',
+    enum: PlayerPosition,
+    enumName: 'posicao_jogador',
+  })
   position: PlayerPosition;
 
   @Column({ name: 'agilidade', type: 'integer' })
@@ -28,7 +33,12 @@ export class Player {
   @Column({ name: 'valor_base', type: 'decimal', precision: 6, scale: 2 })
   baseValue: string;
 
-  @Column({ name: 'condicao', type: 'varchar', length: 20 })
+  @Column({
+    name: 'condicao',
+    type: 'enum',
+    enum: PlayerCondition,
+    enumName: 'condicao_jogador',
+  })
   condition: PlayerCondition;
 
   @Column({ name: 'clube_id', type: 'integer', nullable: true })
