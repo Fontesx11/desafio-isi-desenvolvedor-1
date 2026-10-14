@@ -4,7 +4,6 @@ import { IdParam } from '../../core/decorators/id-param.decorator.js';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
 import {
   PlayerResponseDto,
-  toPlayerResponse,
 } from './dtos/player-response.dto.js';
 import { PlayersService } from './players.service.js';
 
@@ -19,12 +18,12 @@ export class PlayersController {
   ): Promise<PlayerResponseDto> {
     const player = await this.playersService.create(dto);
     response.location(`/api/v1/players/${player.id}`);
-    return toPlayerResponse(player);
+    return new PlayerResponseDto(player);
   }
 
   @Get(':id')
   async findOne(@IdParam() id: number): Promise<PlayerResponseDto> {
-    const player = await this.playersService.findOne({ id });
-    return toPlayerResponse(player);
+    const player = await this.playersService.findById( id );
+    return new PlayerResponseDto(player);
   }
 }

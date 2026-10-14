@@ -1,6 +1,9 @@
-import { PlayerCondition, PlayerPosition } from "../enums/players.enum.js";
-import { calculateBaseValueCents, calculateMarketValueCents, calculateOverall } from "./players.calculations.js";
-
+import { PlayerCondition, PlayerPosition } from '../enums/players.enum.js';
+import {
+  calculateBaseValueCents,
+  calculateMarketValueCents,
+  calculateOverall,
+} from './players.calculations.js';
 
 const { APTO, MAL_CONDICIONADO, DOENTE } = PlayerCondition;
 

@@ -11,4 +11,3 @@ export enum PlayerCondition {
   MAL_CONDICIONADO = 'MAL_CONDICIONADO',
   DOENTE = 'DOENTE',
 }
-

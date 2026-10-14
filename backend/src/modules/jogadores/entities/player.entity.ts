@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { PlayerCondition, PlayerPosition } from '../enums/players.enum.js';
 
-
 @Entity({ name: 'jogadores' })
 export class Player {
   @PrimaryGeneratedColumn('identity', { generatedIdentity: 'ALWAYS' })

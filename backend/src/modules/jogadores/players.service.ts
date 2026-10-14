@@ -2,10 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
+import { PlayerWithDynamicValues } from './dtos/player-response.dto.js';
 import { Player } from './entities/player.entity.js';
 import { PlayerCondition } from './enums/players.enum.js';
 import {
   calculateBaseValueCents,
+  calculateMarketValueCents,
   calculateOverall,
 } from './utils/players.calculations.js';
 
@@ -16,7 +18,7 @@ export class PlayersService {
     private readonly playersRepository: Repository<Player>,
   ) {}
 
-  async create(dto: CreatePlayerDto): Promise<Player> {
+  async create(dto: CreatePlayerDto): Promise<PlayerWithDynamicValues> {
     const overall = calculateOverall(dto.position, dto);
     const baseValueCents = calculateBaseValueCents(
       overall,
@@ -41,7 +43,10 @@ export class PlayersService {
       clubId: null,
     });
 
-    return this.playersRepository.save(player);
+    await this.playersRepository.save(player);
+
+    return this.calculateDynamicValues(player)
+    
   }
 
   async findOne(condition: FindOptionsWhere<Player>): Promise<Player> {
@@ -52,5 +57,27 @@ export class PlayersService {
     }
 
     return player;
+  }
+
+  async findById(id: number): Promise<PlayerWithDynamicValues>{
+    const player  = await this.findOne({ id })
+
+    return this.calculateDynamicValues(player)
+  }
+
+  calculateDynamicValues(player: Player): PlayerWithDynamicValues {
+    const marketValue =
+      calculateMarketValueCents(
+        Math.round(Number(player.baseValue) * 100),
+        player.condition,
+        player.agility,
+        player.age,
+      ) / 100;
+
+    return {
+      ...player,
+      overall: calculateOverall(player.position, player),
+      marketValue,
+    };
   }
 }
