@@ -1,9 +1,12 @@
-import { Body, Controller, Get, Post, Put, Res } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Put, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { IdParam } from '../../core/decorators/id-param.decorator.js';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
 import { PlayerResponseDto } from './dtos/player-response.dto.js';
-import { UpdatePlayerDto } from './dtos/update-player.dto.js';
+import {
+  UpdatePlayerConditionDto,
+  UpdatePlayerDto,
+} from './dtos/update-player.dto.js';
 import { PlayersService } from './players.service.js';
 
 @Controller('players')
@@ -32,6 +35,18 @@ export class PlayersController {
     @Body() dto: UpdatePlayerDto,
   ): Promise<PlayerResponseDto> {
     const player = await this.playersService.update(id, dto);
+    return new PlayerResponseDto(player);
+  }
+
+  @Patch(':id/condition')
+  async changeCondition(
+    @IdParam() id: number,
+    @Body() dto: UpdatePlayerConditionDto,
+  ): Promise<PlayerResponseDto> {
+    const player = await this.playersService.changePlayerCondition(
+      id,
+      dto.condition,
+    );
     return new PlayerResponseDto(player);
   }
 }

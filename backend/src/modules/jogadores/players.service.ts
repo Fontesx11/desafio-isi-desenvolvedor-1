@@ -53,6 +53,29 @@ export class PlayersService {
     return this.calculateDynamicValues(player);
   }
 
+  async changePlayerCondition(
+    id: number,
+    condition: PlayerCondition,
+  ): Promise<PlayerWithDynamicValues> {
+    const player = await this.findOne({ id });
+
+    if (
+      player.condition === PlayerCondition.DOENTE &&
+      condition === PlayerCondition.APTO
+    ) {
+      throw new ConflictException(
+        'condition cannot change directly from DOENTE to APTO',
+      );
+    }
+
+    if (player.condition !== condition) {
+      player.condition = condition;
+      await this.playersRepository.save(player);
+    }
+
+    return this.calculateDynamicValues(player);
+  }
+
   async update(
     id: number,
     dto: UpdatePlayerDto,
