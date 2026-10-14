@@ -32,7 +32,7 @@ export class CreatePlayerDto {
     message: 'name must not contain control characters',
   })
   @Matches(/^[^0-9]*$/, { message: 'name must not contain digits' })
-  @Matches(/^[^ ]*\p{L}[^ ]*( [^ ]*\p{L}[^ ]*)+$/u, {
+  @Matches(/\p{L}.* .*\p{L}/u, {
     message: 'name must have at least two words',
   })
   name: string;

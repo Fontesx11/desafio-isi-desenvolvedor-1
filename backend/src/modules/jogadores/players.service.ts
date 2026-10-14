@@ -5,7 +5,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import { Page, paginate } from '../../core/utils/pagination.utils.js';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
+import { ListPlayersQueryDto } from './dtos/list-players-query.dto.js';
 import { PlayerWithDynamicValues } from './dtos/player-response.dto.js';
 import { UpdatePlayerDto } from './dtos/update-player.dto.js';
 import { Player } from './entities/player.entity.js';
@@ -116,6 +118,18 @@ export class PlayersService {
     }
 
     return player;
+  }
+
+  async findAll(
+    query: ListPlayersQueryDto,
+  ): Promise<Page<PlayerWithDynamicValues>> {
+    const players = await this.playersRepository.find({ order: { id: 'ASC' } });
+
+    return paginate(
+      players.map((player) => this.calculateDynamicValues(player)),
+      query.page,
+      query.limit,
+    );
   }
 
   async findById(id: number): Promise<PlayerWithDynamicValues> {

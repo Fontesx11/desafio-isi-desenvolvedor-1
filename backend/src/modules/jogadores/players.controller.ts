@@ -8,11 +8,14 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { IdParam } from '../../core/decorators/id-param.decorator.js';
+import { Page } from '../../core/utils/pagination.utils.js';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
+import { ListPlayersQueryDto } from './dtos/list-players-query.dto.js';
 import { PlayerResponseDto } from './dtos/player-response.dto.js';
 import {
   UpdatePlayerConditionDto,
@@ -32,6 +35,17 @@ export class PlayersController {
     const player = await this.playersService.create(dto);
     response.location(`/api/v1/players/${player.id}`);
     return new PlayerResponseDto(player);
+  }
+
+  @Get()
+  async findAll(
+    @Query() query: ListPlayersQueryDto,
+  ): Promise<Page<PlayerResponseDto>> {
+    const page = await this.playersService.findAll(query);
+    return {
+      data: page.data.map((player) => new PlayerResponseDto(player)),
+      meta: page.meta,
+    };
   }
 
   @Get(':id')
