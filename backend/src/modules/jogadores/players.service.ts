@@ -45,8 +45,7 @@ export class PlayersService {
 
     await this.playersRepository.save(player);
 
-    return this.calculateDynamicValues(player)
-    
+    return this.calculateDynamicValues(player);
   }
 
   async findOne(condition: FindOptionsWhere<Player>): Promise<Player> {
@@ -59,10 +58,10 @@ export class PlayersService {
     return player;
   }
 
-  async findById(id: number): Promise<PlayerWithDynamicValues>{
-    const player  = await this.findOne({ id })
+  async findById(id: number): Promise<PlayerWithDynamicValues> {
+    const player = await this.findOne({ id });
 
-    return this.calculateDynamicValues(player)
+    return this.calculateDynamicValues(player);
   }
 
   calculateDynamicValues(player: Player): PlayerWithDynamicValues {

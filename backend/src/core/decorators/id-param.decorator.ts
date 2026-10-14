@@ -7,7 +7,6 @@ import type { Request } from 'express';
 
 const MAX_ID = 2147483647;
 
-
 export const IdParam = createParamDecorator(
   (name: string = 'id', context: ExecutionContext): number => {
     const value = context.switchToHttp().getRequest<Request>().params[name];
