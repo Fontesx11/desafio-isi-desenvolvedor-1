@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
 import { Player } from './entities/player.entity.js';
 import { PlayerCondition } from './enums/players.enum.js';
@@ -42,5 +42,15 @@ export class PlayersService {
     });
 
     return this.playersRepository.save(player);
+  }
+
+  async findOne(condition: FindOptionsWhere<Player>): Promise<Player> {
+    const player = await this.playersRepository.findOneBy(condition);
+
+    if (!player) {
+      throw new NotFoundException('Player not found');
+    }
+
+    return player;
   }
 }
