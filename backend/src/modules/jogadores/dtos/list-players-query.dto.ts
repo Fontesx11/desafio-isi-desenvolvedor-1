@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsEnum,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   Length,
@@ -21,6 +22,14 @@ import {
   PlayerPosition,
   PlayerSort,
 } from '../enums/players.enum.js';
+
+const DECIMAL_PATTERN = /^(0|[1-9][0-9]*)(\.[0-9]{1,2})?$/;
+
+function toDecimal({ value }: { value: unknown }): unknown {
+  return typeof value === 'string' && DECIMAL_PATTERN.test(value)
+    ? Number(value)
+    : value;
+}
 
 export class ListPlayersQueryDto extends PaginationQueryDto {
   @IsOptional()
@@ -62,6 +71,22 @@ export class ListPlayersQueryDto extends PaginationQueryDto {
     'min_age must not be greater than max_age',
   )
   max_age: number = 45;
+
+  @Transform(toDecimal)
+  @IsNumber()
+  @Min(0)
+  @Max(550)
+  min_value: number = 0;
+
+  @Transform(toDecimal)
+  @IsNumber()
+  @Min(0)
+  @Max(550)
+  @CrossFieldRule<ListPlayersQueryDto>(
+    (dto) => !(dto.min_value > dto.max_value),
+    'min_value must not be greater than max_value',
+  )
+  max_value: number = 550;
 
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.split(',') : value,

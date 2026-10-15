@@ -16,6 +16,8 @@ export function filterPlayers(
       (query.condition === undefined || player.condition === query.condition) &&
       (query.free === undefined || (player.clubId === null) === query.free) &&
       player.age >= query.min_age &&
-      player.age <= query.max_age,
+      player.age <= query.max_age &&
+      player.marketValue >= query.min_value &&
+      player.marketValue <= query.max_value,
   );
 }
