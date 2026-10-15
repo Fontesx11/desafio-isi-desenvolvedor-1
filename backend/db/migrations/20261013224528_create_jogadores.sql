@@ -10,7 +10,7 @@ CREATE TABLE jogadores (
   idade         integer           NOT NULL,
   valor_base    decimal(6,2)      NOT NULL,
   condicao      condicao_jogador  NOT NULL,
-  clube_id      integer,
+  clube_id      integer           REFERENCES clubes (id),
   velocidade    integer           NOT NULL,
   finalizacao   integer           NOT NULL,
   passe         integer           NOT NULL,
