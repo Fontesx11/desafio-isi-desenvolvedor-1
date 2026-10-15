@@ -17,6 +17,7 @@ import {
   calculateMarketValueCents,
   calculateOverall,
 } from './utils/players.calculations.js';
+import { filterPlayers } from './utils/players.filtering.js';
 import { sortPlayers } from './utils/players.sorting.js';
 
 @Injectable()
@@ -125,10 +126,11 @@ export class PlayersService {
     query: ListPlayersQueryDto,
   ): Promise<Page<PlayerWithDynamicValues>> {
     const players = await this.playersRepository.find();
-    const sortedPlayers = sortPlayers(
+    const filteredPlayers = filterPlayers(
       players.map((player) => this.calculateDynamicValues(player)),
-      query.sort,
+      query,
     );
+    const sortedPlayers = sortPlayers(filteredPlayers, query.sort);
 
     return paginate(sortedPlayers, query.page, query.limit);
   }
