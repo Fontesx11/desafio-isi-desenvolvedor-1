@@ -56,6 +56,16 @@ export class ListPlayersQueryDto extends PaginationQueryDto {
   @IsBoolean()
   free?: boolean;
 
+  @IsOptional()
+  @ToPositiveInteger()
+  @IsInt()
+  @Min(1)
+  @CrossFieldRule<ListPlayersQueryDto>(
+    (dto) => dto.free !== true,
+    'club_id cannot be combined with free=true',
+  )
+  club_id?: number;
+
   @ToPositiveInteger()
   @IsInt()
   @Min(16)

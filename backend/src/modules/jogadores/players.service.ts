@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Page, paginate } from '../../core/utils/pagination.utils.js';
+import { ClubsService } from '../clubes/clubs.service.js';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
 import { ListPlayersQueryDto } from './dtos/list-players-query.dto.js';
 import { PlayerWithDynamicValues } from './dtos/player-response.dto.js';
@@ -14,8 +15,8 @@ import { Player } from './entities/player.entity.js';
 import { PlayerCondition } from './enums/players.enum.js';
 import {
   calculateBaseValueCents,
-  calculateMarketValueCents,
   calculateOverall,
+  calculatePlayerMarketValueCents,
 } from './utils/players.calculations.js';
 import { filterPlayers } from './utils/players.filtering.js';
 import { sortPlayers } from './utils/players.sorting.js';
@@ -25,6 +26,7 @@ export class PlayersService {
   constructor(
     @InjectRepository(Player)
     private readonly playersRepository: Repository<Player>,
+    private readonly clubsService: ClubsService,
   ) {}
 
   async create(dto: CreatePlayerDto): Promise<PlayerWithDynamicValues> {
@@ -125,6 +127,10 @@ export class PlayersService {
   async findAll(
     query: ListPlayersQueryDto,
   ): Promise<Page<PlayerWithDynamicValues>> {
+    if (query.club_id !== undefined) {
+      await this.clubsService.findOne({ id: query.club_id });
+    }
+
     const players = await this.playersRepository.find();
     const filteredPlayers = filterPlayers(
       players.map((player) => this.calculateDynamicValues(player)),
@@ -142,13 +148,7 @@ export class PlayersService {
   }
 
   calculateDynamicValues(player: Player): PlayerWithDynamicValues {
-    const marketValue =
-      calculateMarketValueCents(
-        Math.round(Number(player.baseValue) * 100),
-        player.condition,
-        player.agility,
-        player.age,
-      ) / 100;
+    const marketValue = calculatePlayerMarketValueCents(player) / 100;
 
     return {
       ...player,

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { PlayersService } from '../jogadores/players.service.js';
+import { calculatePlayerMarketValueCents } from '../jogadores/utils/players.calculations.js';
 import { ClubWithDynamicValues } from './dtos/club-response.dto.js';
 import { CreateClubDto } from './dtos/create-club.dto.js';
 import { ListClubsQueryDto } from './dtos/list-clubs-query.dto.js';
@@ -20,7 +20,6 @@ export class ClubsService {
   constructor(
     @InjectRepository(Club)
     private readonly clubsRepository: Repository<Club>,
-    private readonly playersService: PlayersService,
   ) {}
 
   async findOne(condition: FindOptionsWhere<Club>): Promise<Club> {
@@ -86,9 +85,7 @@ export class ClubsService {
   calculateDynamicValues(club: Club): ClubWithDynamicValues {
     let squadValueCents = 0;
     for (const player of club.players) {
-      const { marketValue } =
-        this.playersService.calculateDynamicValues(player);
-      squadValueCents += Math.round(marketValue * 100);
+      squadValueCents += calculatePlayerMarketValueCents(player);
     }
 
     const cashCents = Math.round(Number(club.cash) * 100);

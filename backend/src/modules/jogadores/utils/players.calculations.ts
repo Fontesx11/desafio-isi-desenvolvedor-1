@@ -2,6 +2,7 @@ import {
   pointsInRange,
   roundDivision,
 } from '../../../core/utils/math.utils.js';
+import type { Player } from '../entities/player.entity.js';
 import { PlayerCondition, PlayerPosition } from '../enums/players.enum.js';
 
 export interface PlayerAttributes {
@@ -137,4 +138,15 @@ export function calculateMarketValueCents(
   );
 
   return Math.max(marketValueCents, MIN_VALUE);
+}
+
+export function calculatePlayerMarketValueCents(
+  player: Pick<Player, 'baseValue' | 'condition' | 'agility' | 'age'>,
+): number {
+  return calculateMarketValueCents(
+    Math.round(Number(player.baseValue) * 100),
+    player.condition,
+    player.agility,
+    player.age,
+  );
 }
