@@ -26,3 +26,23 @@ export type ClubDetails = Club & { players: SquadPlayer[] };
 export type ClubSort = 'name' | 'net_worth_desc' | 'net_worth_asc';
 
 export type Formation = '3-1' | '2-2' | '2-1-1' | '1-2-1';
+
+// Mesmo formato da resposta de POST /players/{id}/sell
+export type SaleResult = {
+  id: number;
+  club_id: number;
+  player_id: number;
+  player_name: string;
+  type: 'VENDA';
+  value: number;
+  fee: number;
+  penalty: number;
+  profit: number;
+  cash_change: number;
+  created_at: string;
+  purchase_value: number;
+  remaining_days: number;
+  penalty_rate: number;
+  contract_status: 'RESCINDIDO' | 'ENCERRADO';
+  club_cash: number;
+};

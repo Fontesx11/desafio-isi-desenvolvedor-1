@@ -1,0 +1,114 @@
+import { Handshake, Info } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  formatCurrency,
+  formatDate,
+  formatInteger,
+  formatTime,
+} from '@/lib/format';
+import { PlayerSummaryCard } from '@/modules/jogadores/components/player-summary-card';
+import { SALE_RESULT_MOCK } from '../mocks/clubs.mock';
+import type { SaleResult, SquadPlayer } from '../types/clubs.types';
+
+type SellPlayerDialogProps = {
+  player: SquadPlayer;
+  clubName: string;
+  onClose: () => void;
+  onSold: (result: SaleResult) => void;
+};
+
+export function SellPlayerDialog({
+  player,
+  clubName,
+  onClose,
+  onSold,
+}: SellPlayerDialogProps) {
+  const { contract } = player;
+
+  const rows = [
+    {
+      label: 'Valor de compra',
+      value: formatCurrency(contract.purchase_value),
+    },
+    {
+      label: 'Fim da fidelidade',
+      value: `${formatDate(contract.loyalty_until)}, ${formatTime(contract.loyalty_until)}`,
+    },
+    {
+      label: 'Dias restantes',
+      value: formatInteger(contract.remaining_days),
+    },
+    {
+      label: '% de multa se vender agora',
+      value: <Badge variant="outline">{contract.penalty_rate}%</Badge>,
+    },
+  ];
+
+  // simulacao
+  // Sem a API: o resultado é a venda fixa do mockup
+  function handleConfirm() {
+    onSold(SALE_RESULT_MOCK);
+  }
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="gap-5 p-8 sm:max-w-[520px]">
+        <DialogHeader>
+          <DialogTitle className="text-xl">Vender {player.name}?</DialogTitle>
+          <DialogDescription>
+            O jogador sai do elenco do {clubName} e volta a ficar livre.
+          </DialogDescription>
+        </DialogHeader>
+
+        <PlayerSummaryCard
+          player={player}
+          aside={
+            <div className="text-right">
+              <p className="text-sm text-zinc-500">Valor de mercado</p>
+              <p className="text-lg font-semibold">
+                {formatCurrency(player.market_value)}
+              </p>
+            </div>
+          }
+        />
+
+        <dl className="divide-y divide-zinc-200 overflow-hidden rounded-xl border border-zinc-200">
+          {rows.map((row) => (
+            <div
+              key={row.label}
+              className="flex items-center justify-between gap-4 px-4 py-3"
+            >
+              <dt className="text-zinc-600">{row.label}</dt>
+              <dd className="font-medium tabular-nums">{row.value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <p className="flex gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-zinc-600">
+          <Info className="mt-0.5 size-4 shrink-0 text-zinc-500" />A venda é
+          pelo valor de mercado do momento. Multa (teto de 10,00), lucro,
+          comissão e crédito são calculados ao confirmar.
+        </p>
+
+        <DialogFooter className="mx-0 mb-0 rounded-none border-t border-zinc-200 bg-transparent px-0 pt-5 pb-0">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button type="button" onClick={handleConfirm}>
+            <Handshake />
+            Confirmar venda
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

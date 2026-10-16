@@ -4,6 +4,7 @@ import type {
   ClubDetails,
   Formation,
   PlayerContract,
+  SaleResult,
   SquadPlayer,
 } from '../types/clubs.types';
 
@@ -106,3 +107,23 @@ export function findLineupMock(clubId: number): {
     bench: isAguias ? [AGUIAS_SQUAD[3]] : [],
   };
 }
+
+// Resposta de POST /players/7/sell: o Águias FC vende o Felipe Moura
+export const SALE_RESULT_MOCK: SaleResult = {
+  id: 12,
+  club_id: 1,
+  player_id: 7,
+  player_name: 'Felipe Moura',
+  type: 'VENDA',
+  value: 52,
+  fee: 0.78,
+  penalty: 5.2,
+  profit: 7.8,
+  cash_change: 46.02,
+  created_at: '2026-11-12T15:00:00-03:00',
+  purchase_value: 44.2,
+  remaining_days: 144,
+  penalty_rate: 10,
+  contract_status: 'RESCINDIDO',
+  club_cash: 97.6,
+};

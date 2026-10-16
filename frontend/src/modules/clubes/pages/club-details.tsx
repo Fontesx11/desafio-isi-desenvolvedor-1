@@ -1,15 +1,24 @@
 import { useLoaderData } from '@tanstack/react-router';
 import { ClipboardList, History, Shirt, ShoppingCart } from 'lucide-react';
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ClubAcronym } from '../components/club-acronym';
 import { ClubStats } from '../components/club-stats';
 import { LineupTab } from '../components/lineup-tab';
+import { SaleResultDialog } from '../components/sale-result-dialog';
+import { SellPlayerDialog } from '../components/sell-player-dialog';
 import { SquadTable } from '../components/squad-table';
+import type { SaleResult, SquadPlayer } from '../types/clubs.types';
+
+// Qual modal da venda está aberto
+type SalePanel =
+  { type: 'sell'; player: SquadPlayer } | { type: 'sold'; result: SaleResult };
 
 export default function ClubDetailsPage() {
   const { club } = useLoaderData({ from: '/_app/clubs/$clubId' });
+  const [salePanel, setSalePanel] = useState<SalePanel | null>(null);
 
   return (
     <div className="space-y-6">
@@ -46,7 +55,10 @@ export default function ClubDetailsPage() {
         </TabsList>
 
         <TabsContent value="squad">
-          <SquadTable players={club.players} />
+          <SquadTable
+            players={club.players}
+            onSell={(player) => setSalePanel({ type: 'sell', player })}
+          />
         </TabsContent>
 
         <TabsContent value="lineup">
@@ -54,6 +66,22 @@ export default function ClubDetailsPage() {
           <LineupTab key={club.id} club={club} />
         </TabsContent>
       </Tabs>
+
+      {salePanel?.type === 'sell' && (
+        <SellPlayerDialog
+          player={salePanel.player}
+          clubName={club.name}
+          onClose={() => setSalePanel(null)}
+          onSold={(result) => setSalePanel({ type: 'sold', result })}
+        />
+      )}
+      {salePanel?.type === 'sold' && (
+        <SaleResultDialog
+          result={salePanel.result}
+          clubName={club.name}
+          onClose={() => setSalePanel(null)}
+        />
+      )}
     </div>
   );
 }
