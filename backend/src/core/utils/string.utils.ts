@@ -12,6 +12,10 @@ export function normalizeForComparison(value: string): string {
     .replace(/\p{Mn}/gu, '');
 }
 
+export function countWords(name: string): number {
+  return name.split(' ').filter((piece) => /\p{L}/u.test(piece)).length;
+}
+
 function compareCodePoints(left: string, right: string): number {
   const leftCodePoints = Array.from(left, (char) => char.codePointAt(0) ?? 0);
   const rightCodePoints = Array.from(right, (char) => char.codePointAt(0) ?? 0);

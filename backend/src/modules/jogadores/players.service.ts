@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { Page, paginate } from '../../core/utils/pagination.utils.js';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
 import { ListPlayersQueryDto } from './dtos/list-players-query.dto.js';
@@ -120,6 +120,10 @@ export class PlayersService {
     }
 
     return player;
+  }
+
+  async findMany(options: FindManyOptions<Player>): Promise<Player[]> {
+    return this.playersRepository.find(options);
   }
 
   async findAll(
