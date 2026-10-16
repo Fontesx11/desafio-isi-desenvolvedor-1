@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChartColumn, Info, User } from 'lucide-react';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm, useWatch, type Control } from 'react-hook-form';
 import { FormField } from '@/components/form-field';
 import { InputWithIcon } from '@/components/input-with-icon';
 import { Button } from '@/components/ui/button';
@@ -126,10 +126,9 @@ export function CreatePlayerDialog({
             </FormField>
             <FormField
               label={<span className="text-zinc-500">Valor base (moedas)</span>}
-              htmlFor="player-base-value"
               description="Calculado no cadastro."
             >
-              <LockedValue id="player-base-value" />
+              <LockedValue />
             </FormField>
           </div>
 
@@ -175,10 +174,9 @@ export function CreatePlayerDialog({
               </FormField>
               <FormField
                 label={<span className="text-zinc-500">Overall</span>}
-                htmlFor="player-overall"
                 description="Calculado automaticamente"
               >
-                <LockedValue id="player-overall" />
+                <LockedValue />
               </FormField>
             </div>
             <AttributesPreview control={control} />
@@ -207,7 +205,7 @@ export function CreatePlayerDialog({
 function AttributesPreview({
   control,
 }: {
-  control: ReturnType<typeof useForm<CreatePlayerValues>>['control'];
+  control: Control<CreatePlayerValues>;
 }) {
   const values = useWatch({ control });
   const preview = attributesSchema.safeParse(values);

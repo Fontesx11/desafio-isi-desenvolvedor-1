@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { Player, PlayerAction } from '../types/players.types';
+import { isFreePlayer } from '../utils/players.utils';
 
 type PlayerRowActionsProps = {
   player: Player;
@@ -23,8 +24,6 @@ type PlayerRowActionsProps = {
 };
 
 export function PlayerRowActions({ player, onAction }: PlayerRowActionsProps) {
-  const isFree = player.club_id === null;
-
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -53,7 +52,7 @@ export function PlayerRowActions({ player, onAction }: PlayerRowActionsProps) {
           <HeartPulse />
           Alterar condição
         </DropdownMenuItem>
-        {isFree && (
+        {isFreePlayer(player) && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem>

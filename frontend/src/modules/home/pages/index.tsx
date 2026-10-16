@@ -1,10 +1,24 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { ArrowRight, ChevronRight, Clock } from 'lucide-react';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { PitchMarkings } from '../components/pitch-markings';
 import { FLOW_STEPS } from '../constants/home.constants';
 
 export default function HomePage() {
+  const navigate = useNavigate();
+
+  // "ou tecle Enter": mesmo destino do botão Iniciar
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Enter') {
+        navigate({ to: '/players' });
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate]);
+
   return (
     <main className="flex min-h-svh items-center justify-center px-4 py-10 lg:px-10">
       {/* Campo na proporção do Figma (1200 × 700); a partir de 2xl, 1440 × 840 */}

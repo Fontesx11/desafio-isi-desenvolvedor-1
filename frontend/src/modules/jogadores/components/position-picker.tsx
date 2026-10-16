@@ -19,7 +19,6 @@ export function PositionPicker({
   return (
     <ToggleGroup
       type="single"
-      spacing={2}
       value={value ?? ''}
       onValueChange={(next) => next && onChange(next as PlayerPosition)}
       aria-invalid={invalid}

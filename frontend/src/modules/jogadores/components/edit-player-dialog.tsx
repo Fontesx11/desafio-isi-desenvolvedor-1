@@ -20,6 +20,7 @@ import {
   type EditPlayerValues,
 } from '../schemas/players.schema';
 import type { Player } from '../types/players.types';
+import { isFreePlayer } from '../utils/players.utils';
 import { PositionPicker } from './position-picker';
 
 type EditPlayerDialogProps = {
@@ -28,7 +29,7 @@ type EditPlayerDialogProps = {
 };
 
 export function EditPlayerDialog({ player, onClose }: EditPlayerDialogProps) {
-  const hasClub = player.club_id !== null;
+  const hasClub = !isFreePlayer(player);
   const {
     control,
     register,

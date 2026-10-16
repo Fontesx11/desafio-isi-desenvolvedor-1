@@ -24,6 +24,7 @@ import type { Player, PlayerAction, PlayersTab } from '../types/players.types';
 import { ClubCell } from './club-cell';
 import { ConditionBadge } from './condition-badge';
 import { PlayerAvatar } from './player-avatar';
+import { isFreePlayer } from '../utils/players.utils';
 import { PlayerRowActions } from './player-row-actions';
 
 const TABS: { value: PlayersTab; label: string }[] = [
@@ -131,7 +132,7 @@ export function PlayersTable({
       className: 'w-0',
       cell: (player) => (
         <div className="flex items-center justify-end gap-2">
-          {player.club_id === null && (
+          {isFreePlayer(player) && (
             <Button type="button" variant="outline" size="sm">
               <ShoppingCart />
               Comprar

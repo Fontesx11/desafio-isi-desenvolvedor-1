@@ -13,12 +13,11 @@ import { PlayersTable } from '../components/players-table';
 import { PAGE_SIZE } from '../constants/players.constants';
 import { PLAYERS_MOCK } from '../mocks/players.mock';
 import type { Player, PlayerAction, PlayersTab } from '../types/players.types';
+import { isFreePlayer } from '../utils/players.utils';
 
 // Qual modal ou painel está aberto, e para qual jogador
 type OpenPanel =
   { type: 'create' } | { type: PlayerAction | 'created'; player: Player };
-
-const isFree = (player: Player) => player.club_id === null;
 
 export default function PlayersPage() {
   const [tab, setTab] = useState<PlayersTab>('all');
@@ -28,11 +27,11 @@ export default function PlayersPage() {
   // Sem a API, as abas e a paginação usam os dados fixos
   const counts: Record<PlayersTab, number> = {
     all: PLAYERS_MOCK.length,
-    free: PLAYERS_MOCK.filter(isFree).length,
-    'in-clubs': PLAYERS_MOCK.filter((player) => !isFree(player)).length,
+    free: PLAYERS_MOCK.filter(isFreePlayer).length,
+    'in-clubs': PLAYERS_MOCK.filter((player) => !isFreePlayer(player)).length,
   };
   const tabPlayers = PLAYERS_MOCK.filter(
-    (player) => tab === 'all' || (tab === 'free') === isFree(player),
+    (player) => tab === 'all' || (tab === 'free') === isFreePlayer(player),
   );
   const pagePlayers = tabPlayers.slice(
     (page - 1) * PAGE_SIZE,

@@ -8,7 +8,8 @@ import {
 } from '@/components/ui/field';
 
 type FormFieldProps = {
-  label: ReactNode;
+  // Sem rótulo quando as opções já se explicam (ex.: escolha da condição)
+  label?: ReactNode;
   htmlFor?: string;
   error?: string;
   // Texto de ajuda, trocado pela mensagem de erro quando houver
@@ -27,7 +28,7 @@ export function FormField({
 }: FormFieldProps) {
   return (
     <Field data-invalid={!!error} className={className}>
-      <FieldLabel htmlFor={htmlFor}>{label}</FieldLabel>
+      {label && <FieldLabel htmlFor={htmlFor}>{label}</FieldLabel>}
       {children}
       {error ? (
         <FieldError className="flex items-start gap-1.5">

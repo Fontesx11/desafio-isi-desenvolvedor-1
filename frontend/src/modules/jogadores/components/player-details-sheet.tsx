@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/sheet';
 import { formatCurrency } from '@/lib/format';
 import type { Player, PlayerAction } from '../types/players.types';
-import { findClub } from '../utils/players.utils';
+import { findClub, isFreePlayer } from '../utils/players.utils';
 import { AttributeBars } from './attribute-bars';
 import { ConditionBadge } from './condition-badge';
 import { PlayerAvatar } from './player-avatar';
@@ -158,7 +158,7 @@ export function PlayerDetailsSheet({
             <HeartPulse />
             Alterar condição
           </Button>
-          {player.club_id === null && (
+          {isFreePlayer(player) && (
             <Button type="button" className="ml-auto">
               <ShoppingCart />
               Comprar

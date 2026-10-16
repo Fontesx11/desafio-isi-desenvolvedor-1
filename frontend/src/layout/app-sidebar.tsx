@@ -1,5 +1,6 @@
 import { Link, useMatchRoute } from '@tanstack/react-router';
 import { Clock, Plus, Swords, Trophy } from 'lucide-react';
+import type { ReactNode } from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -118,7 +119,7 @@ function FooterInfo({
   title,
   description,
 }: {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   description: string;
 }) {
