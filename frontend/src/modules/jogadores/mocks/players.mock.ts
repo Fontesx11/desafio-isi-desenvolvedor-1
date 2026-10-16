@@ -50,7 +50,6 @@ export function toPlayer([
   };
 }
 
-// Uma linha por jogador: fica mais fácil de ler como tabela
 // prettier-ignore
 const ROWS: MockRow[] = [
   [1, 'André Lacerda', 'GOL', 70, 31, 'APTO', 26, 26, [55, 30, 58, 52, 72, 70], 78, 68, 2],
@@ -78,16 +77,13 @@ const ROWS: MockRow[] = [
   [23, 'Wagner Rocha', 'ZAG', 48, 29, 'APTO', 38, 38, [60, 40, 58, 52, 82, 80], 84, 74, 3],
 ];
 
-// Dados fixos no formato de GET /players, usados enquanto a tela não chama a API
 export const PLAYERS_MOCK: Player[] = ROWS.map(toPlayer);
 
-// Valores que a API devolveria depois do cadastro (base, mercado e overall)
 // prettier-ignore
 export const CREATED_PLAYER_MOCK = toPlayer([
   24, 'Davi Melo', 'MEI', 70, 23, 'APTO', 26, 26, [66, 62, 74, 70, 48, 58], 82, 68, null,
 ]);
 
-// Resposta de POST /players/5/buy: Eduardo Paiva comprado pelo Tubarões EC
 export const PURCHASE_RESULT_MOCK: PurchaseResult = {
   id: 11,
   club_id: 6,

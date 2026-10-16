@@ -10,8 +10,6 @@ import type {
   TransactionsSummary,
 } from '../types/clubs.types';
 
-// Dados fixos no formato de GET /clubs (ordem por nome, a padrão da API),
-// usados enquanto a tela não chama a API
 // prettier-ignore
 export const CLUBS_MOCK: Club[] = [
   { id: 1, name: 'Águias FC', acronym: 'AGU', cash: 51.58, squad_value: 222.68, net_worth: 274.26 },
@@ -40,7 +38,6 @@ function withContract(
   return { ...player, contract };
 }
 
-// Elenco da Águias FC no formato de GET /clubs/1, na ordem da API (RN11)
 // prettier-ignore
 const AGUIAS_SQUAD: SquadPlayer[] = [
   withContract(toPlayer([2, 'Bruno Tavares', 'GOL', 58, 29, 'APTO', 32, 32, [52, 28, 62, 50, 76, 74], 80, 71, 1]), [32, '2028-11-03T11:20:00-03:00', 722, 20]),
@@ -51,7 +48,6 @@ const AGUIAS_SQUAD: SquadPlayer[] = [
   withContract(toPlayer([11, 'João Silva', 'ATA', 72, 23, 'APTO', 52, 52, [80, 82, 68, 76, 36, 70], 86, 77, 1]), [52, '2029-11-04T17:10:00-03:00', 1089, 20]),
 ];
 
-// Resposta de POST /clubs: o clube começa com 300,00 e sem jogadores
 export const CREATED_CLUB_MOCK: ClubDetails = {
   id: 7,
   name: 'Leões da Serra',
@@ -110,7 +106,6 @@ export function findLineupMock(clubId: number): {
   };
 }
 
-// Resposta de POST /players/7/sell: o Águias FC vende o Felipe Moura
 export const SALE_RESULT_MOCK: SaleResult = {
   id: 12,
   club_id: 1,
@@ -143,8 +138,6 @@ type TransactionRow = [
   cashChange: number,
 ];
 
-// Histórico da Águias FC no formato de GET /clubs/1/transactions, da mais
-// recente para a mais antiga
 // prettier-ignore
 const AGUIAS_TRANSACTIONS: TransactionRow[] = [
   [10, '2026-11-08T11:00:00-03:00', 'COMPRA', 25, 'Sávio Lima', 22.25, 0, 0, null, -22.25],

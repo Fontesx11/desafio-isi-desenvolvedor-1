@@ -11,7 +11,6 @@ export type PlayerAttributes = {
   physical: number;
 };
 
-// Mesmo formato da resposta de GET /players
 export type Player = PlayerAttributes & {
   id: number;
   name: string;
@@ -30,7 +29,6 @@ export type PlayersTab = 'all' | 'free' | 'in-clubs';
 
 export type PlayerAction = 'details' | 'edit' | 'condition' | 'delete' | 'buy';
 
-// Mesmo formato da resposta de POST /players/{id}/buy
 export type PurchaseResult = {
   id: number;
   club_id: number;

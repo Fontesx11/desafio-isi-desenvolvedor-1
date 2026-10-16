@@ -1,4 +1,3 @@
-// Dados fixos do mockup, usados enquanto as telas não chamam a API
 export const LEAGUE_MOCK = {
   name: 'Liga Fictícia 2026',
   playersCount: 23,
