@@ -65,12 +65,11 @@ export class ClubsService {
       name: dto.name,
       acronym: dto.acronym,
       cash: INITIAL_CASH,
-      players: [],
     });
 
     await this.clubsRepository.save(club);
 
-    return this.calculateDynamicValues(club);
+    return { ...club, squadValue: 0, netWorth: Number(club.cash) };
   }
 
   async findAll(query: ListClubsQueryDto): Promise<ClubWithDynamicValues[]> {
