@@ -1,5 +1,5 @@
 import { cn } from 'cn';
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import {
   Table,
   TableBody,
@@ -21,6 +21,7 @@ type DataTableProps<T> = {
   rows: T[];
   getRowKey: (row: T) => string | number;
   emptyMessage: string;
+  groupHeader?: (row: T, index: number) => ReactNode;
 };
 
 export function DataTable<T>({
@@ -28,6 +29,7 @@ export function DataTable<T>({
   rows,
   getRowKey,
   emptyMessage,
+  groupHeader,
 }: DataTableProps<T>) {
   return (
     <Table>
@@ -57,21 +59,33 @@ export function DataTable<T>({
             </TableCell>
           </TableRow>
         ) : (
-          rows.map((row) => (
-            <TableRow key={getRowKey(row)}>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  className={cn(
-                    'h-14 px-2.5 first:pl-4 last:pr-4',
-                    column.className,
-                  )}
-                >
-                  {column.cell(row)}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))
+          rows.map((row, index) => {
+            const header = groupHeader?.(row, index);
+            return (
+              <Fragment key={getRowKey(row)}>
+                {header && (
+                  <TableRow className="bg-zinc-50 hover:bg-zinc-50">
+                    <TableCell colSpan={columns.length} className="px-4 py-2.5">
+                      {header}
+                    </TableCell>
+                  </TableRow>
+                )}
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      className={cn(
+                        'h-14 px-2.5 first:pl-4 last:pr-4',
+                        column.className,
+                      )}
+                    >
+                      {column.cell(row)}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </Fragment>
+            );
+          })
         )}
       </TableBody>
     </Table>

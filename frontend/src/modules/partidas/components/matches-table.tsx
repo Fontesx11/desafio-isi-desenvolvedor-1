@@ -1,8 +1,10 @@
+import { Link } from '@tanstack/react-router';
 import { cn } from 'cn';
-import { Shield } from 'lucide-react';
+import { ChevronRight, Shield } from 'lucide-react';
 import { useState } from 'react';
 import { DataTable, type DataTableColumn } from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -73,11 +75,23 @@ const columns: DataTableColumn<Match>[] = [
       <Badge variant="outline">{RESULT_LABELS[match.result]}</Badge>
     ),
   },
+  {
+    id: 'actions',
+    header: <span className="sr-only">Ações</span>,
+    className: 'w-0',
+    cell: (match) => (
+      <Button asChild variant="ghost" size="sm">
+        <Link to="/matches/$matchId" params={{ matchId: String(match.id) }}>
+          Ver duelos
+          <ChevronRight />
+        </Link>
+      </Button>
+    ),
+  },
 ];
 
 export function MatchesTable({ matches }: { matches: Match[] }) {
   // simulacao
-  // O filtro só troca o clube marcado; a lista não muda
   const [clubId, setClubId] = useState('all');
 
   return (

@@ -1,4 +1,5 @@
-import { Plus, Swords } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
+import { ChevronRight, Plus, Swords } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/layout/components/page-header';
 import { MatchScoreCard } from '../components/match-score-card';
@@ -27,7 +28,20 @@ export default function MatchesPage() {
       {lastMatch && (
         <div className="space-y-2">
           <h2 className="text-sm text-zinc-500">Última partida</h2>
-          <MatchScoreCard match={lastMatch} />
+          <MatchScoreCard
+            match={lastMatch}
+            action={
+              <Button asChild variant="outline">
+                <Link
+                  to="/matches/$matchId"
+                  params={{ matchId: String(lastMatch.id) }}
+                >
+                  Ver duelos
+                  <ChevronRight />
+                </Link>
+              </Button>
+            }
+          />
         </div>
       )}
 
