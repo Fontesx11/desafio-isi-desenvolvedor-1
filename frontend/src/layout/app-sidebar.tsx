@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { LEAGUE_MOCK } from '@/lib/mocks/league.mock';
+import { CLUBS_MOCK } from '@/modules/clubes/mocks/clubs.mock';
 import { MENU_GROUPS } from './constants/menu.constants';
 
 const activeItem =
@@ -78,11 +79,11 @@ export function AppSidebar() {
             <Plus />
           </SidebarGroupAction>
           <SidebarMenu>
-            {LEAGUE_MOCK.clubs.map((club) => (
+            {CLUBS_MOCK.map((club) => (
               <SidebarMenuItem key={club.id}>
                 <SidebarMenuButton>
                   <span className="flex size-5 shrink-0 items-center justify-center rounded border border-zinc-200 bg-background text-[11px] font-medium">
-                    {club.initial}
+                    {club.acronym[0]}
                   </span>
                   <span>{club.name}</span>
                 </SidebarMenuButton>

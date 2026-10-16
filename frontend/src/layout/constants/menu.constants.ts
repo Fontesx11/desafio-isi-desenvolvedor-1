@@ -26,7 +26,12 @@ export const MENU_GROUPS: { label: string; items: MenuItem[] }[] = [
         to: '/players',
         count: LEAGUE_MOCK.playersCount,
       },
-      { title: 'Clubes', icon: Shield, count: LEAGUE_MOCK.clubsCount },
+      {
+        title: 'Clubes',
+        icon: Shield,
+        to: '/clubs',
+        count: LEAGUE_MOCK.clubsCount,
+      },
     ],
   },
   {

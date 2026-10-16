@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppPlayersRouteImport } from './routes/_app/players'
+import { Route as AppClubsIndexRouteImport } from './routes/_app/clubs.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -27,27 +28,35 @@ const AppPlayersRoute = AppPlayersRouteImport.update({
   path: '/players',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppClubsIndexRoute = AppClubsIndexRouteImport.update({
+  id: '/clubs/',
+  path: '/clubs/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/players': typeof AppPlayersRoute
+  '/clubs/': typeof AppClubsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/players': typeof AppPlayersRoute
+  '/clubs': typeof AppClubsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteRouteWithChildren
   '/_app/players': typeof AppPlayersRoute
+  '/_app/clubs/': typeof AppClubsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/players'
+  fullPaths: '/' | '/players' | '/clubs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/players'
-  id: '__root__' | '/' | '/_app' | '/_app/players'
+  to: '/' | '/players' | '/clubs'
+  id: '__root__' | '/' | '/_app' | '/_app/players' | '/_app/clubs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -78,15 +87,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPlayersRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/clubs/': {
+      id: '/_app/clubs/'
+      path: '/clubs'
+      fullPath: '/clubs/'
+      preLoaderRoute: typeof AppClubsIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
 interface AppRouteRouteChildren {
   AppPlayersRoute: typeof AppPlayersRoute
+  AppClubsIndexRoute: typeof AppClubsIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppPlayersRoute: AppPlayersRoute,
+  AppClubsIndexRoute: AppClubsIndexRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
