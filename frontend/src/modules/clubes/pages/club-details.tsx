@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ClubAcronym } from '../components/club-acronym';
 import { ClubStats } from '../components/club-stats';
+import { LineupTab } from '../components/lineup-tab';
 import { SquadTable } from '../components/squad-table';
 
 export default function ClubDetailsPage() {
@@ -27,14 +28,14 @@ export default function ClubDetailsPage() {
 
       <ClubStats club={club} />
 
-      {/* Escalação e Histórico entram nas etapas próprias (F12 e F09-F11) */}
+      {/* O Histórico entra na etapa própria (F09-F11) */}
       <Tabs defaultValue="squad" className="gap-4">
         <TabsList variant="line" className="w-full justify-start border-b">
           <TabsTrigger value="squad" className="flex-none px-3">
             <Shirt />
             Elenco
           </TabsTrigger>
-          <TabsTrigger value="lineup" className="flex-none px-3" disabled>
+          <TabsTrigger value="lineup" className="flex-none px-3">
             <ClipboardList />
             Escalação
           </TabsTrigger>
@@ -46,6 +47,11 @@ export default function ClubDetailsPage() {
 
         <TabsContent value="squad">
           <SquadTable players={club.players} />
+        </TabsContent>
+
+        <TabsContent value="lineup">
+          {/* key: ao trocar de clube, a aba começa da escalação do novo clube */}
+          <LineupTab key={club.id} club={club} />
         </TabsContent>
       </Tabs>
     </div>

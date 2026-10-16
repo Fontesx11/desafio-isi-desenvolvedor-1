@@ -2,6 +2,7 @@ import { toPlayer } from '@/modules/jogadores/mocks/players.mock';
 import type {
   Club,
   ClubDetails,
+  Formation,
   PlayerContract,
   SquadPlayer,
 } from '../types/clubs.types';
@@ -67,4 +68,41 @@ export function findClubDetails(clubId: number): ClubDetails {
   }
   const club = CLUBS_MOCK.find((item) => item.id === clubId) ?? CLUBS_MOCK[0];
   return { ...club, players: club.id === 1 ? AGUIAS_SQUAD : [] };
+}
+
+export type LineupSlotMock = {
+  label: string;
+  positions: string;
+  playerId: number | null;
+};
+
+// simulacao
+// Escalação já distribuída nas vagas da 2-1-1 e reservas prontos, só para
+// desenhar a tela: a API devolve formation e players, e as vagas e os reservas
+// ainda não são montados pela tela
+export function findLineupMock(clubId: number): {
+  formation: Formation | null;
+  slots: LineupSlotMock[];
+  bench: SquadPlayer[];
+} {
+  const isAguias = clubId === 1;
+  return {
+    formation: isAguias ? '2-1-1' : null,
+    slots: [
+      { label: 'Goleiro', positions: 'GOL', playerId: isAguias ? 2 : null },
+      {
+        label: 'Defesa',
+        positions: 'ZAG ou LAT',
+        playerId: isAguias ? 7 : null,
+      },
+      {
+        label: 'Defesa',
+        positions: 'ZAG ou LAT',
+        playerId: isAguias ? 4 : null,
+      },
+      { label: 'Meio', positions: 'MEI', playerId: isAguias ? 25 : null },
+      { label: 'Ataque', positions: 'ATA', playerId: isAguias ? 11 : null },
+    ],
+    bench: isAguias ? [AGUIAS_SQUAD[3]] : [],
+  };
 }
