@@ -1,0 +1,65 @@
+import { Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import type { Player } from '../types/players.types';
+import { PlayerSummaryCard } from './player-summary-card';
+
+type DeletePlayerDialogProps = {
+  player: Player;
+  onClose: () => void;
+};
+
+export function DeletePlayerDialog({
+  player,
+  onClose,
+}: DeletePlayerDialogProps) {
+  // Sem a API por enquanto: só confirma na tela
+  function handleConfirm() {
+    toast.success('Jogador excluído', {
+      description: `${player.name} saiu da lista. Transações e partidas antigas dele continuam gravadas.`,
+    });
+    onClose();
+  }
+
+  return (
+    <AlertDialog open onOpenChange={(open) => !open && onClose()}>
+      <AlertDialogContent className="gap-5 p-8 data-[size=default]:sm:max-w-[480px]">
+        <AlertDialogHeader className="text-left">
+          <AlertDialogTitle className="text-xl">
+            Excluir {player.name}?
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            O jogador sai da lista e da busca, mas as transações e as partidas
+            antigas dele continuam como foram gravadas.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <PlayerSummaryCard
+          player={player}
+          aside={<Badge variant="secondary">Livre</Badge>}
+        />
+
+        <AlertDialogFooter className="mx-0 mb-0 rounded-none bg-transparent px-0 pt-5 pb-0">
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleConfirm}
+            className="bg-red-600 text-white hover:bg-red-700"
+          >
+            <Trash2 />
+            Excluir jogador
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
