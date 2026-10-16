@@ -8,7 +8,9 @@ import { FindOptionsWhere, Repository } from 'typeorm';
 import { PlayersService } from '../jogadores/players.service.js';
 import { ClubWithDynamicValues } from './dtos/club-response.dto.js';
 import { CreateClubDto } from './dtos/create-club.dto.js';
+import { ListClubsQueryDto } from './dtos/list-clubs-query.dto.js';
 import { Club } from './entities/club.entity.js';
+import { sortClubs } from './utils/clubs.sorting.js';
 
 const CLUB_LIMIT = 20;
 const INITIAL_CASH = '300.00';
@@ -63,6 +65,7 @@ export class ClubsService {
       name: dto.name,
       acronym: dto.acronym,
       cash: INITIAL_CASH,
+      players: [],
     });
 
     await this.clubsRepository.save(club);
@@ -70,13 +73,20 @@ export class ClubsService {
     return this.calculateDynamicValues(club);
   }
 
-  async calculateDynamicValues(club: Club): Promise<ClubWithDynamicValues> {
-    const players = await this.playersService.findMany({
-      where: { clubId: club.id },
+  async findAll(query: ListClubsQueryDto): Promise<ClubWithDynamicValues[]> {
+    const clubs = await this.clubsRepository.find({
+      relations: { players: true },
     });
+    const clubsWithValues = clubs.map((club) =>
+      this.calculateDynamicValues(club),
+    );
 
+    return sortClubs(clubsWithValues, query.sort);
+  }
+
+  calculateDynamicValues(club: Club): ClubWithDynamicValues {
     let squadValueCents = 0;
-    for (const player of players) {
+    for (const player of club.players) {
       const { marketValue } =
         this.playersService.calculateDynamicValues(player);
       squadValueCents += Math.round(marketValue * 100);

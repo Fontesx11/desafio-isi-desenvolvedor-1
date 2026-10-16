@@ -3,9 +3,13 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { Club } from '../../clubes/entities/club.entity.js';
 import { PlayerCondition, PlayerPosition } from '../enums/players.enum.js';
 
 @Entity({ name: 'jogadores' })
@@ -73,4 +77,8 @@ export class Player {
 
   @UpdateDateColumn({ name: 'atualizado_em', type: 'timestamptz' })
   updatedAt: Date;
+
+   @ManyToOne(() => Club, (club) => club.players, { nullable: true })
+  @JoinColumn({ name: 'clube_id' })
+    club?: Relation<Club>;
 }

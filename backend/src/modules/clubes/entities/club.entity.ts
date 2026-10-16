@@ -2,8 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
+  type Relation,
 } from 'typeorm';
+import { Player } from '../../jogadores/entities/player.entity.js';
 import { ClubFormation } from '../enums/clubs.enum.js';
 
 @Entity({ name: 'clubes' })
@@ -31,4 +34,7 @@ export class Club {
 
   @CreateDateColumn({ name: 'criado_em', type: 'timestamptz' })
   createdAt: Date;
+
+  @OneToMany(() => Player, (player) => player.club)
+  players: Relation<Player[]>;
 }
