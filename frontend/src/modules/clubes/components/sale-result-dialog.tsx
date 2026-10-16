@@ -10,8 +10,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { formatCurrency, formatInteger } from '@/lib/format';
+import { SignedValue } from '@/components/signed-value';
+import {
+  formatCurrency,
+  formatInteger,
+  formatSignedCurrency,
+} from '@/lib/format';
 import type { SaleResult } from '../types/clubs.types';
+
+const CONTRACT_STATUS_STYLES: Record<SaleResult['contract_status'], string> = {
+  RESCINDIDO: 'border-amber-200 bg-amber-50 text-amber-700',
+  ENCERRADO: 'border-zinc-200 bg-zinc-50 text-zinc-700',
+};
 
 type SaleResultDialogProps = {
   result: SaleResult;
@@ -47,7 +57,7 @@ export function SaleResultDialog({
     },
     {
       label: 'Lucro',
-      value: formatCurrency(result.profit),
+      value: <SignedValue value={result.profit} />,
     },
     {
       label: 'Comissão',
@@ -57,12 +67,23 @@ export function SaleResultDialog({
     {
       label: 'Crédito no caixa',
       hint: 'Valor de venda − multa − comissão',
-      value: formatCurrency(result.cash_change),
+      value: formatSignedCurrency(result.cash_change),
       highlight: true,
     },
     {
       label: 'Contrato',
-      value: <Badge variant="outline">{result.contract_status}</Badge>,
+      value: (
+        <Badge
+          variant="outline"
+          className={cn(
+            'gap-1.5',
+            CONTRACT_STATUS_STYLES[result.contract_status],
+          )}
+        >
+          <span className="size-1.5 rounded-full bg-current" />
+          {result.contract_status}
+        </Badge>
+      ),
     },
     {
       label: `Novo caixa do ${clubName}`,

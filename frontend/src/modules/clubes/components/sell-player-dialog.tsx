@@ -1,5 +1,4 @@
 import { Handshake, Info } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -18,6 +17,7 @@ import {
 import { PlayerSummaryCard } from '@/modules/jogadores/components/player-summary-card';
 import { SALE_RESULT_MOCK } from '../mocks/clubs.mock';
 import type { SaleResult, SquadPlayer } from '../types/clubs.types';
+import { PenaltyBadge } from './penalty-badge';
 
 type SellPlayerDialogProps = {
   player: SquadPlayer;
@@ -49,7 +49,7 @@ export function SellPlayerDialog({
     },
     {
       label: '% de multa se vender agora',
-      value: <Badge variant="outline">{contract.penalty_rate}%</Badge>,
+      value: <PenaltyBadge rate={contract.penalty_rate} />,
     },
   ];
 

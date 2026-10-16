@@ -11,6 +11,7 @@ import {
 import { ConditionBadge } from '@/modules/jogadores/components/condition-badge';
 import { PlayerAvatar } from '@/modules/jogadores/components/player-avatar';
 import type { SquadPlayer } from '../types/clubs.types';
+import { PenaltyBadge } from './penalty-badge';
 
 type SquadTableProps = {
   players: SquadPlayer[];
@@ -90,9 +91,7 @@ export function SquadTable({ players, onSell }: SquadTableProps) {
       id: 'penalty-rate',
       header: '% de multa',
       className: 'whitespace-normal',
-      cell: (player) => (
-        <Badge variant="outline">{player.contract.penalty_rate}%</Badge>
-      ),
+      cell: (player) => <PenaltyBadge rate={player.contract.penalty_rate} />,
     },
     {
       id: 'actions',

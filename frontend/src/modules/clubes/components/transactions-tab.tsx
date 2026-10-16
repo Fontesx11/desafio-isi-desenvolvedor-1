@@ -4,13 +4,15 @@ import {
   Download,
   Handshake,
   ShoppingCart,
-  Sigma,
+  TrendingDown,
+  TrendingUp,
   TriangleAlert,
   User,
   type LucideIcon,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { DataTable, type DataTableColumn } from '@/components/data-table';
+import { SignedValue } from '@/components/signed-value';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,12 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import {
-  formatCurrency,
-  formatDate,
-  formatSignedCurrency,
-  formatTime,
-} from '@/lib/format';
+import { formatCurrency, formatDate, formatTime } from '@/lib/format';
 import { PlayerAvatar } from '@/modules/jogadores/components/player-avatar';
 import { TRANSACTION_TYPE_LABELS } from '../constants/clubs.constants';
 import {
@@ -102,18 +99,18 @@ const columns: DataTableColumn<Transaction>[] = [
     className: 'text-right',
     // A compra não tem lucro: a API devolve null
     cell: (transaction) =>
-      transaction.profit === null
-        ? '–'
-        : formatSignedCurrency(transaction.profit),
+      transaction.profit === null ? (
+        '–'
+      ) : (
+        <SignedValue value={transaction.profit} />
+      ),
   },
   {
     id: 'cash-change',
     header: 'Variação do caixa',
     className: 'text-right',
     cell: (transaction) => (
-      <span className="font-semibold">
-        {formatSignedCurrency(transaction.cash_change)}
-      </span>
+      <SignedValue value={transaction.cash_change} className="font-semibold" />
     ),
   },
 ];
@@ -127,7 +124,7 @@ export function TransactionsTab({ clubId }: { clubId: number }) {
 
   const totals: {
     label: string;
-    value: string;
+    value: ReactNode;
     hint: string;
     icon: LucideIcon;
   }[] = [
@@ -157,9 +154,9 @@ export function TransactionsTab({ clubId }: { clubId: number }) {
     },
     {
       label: 'Lucro total',
-      value: formatSignedCurrency(summary.total_profit),
+      value: <SignedValue value={summary.total_profit} />,
       hint: 'Soma dos lucros, com sinal',
-      icon: Sigma,
+      icon: summary.total_profit < 0 ? TrendingDown : TrendingUp,
     },
   ];
 
