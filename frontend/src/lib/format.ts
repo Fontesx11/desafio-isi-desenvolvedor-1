@@ -25,6 +25,14 @@ export function formatInteger(value: number) {
   return integerFormatter.format(value);
 }
 
+const signedIntegerFormatter = new Intl.NumberFormat('pt-BR', {
+  signDisplay: 'exceptZero',
+});
+
+export function formatSignedInteger(value: number) {
+  return signedIntegerFormatter.format(value);
+}
+
 // Datas sempre no horário de Brasília, qualquer que seja o fuso do navegador
 const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
   timeZone: 'America/Sao_Paulo',

@@ -16,6 +16,7 @@ import { Route as AppClubsClubIdRouteImport } from './routes/_app/clubs/$clubId'
 import { Route as AppMatchesIndexRouteImport } from './routes/_app/matches/index'
 import { Route as AppMatchesMatchIdRouteImport } from './routes/_app/matches/$matchId'
 import { Route as AppPlayersIndexRouteImport } from './routes/_app/players/index'
+import { Route as AppStandingsIndexRouteImport } from './routes/_app/standings/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -51,6 +52,11 @@ const AppPlayersIndexRoute = AppPlayersIndexRouteImport.update({
   path: '/players/',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppStandingsIndexRoute = AppStandingsIndexRouteImport.update({
+  id: '/standings/',
+  path: '/standings/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/clubs/': typeof AppClubsIndexRoute
   '/matches/': typeof AppMatchesIndexRoute
   '/players/': typeof AppPlayersIndexRoute
+  '/standings/': typeof AppStandingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/clubs': typeof AppClubsIndexRoute
   '/matches': typeof AppMatchesIndexRoute
   '/players': typeof AppPlayersIndexRoute
+  '/standings': typeof AppStandingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/_app/clubs/': typeof AppClubsIndexRoute
   '/_app/matches/': typeof AppMatchesIndexRoute
   '/_app/players/': typeof AppPlayersIndexRoute
+  '/_app/standings/': typeof AppStandingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/clubs/'
     | '/matches/'
     | '/players/'
+    | '/standings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
     | '/clubs'
     | '/matches'
     | '/players'
+    | '/standings'
   id:
     | '__root__'
     | '/'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '/_app/clubs/'
     | '/_app/matches/'
     | '/_app/players/'
+    | '/_app/standings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -162,6 +174,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPlayersIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/standings/': {
+      id: '/_app/standings/'
+      path: '/standings'
+      fullPath: '/standings/'
+      preLoaderRoute: typeof AppStandingsIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
@@ -171,6 +190,7 @@ interface AppRouteRouteChildren {
   AppClubsIndexRoute: typeof AppClubsIndexRoute
   AppMatchesIndexRoute: typeof AppMatchesIndexRoute
   AppPlayersIndexRoute: typeof AppPlayersIndexRoute
+  AppStandingsIndexRoute: typeof AppStandingsIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
@@ -179,6 +199,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppClubsIndexRoute: AppClubsIndexRoute,
   AppMatchesIndexRoute: AppMatchesIndexRoute,
   AppPlayersIndexRoute: AppPlayersIndexRoute,
+  AppStandingsIndexRoute: AppStandingsIndexRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(

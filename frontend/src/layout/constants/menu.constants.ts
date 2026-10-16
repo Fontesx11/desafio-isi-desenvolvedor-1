@@ -43,7 +43,7 @@ export const MENU_GROUPS: { label: string; items: MenuItem[] }[] = [
         to: '/matches',
         count: LEAGUE_MOCK.matchesCount,
       },
-      { title: 'Classificação', icon: ListOrdered },
+      { title: 'Classificação', icon: ListOrdered, to: '/standings' },
     ],
   },
 ];
