@@ -72,3 +72,6 @@ export function findMatchMock(matchId: number): Match {
     MATCHES_MOCK.find((item) => item.id === matchId) ?? MATCHES_MOCK[0];
   return { ...match, duels: DUELS };
 }
+
+// simulacao
+export const PLAYED_MATCH_MOCK = MATCHES_MOCK[0];

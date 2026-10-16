@@ -1,12 +1,15 @@
 import { Link } from '@tanstack/react-router';
 import { ChevronRight, Plus, Swords } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/layout/components/page-header';
 import { MatchScoreCard } from '../components/match-score-card';
 import { MatchesTable } from '../components/matches-table';
+import { NewMatchDialog } from '../components/new-match-dialog';
 import { MATCHES_MOCK } from '../mocks/matches.mock';
 
 export default function MatchesPage() {
+  const [isCreating, setIsCreating] = useState(false);
   // A lista vem da mais recente para a mais antiga: a primeira é a última jogada
   const lastMatch = MATCHES_MOCK[0];
 
@@ -17,8 +20,11 @@ export default function MatchesPage() {
         title="Partidas"
         subtitle="Jogue partidas entre clubes com os 5 titulares escalados e acompanhe o histórico."
         actions={
-          // simulacao: sem ação até o modal Nova partida
-          <Button type="button" className="h-10 gap-2 px-4">
+          <Button
+            type="button"
+            className="h-10 gap-2 px-4"
+            onClick={() => setIsCreating(true)}
+          >
             <Plus />
             Nova partida
           </Button>
@@ -46,6 +52,8 @@ export default function MatchesPage() {
       )}
 
       <MatchesTable matches={MATCHES_MOCK} />
+
+      {isCreating && <NewMatchDialog onClose={() => setIsCreating(false)} />}
     </div>
   );
 }
