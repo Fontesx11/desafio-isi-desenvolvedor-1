@@ -2,6 +2,7 @@ import {
   pointsInRange,
   roundDivision,
 } from '../../../core/utils/math.utils.js';
+import type { PlayerWithDynamicValues } from '../dtos/player-response.dto.js';
 import type { Player } from '../entities/player.entity.js';
 import { PlayerCondition, PlayerPosition } from '../enums/players.enum.js';
 
@@ -140,7 +141,7 @@ export function calculateMarketValueCents(
   return Math.max(marketValueCents, MIN_VALUE);
 }
 
-export function calculatePlayerMarketValueCents(
+function calculatePlayerMarketValueCents(
   player: Pick<Player, 'baseValue' | 'condition' | 'agility' | 'age'>,
 ): number {
   return calculateMarketValueCents(
@@ -149,4 +150,14 @@ export function calculatePlayerMarketValueCents(
     player.agility,
     player.age,
   );
+}
+
+export function calculatePlayerDynamicValues(
+  player: Player,
+): PlayerWithDynamicValues {
+  return {
+    ...player,
+    overall: calculateOverall(player.position, player),
+    marketValue: calculatePlayerMarketValueCents(player) / 100,
+  };
 }

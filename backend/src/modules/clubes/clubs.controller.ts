@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
 import type { Response } from 'express';
+import { IdParam } from '../../core/decorators/id-param.decorator.js';
 import { ClubsService } from './clubs.service.js';
 import { ClubResponseDto } from './dtos/club-response.dto.js';
 import { CreateClubDto } from './dtos/create-club.dto.js';
@@ -23,5 +24,11 @@ export class ClubsController {
   async findAll(@Query() query: ListClubsQueryDto): Promise<ClubResponseDto[]> {
     const clubs = await this.clubsService.findAll(query);
     return clubs.map((club) => new ClubResponseDto(club));
+  }
+
+  @Get(':id')
+  async findOne(@IdParam() id: number): Promise<ClubResponseDto> {
+    const club = await this.clubsService.findById(id);
+    return new ClubResponseDto(club, club.squad);
   }
 }

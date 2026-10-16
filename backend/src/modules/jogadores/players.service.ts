@@ -16,7 +16,7 @@ import { PlayerCondition } from './enums/players.enum.js';
 import {
   calculateBaseValueCents,
   calculateOverall,
-  calculatePlayerMarketValueCents,
+  calculatePlayerDynamicValues,
 } from './utils/players.calculations.js';
 import { filterPlayers } from './utils/players.filtering.js';
 import { sortPlayers } from './utils/players.sorting.js';
@@ -56,7 +56,7 @@ export class PlayersService {
 
     await this.playersRepository.save(player);
 
-    return this.calculateDynamicValues(player);
+    return calculatePlayerDynamicValues(player);
   }
 
   async changePlayerCondition(
@@ -79,7 +79,7 @@ export class PlayersService {
       await this.playersRepository.save(player);
     }
 
-    return this.calculateDynamicValues(player);
+    return calculatePlayerDynamicValues(player);
   }
 
   async update(
@@ -101,7 +101,7 @@ export class PlayersService {
     this.playersRepository.merge(player, dto);
     await this.playersRepository.save(player);
 
-    return this.calculateDynamicValues(player);
+    return calculatePlayerDynamicValues(player);
   }
 
   async remove(id: number): Promise<void> {
@@ -133,7 +133,7 @@ export class PlayersService {
 
     const players = await this.playersRepository.find();
     const filteredPlayers = filterPlayers(
-      players.map((player) => this.calculateDynamicValues(player)),
+      players.map((player) => calculatePlayerDynamicValues(player)),
       query,
     );
     const sortedPlayers = sortPlayers(filteredPlayers, query.sort);
@@ -144,16 +144,6 @@ export class PlayersService {
   async findById(id: number): Promise<PlayerWithDynamicValues> {
     const player = await this.findOne({ id });
 
-    return this.calculateDynamicValues(player);
-  }
-
-  calculateDynamicValues(player: Player): PlayerWithDynamicValues {
-    const marketValue = calculatePlayerMarketValueCents(player) / 100;
-
-    return {
-      ...player,
-      overall: calculateOverall(player.position, player),
-      marketValue,
-    };
+    return calculatePlayerDynamicValues(player);
   }
 }

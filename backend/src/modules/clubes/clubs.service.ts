@@ -4,8 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
-import { calculatePlayerMarketValueCents } from '../jogadores/utils/players.calculations.js';
+import { FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
+import { PlayerSort } from '../jogadores/enums/players.enum.js';
+import { calculatePlayerDynamicValues } from '../jogadores/utils/players.calculations.js';
+import { sortPlayers } from '../jogadores/utils/players.sorting.js';
 import { ClubWithDynamicValues } from './dtos/club-response.dto.js';
 import { CreateClubDto } from './dtos/create-club.dto.js';
 import { ListClubsQueryDto } from './dtos/list-clubs-query.dto.js';
@@ -22,14 +24,26 @@ export class ClubsService {
     private readonly clubsRepository: Repository<Club>,
   ) {}
 
-  async findOne(condition: FindOptionsWhere<Club>): Promise<Club> {
-    const club = await this.clubsRepository.findOneBy(condition);
+  async findOne(
+    condition: FindOptionsWhere<Club>,
+    relations?: FindOptionsRelations<Club>,
+  ): Promise<Club> {
+    const club = await this.clubsRepository.findOne({
+      where: condition,
+      relations,
+    });
 
     if (!club) {
       throw new NotFoundException('Club not found');
     }
 
     return club;
+  }
+
+  async findById(id: number): Promise<ClubWithDynamicValues> {
+    const club = await this.findOne({ id }, { players: true });
+
+    return this.calculateDynamicValues(club);
   }
 
   async create(dto: CreateClubDto): Promise<ClubWithDynamicValues> {
@@ -68,7 +82,7 @@ export class ClubsService {
 
     await this.clubsRepository.save(club);
 
-    return { ...club, squadValue: 0, netWorth: Number(club.cash) };
+    return { ...club, squad: [], squadValue: 0, netWorth: Number(club.cash) };
   }
 
   async findAll(query: ListClubsQueryDto): Promise<ClubWithDynamicValues[]> {
@@ -83,15 +97,21 @@ export class ClubsService {
   }
 
   calculateDynamicValues(club: Club): ClubWithDynamicValues {
+    const squad = sortPlayers(
+      club.players.map((player) => calculatePlayerDynamicValues(player)),
+      [PlayerSort.POSITION],
+    );
+
     let squadValueCents = 0;
-    for (const player of club.players) {
-      squadValueCents += calculatePlayerMarketValueCents(player);
+    for (const player of squad) {
+      squadValueCents += Math.round(player.marketValue * 100);
     }
 
     const cashCents = Math.round(Number(club.cash) * 100);
 
     return {
       ...club,
+      squad,
       squadValue: squadValueCents / 100,
       netWorth: (cashCents + squadValueCents) / 100,
     };
