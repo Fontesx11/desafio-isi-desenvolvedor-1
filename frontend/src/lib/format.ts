@@ -7,6 +7,17 @@ export function formatCurrency(value: number) {
   return currencyFormatter.format(value);
 }
 
+const signedCurrencyFormatter = new Intl.NumberFormat('pt-BR', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+  signDisplay: 'exceptZero',
+});
+
+// Moeda com sinal: 35.7 → "+35,70"; -38.85 → "-38,85"; 0 → "0,00"
+export function formatSignedCurrency(value: number) {
+  return signedCurrencyFormatter.format(value);
+}
+
 const integerFormatter = new Intl.NumberFormat('pt-BR');
 
 // Inteiro com separador de milhar: 1089 → "1.089"

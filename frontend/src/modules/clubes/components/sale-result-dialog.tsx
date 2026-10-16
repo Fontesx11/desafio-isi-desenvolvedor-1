@@ -17,12 +17,14 @@ type SaleResultDialogProps = {
   result: SaleResult;
   clubName: string;
   onClose: () => void;
+  onShowHistory: () => void;
 };
 
 export function SaleResultDialog({
   result,
   clubName,
   onClose,
+  onShowHistory,
 }: SaleResultDialogProps) {
   const rows = [
     {
@@ -114,8 +116,7 @@ export function SaleResultDialog({
         </dl>
 
         <DialogFooter className="mx-0 mb-0 rounded-none border-t border-zinc-200 bg-transparent px-0 pt-5 pb-0">
-          {/* simulacao: sem ação até a aba Histórico existir */}
-          <Button type="button" variant="outline">
+          <Button type="button" variant="outline" onClick={onShowHistory}>
             <History />
             Ver histórico
           </Button>

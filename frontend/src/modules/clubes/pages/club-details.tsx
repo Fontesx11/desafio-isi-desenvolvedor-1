@@ -10,6 +10,7 @@ import { LineupTab } from '../components/lineup-tab';
 import { SaleResultDialog } from '../components/sale-result-dialog';
 import { SellPlayerDialog } from '../components/sell-player-dialog';
 import { SquadTable } from '../components/squad-table';
+import { TransactionsTab } from '../components/transactions-tab';
 import type { SaleResult, SquadPlayer } from '../types/clubs.types';
 
 // Qual modal da venda está aberto
@@ -18,6 +19,7 @@ type SalePanel =
 
 export default function ClubDetailsPage() {
   const { club } = useLoaderData({ from: '/_app/clubs/$clubId' });
+  const [tab, setTab] = useState('squad');
   const [salePanel, setSalePanel] = useState<SalePanel | null>(null);
 
   return (
@@ -37,8 +39,7 @@ export default function ClubDetailsPage() {
 
       <ClubStats club={club} />
 
-      {/* O Histórico entra na etapa própria (F09-F11) */}
-      <Tabs defaultValue="squad" className="gap-4">
+      <Tabs value={tab} onValueChange={setTab} className="gap-4">
         <TabsList variant="line" className="w-full justify-start border-b">
           <TabsTrigger value="squad" className="flex-none px-3">
             <Shirt />
@@ -48,7 +49,7 @@ export default function ClubDetailsPage() {
             <ClipboardList />
             Escalação
           </TabsTrigger>
-          <TabsTrigger value="history" className="flex-none px-3" disabled>
+          <TabsTrigger value="history" className="flex-none px-3">
             <History />
             Histórico
           </TabsTrigger>
@@ -65,6 +66,10 @@ export default function ClubDetailsPage() {
           {/* key: ao trocar de clube, a aba começa da escalação do novo clube */}
           <LineupTab key={club.id} club={club} />
         </TabsContent>
+
+        <TabsContent value="history">
+          <TransactionsTab key={club.id} clubId={club.id} />
+        </TabsContent>
       </Tabs>
 
       {salePanel?.type === 'sell' && (
@@ -80,6 +85,10 @@ export default function ClubDetailsPage() {
           result={salePanel.result}
           clubName={club.name}
           onClose={() => setSalePanel(null)}
+          onShowHistory={() => {
+            setSalePanel(null);
+            setTab('history');
+          }}
         />
       )}
     </div>

@@ -46,3 +46,29 @@ export type SaleResult = {
   contract_status: 'RESCINDIDO' | 'ENCERRADO';
   club_cash: number;
 };
+
+export type TransactionType = 'COMPRA' | 'VENDA';
+
+// Mesmo formato de cada item de GET /clubs/{id}/transactions
+export type Transaction = {
+  id: number;
+  club_id: number;
+  player_id: number;
+  player_name: string;
+  type: TransactionType;
+  value: number;
+  fee: number;
+  penalty: number;
+  profit: number | null;
+  cash_change: number;
+  created_at: string;
+};
+
+// Mesmo formato do summary de GET /clubs/{id}/transactions
+export type TransactionsSummary = {
+  total_spent: number;
+  total_received: number;
+  total_fees: number;
+  total_penalties: number;
+  total_profit: number;
+};
