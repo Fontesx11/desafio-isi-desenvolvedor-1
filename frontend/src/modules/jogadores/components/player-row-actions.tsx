@@ -55,7 +55,7 @@ export function PlayerRowActions({ player, onAction }: PlayerRowActionsProps) {
         {isFreePlayer(player) && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => onAction('buy', player)}>
               <ShoppingCart />
               Comprar
             </DropdownMenuItem>

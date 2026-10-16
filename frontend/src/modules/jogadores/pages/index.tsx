@@ -2,6 +2,7 @@ import { Plus, Users } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/layout/components/page-header';
+import { BuyPlayerDialog } from '../components/buy-player-dialog';
 import { ChangeConditionDialog } from '../components/change-condition-dialog';
 import { CreatePlayerDialog } from '../components/create-player-dialog';
 import { DeletePlayerDialog } from '../components/delete-player-dialog';
@@ -10,14 +11,22 @@ import { PlayerCreatedDialog } from '../components/player-created-dialog';
 import { PlayerDetailsSheet } from '../components/player-details-sheet';
 import { PlayersFilters } from '../components/players-filters';
 import { PlayersTable } from '../components/players-table';
+import { PurchaseResultDialog } from '../components/purchase-result-dialog';
 import { PAGE_SIZE } from '../constants/players.constants';
 import { PLAYERS_MOCK } from '../mocks/players.mock';
-import type { Player, PlayerAction, PlayersTab } from '../types/players.types';
+import type {
+  Player,
+  PlayerAction,
+  PlayersTab,
+  PurchaseResult,
+} from '../types/players.types';
 import { isFreePlayer } from '../utils/players.utils';
 
 // Qual modal ou painel está aberto, e para qual jogador
 type OpenPanel =
-  { type: 'create' } | { type: PlayerAction | 'created'; player: Player };
+  | { type: 'create' }
+  | { type: PlayerAction | 'created'; player: Player }
+  | { type: 'purchased'; player: Player; result: PurchaseResult };
 
 export default function PlayersPage() {
   const [tab, setTab] = useState<PlayersTab>('all');
@@ -110,6 +119,22 @@ export default function PlayersPage() {
       )}
       {panel?.type === 'delete' && (
         <DeletePlayerDialog player={panel.player} onClose={closePanel} />
+      )}
+      {panel?.type === 'buy' && (
+        <BuyPlayerDialog
+          player={panel.player}
+          onClose={closePanel}
+          onPurchased={(result) =>
+            setPanel({ type: 'purchased', player: panel.player, result })
+          }
+        />
+      )}
+      {panel?.type === 'purchased' && (
+        <PurchaseResultDialog
+          player={panel.player}
+          result={panel.result}
+          onClose={closePanel}
+        />
       )}
     </div>
   );

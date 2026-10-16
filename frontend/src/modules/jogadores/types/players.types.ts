@@ -28,5 +28,25 @@ export type Player = PlayerAttributes & {
 
 export type PlayersTab = 'all' | 'free' | 'in-clubs';
 
-// A compra fica para a etapa de Compra; aqui só as ações do jogador
-export type PlayerAction = 'details' | 'edit' | 'condition' | 'delete';
+export type PlayerAction = 'details' | 'edit' | 'condition' | 'delete' | 'buy';
+
+// Mesmo formato da resposta de POST /players/{id}/buy
+export type PurchaseResult = {
+  id: number;
+  club_id: number;
+  player_id: number;
+  player_name: string;
+  type: 'COMPRA';
+  value: number;
+  fee: number;
+  penalty: number;
+  profit: number | null;
+  cash_change: number;
+  created_at: string;
+  contract: {
+    purchase_value: number;
+    loyalty_until: string;
+    status: 'ATIVO';
+  };
+  club_cash: number;
+};

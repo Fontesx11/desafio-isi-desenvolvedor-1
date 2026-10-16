@@ -125,7 +125,12 @@ export function PlayersTable({
       cell: (player) => (
         <div className="flex items-center justify-end gap-2">
           {isFreePlayer(player) && (
-            <Button type="button" variant="outline" size="sm">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => onAction('buy', player)}
+            >
               <ShoppingCart />
               Comprar
             </Button>

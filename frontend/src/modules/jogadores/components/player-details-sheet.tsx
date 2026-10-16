@@ -159,7 +159,11 @@ export function PlayerDetailsSheet({
             Alterar condição
           </Button>
           {isFreePlayer(player) && (
-            <Button type="button" className="ml-auto">
+            <Button
+              type="button"
+              className="ml-auto"
+              onClick={() => onAction('buy', player)}
+            >
               <ShoppingCart />
               Comprar
             </Button>
