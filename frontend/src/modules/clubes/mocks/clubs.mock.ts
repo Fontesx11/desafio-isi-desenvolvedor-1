@@ -1,4 +1,10 @@
-import type { Club } from '../types/clubs.types';
+import { toPlayer } from '@/modules/jogadores/mocks/players.mock';
+import type {
+  Club,
+  ClubDetails,
+  PlayerContract,
+  SquadPlayer,
+} from '../types/clubs.types';
 
 // Dados fixos no formato de GET /clubs (ordem por nome, a padrão da API),
 // usados enquanto a tela não chama a API
@@ -12,12 +18,53 @@ export const CLUBS_MOCK: Club[] = [
   { id: 6, name: 'Tubarões EC', acronym: 'TUB', cash: 300, squad_value: 0, net_worth: 300 },
 ];
 
+function withContract(
+  player: ReturnType<typeof toPlayer>,
+  [purchaseValue, loyaltyUntil, remainingDays, penaltyRate]: [
+    number,
+    string,
+    number,
+    number,
+  ],
+): SquadPlayer {
+  const contract: PlayerContract = {
+    purchase_value: purchaseValue,
+    loyalty_until: loyaltyUntil,
+    remaining_days: remainingDays,
+    penalty_rate: penaltyRate,
+  };
+  return { ...player, contract };
+}
+
+// Elenco da Águias FC no formato de GET /clubs/1, na ordem da API (RN11)
+// prettier-ignore
+const AGUIAS_SQUAD: SquadPlayer[] = [
+  withContract(toPlayer([2, 'Bruno Tavares', 'GOL', 58, 29, 'APTO', 32, 32, [52, 28, 62, 50, 76, 74], 80, 71, 1]), [32, '2028-11-03T11:20:00-03:00', 722, 20]),
+  withContract(toPlayer([7, 'Felipe Moura', 'ZAG', 45, 27, 'APTO', 52, 52, [62, 42, 66, 58, 84, 82], 86, 77, 1]), [44.2, '2027-04-04T15:45:00-03:00', 144, 10]),
+  withContract(toPlayer([4, 'Diego Ramos', 'LAT', 81, 20, 'MAL_CONDICIONADO', 39.44, 40.43, [84, 58, 70, 72, 68, 66], 88, 72, 1]), [43.38, '2026-12-10T18:00:00-03:00', 29, 5]),
+  withContract(toPlayer([24, 'Lucas Ferraz', 'MEI', 60, 28, 'DOENTE', 34.29, 24, [68, 66, 78, 74, 50, 60], 84, 71, 1]), [28.8, '2026-11-07T09:00:00-03:00', 0, 0]),
+  withContract(toPlayer([25, 'Sávio Lima', 'MEI', 85, 31, 'MAL_CONDICIONADO', 26.18, 22.25, [66, 60, 72, 70, 48, 58], 76, 66, 1]), [22.25, '2027-05-08T11:00:00-03:00', 177, 10]),
+  withContract(toPlayer([11, 'João Silva', 'ATA', 72, 23, 'APTO', 52, 52, [80, 82, 68, 76, 36, 70], 86, 77, 1]), [52, '2029-11-04T17:10:00-03:00', 1089, 20]),
+];
+
 // Resposta de POST /clubs: o clube começa com 300,00 e sem jogadores
-export const CREATED_CLUB_MOCK: Club = {
+export const CREATED_CLUB_MOCK: ClubDetails = {
   id: 7,
   name: 'Leões da Serra',
   acronym: 'LDS',
   cash: 300,
   squad_value: 0,
   net_worth: 300,
+  players: [],
 };
+
+// simulacao
+// Sem a API, só a Águias FC tem elenco; os outros clubes aparecem vazios, e um
+// id que não existe abre a Águias FC
+export function findClubDetails(clubId: number): ClubDetails {
+  if (clubId === CREATED_CLUB_MOCK.id) {
+    return CREATED_CLUB_MOCK;
+  }
+  const club = CLUBS_MOCK.find((item) => item.id === clubId) ?? CLUBS_MOCK[0];
+  return { ...club, players: club.id === 1 ? AGUIAS_SQUAD : [] };
+}

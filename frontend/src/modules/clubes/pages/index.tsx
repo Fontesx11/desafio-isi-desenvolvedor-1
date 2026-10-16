@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Plus, Shield } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -10,15 +11,17 @@ import { CLUBS_MOCK } from '../mocks/clubs.mock';
 import type { Club } from '../types/clubs.types';
 
 export default function ClubsPage() {
+  const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
 
   // simulacao
-  // Mostra o aviso com os dados fixos
+  // Mostra o aviso e abre a página do clube dos dados fixos
   function handleCreated(club: Club) {
     setIsCreating(false);
     toast.success('Clube criado', {
       description: `${club.name} (${club.acronym}) começa com ${formatCurrency(club.cash)} em caixa.`,
     });
+    navigate({ to: '/clubs/$clubId', params: { clubId: String(club.id) } });
   }
 
   return (

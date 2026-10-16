@@ -1,4 +1,5 @@
 import { Link, useMatchRoute } from '@tanstack/react-router';
+import { cn } from 'cn';
 import { Clock, Plus, Swords, Trophy } from 'lucide-react';
 import type { ReactNode } from 'react';
 import {
@@ -79,16 +80,33 @@ export function AppSidebar() {
             <Plus />
           </SidebarGroupAction>
           <SidebarMenu>
-            {CLUBS_MOCK.map((club) => (
-              <SidebarMenuItem key={club.id}>
-                <SidebarMenuButton>
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded border border-zinc-200 bg-background text-[11px] font-medium">
-                    {club.acronym[0]}
-                  </span>
-                  <span>{club.name}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {CLUBS_MOCK.map((club) => {
+              const params = { clubId: String(club.id) };
+              const isActive = !!matchRoute({ to: '/clubs/$clubId', params });
+
+              return (
+                <SidebarMenuItem key={club.id}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive}
+                    className={activeItem}
+                  >
+                    <Link to="/clubs/$clubId" params={params}>
+                      <span
+                        className={cn(
+                          'flex size-5 shrink-0 items-center justify-center rounded border border-zinc-200 bg-background text-[11px] font-medium',
+                          isActive &&
+                            'border-primary bg-primary text-primary-foreground',
+                        )}
+                      >
+                        {club.acronym[0]}
+                      </span>
+                      <span>{club.name}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

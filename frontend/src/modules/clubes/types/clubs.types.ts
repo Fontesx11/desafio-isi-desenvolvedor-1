@@ -1,3 +1,5 @@
+import type { Player } from '@/modules/jogadores/types/players.types';
+
 // Mesmo formato da resposta de GET /clubs
 export type Club = {
   id: number;
@@ -7,5 +9,18 @@ export type Club = {
   squad_value: number;
   net_worth: number;
 };
+
+// Contrato de cada jogador do elenco, calculado para uma venda agora
+export type PlayerContract = {
+  purchase_value: number;
+  loyalty_until: string;
+  remaining_days: number;
+  penalty_rate: number;
+};
+
+export type SquadPlayer = Player & { contract: PlayerContract };
+
+// Mesmo formato da resposta de GET /clubs/{id}
+export type ClubDetails = Club & { players: SquadPlayer[] };
 
 export type ClubSort = 'name' | 'net_worth_desc' | 'net_worth_asc';

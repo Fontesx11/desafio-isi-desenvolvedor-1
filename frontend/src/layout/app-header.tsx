@@ -14,7 +14,12 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 
 export function AppHeader() {
   const matches = useMatches();
-  const breadcrumb = matches.at(-1)?.staticData.breadcrumb ?? [];
+  const currentPage = matches.at(-1);
+  // A trilha vem da rota: fixa no staticData ou montada no loader
+  const breadcrumb =
+    currentPage?.loaderData?.breadcrumb ??
+    currentPage?.staticData.breadcrumb ??
+    [];
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-3 border-b border-zinc-200 px-4">

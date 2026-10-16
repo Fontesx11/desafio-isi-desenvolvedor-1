@@ -15,7 +15,7 @@ type MockRow = [
   clubId: number | null,
 ];
 
-function toPlayer([
+export function toPlayer([
   id,
   name,
   position,
