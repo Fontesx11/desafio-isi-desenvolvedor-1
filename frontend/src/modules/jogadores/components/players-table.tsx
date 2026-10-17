@@ -1,6 +1,5 @@
 import { cn } from 'cn';
 import { ShoppingCart } from 'lucide-react';
-import { useState } from 'react';
 import { DataTable, type DataTableColumn } from '@/components/data-table';
 import { SortMenu } from '@/components/sort-menu';
 import { TablePagination } from '@/components/table-pagination';
@@ -35,6 +34,8 @@ type PlayersTableProps = {
   page: number;
   onPageChange: (page: number) => void;
   onAction: (action: PlayerAction, player: Player) => void;
+  sort: string;
+  onSortChange: (sort: string) => void;
 };
 
 export function PlayersTable({
@@ -46,9 +47,9 @@ export function PlayersTable({
   page,
   onPageChange,
   onAction,
+  sort,
+  onSortChange,
 }: PlayersTableProps) {
-  const [sort, setSort] = useState(SORT_OPTIONS[0].value);
-
   const columns: DataTableColumn<Player>[] = [
     {
       id: 'player',
@@ -157,7 +158,7 @@ export function PlayersTable({
           </TabsList>
         </Tabs>
 
-        <SortMenu options={SORT_OPTIONS} value={sort} onChange={setSort} />
+        <SortMenu options={SORT_OPTIONS} value={sort} onChange={onSortChange} />
       </div>
 
       <DataTable

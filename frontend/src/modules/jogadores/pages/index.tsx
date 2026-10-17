@@ -2,66 +2,21 @@ import { Plus, Users } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/layout/components/page-header';
-import { BuyPlayerDialog } from '../components/buy-player-dialog';
-import { ChangeConditionDialog } from '../components/change-condition-dialog';
-import { CreatePlayerDialog } from '../components/create-player-dialog';
-import { DeletePlayerDialog } from '../components/delete-player-dialog';
-import { EditPlayerDialog } from '../components/edit-player-dialog';
-import { PlayerCreatedDialog } from '../components/player-created-dialog';
-import { PlayerDetailsSheet } from '../components/player-details-sheet';
 import { PlayersFilters } from '../components/players-filters';
+import { PlayersPanels, type OpenPanel } from '../components/players-panels';
 import { PlayersTable } from '../components/players-table';
-import { PurchaseResultDialog } from '../components/purchase-result-dialog';
-import { PAGE_SIZE } from '../constants/players.constants';
-import type {
-  Player,
-  PlayerAction,
-  PlayersTab,
-  PurchaseResult,
-} from '../types/players.types';
-import { usePlayersQueries } from '../hooks/usePlayersQueries';
-
-type OpenPanel =
-  | { type: 'create' }
-  | { type: PlayerAction | 'created'; player: Player }
-  | { type: 'purchased'; player: Player; result: PurchaseResult };
+import { usePlayersFilters } from '../hooks/usePlayersFilters';
+import { usePlayersList } from '../hooks/usePlayersList';
+import type { Player, PlayerAction } from '../types/players.types';
 
 export default function PlayersPage() {
-  const [tab, setTab] = useState<PlayersTab>('all');
-  const [page, setPage] = useState(1);
   const [panel, setPanel] = useState<OpenPanel | null>(null);
-
-  const { useGetPlayers } = usePlayersQueries();
-
-  const params = new URLSearchParams({
-    page: String(page),
-    limit: String(PAGE_SIZE),
-  });
-  if (tab === 'free') params.set('free', 'true');
-  const { data: playersPage } = useGetPlayers(params.toString());
-
-  const { data: allPage } = useGetPlayers('limit=1');
-  const { data: freePage } = useGetPlayers('limit=1&free=true');
-  const allCount = allPage?.meta.total_items ?? 0;
-  const freeCount = freePage?.meta.total_items ?? 0;
-  const counts: Record<PlayersTab, number> = {
-    all: allCount,
-    free: freeCount,
-    'in-clubs': allCount - freeCount,
-  };
-  const pagePlayers = playersPage?.data ?? [];
-
-  function changeTab(next: PlayersTab) {
-    setTab(next);
-    setPage(1);
-  }
+  const { filters, updateFilters, page, setPage, queryParams } =
+    usePlayersFilters();
+  const { players, total, counts } = usePlayersList(queryParams);
 
   function openAction(action: PlayerAction, player: Player) {
     setPanel({ type: action, player });
-  }
-
-  function closePanel() {
-    setPanel(null);
   }
 
   return (
@@ -82,64 +37,30 @@ export default function PlayersPage() {
         }
       />
 
-      <PlayersFilters isClubFilterDisabled={tab === 'free'} />
+      <PlayersFilters
+        search={filters.search}
+        onSearchChange={(search) => updateFilters({ search })}
+        position={filters.position}
+        onPositionChange={(position) => updateFilters({ position })}
+        condition={filters.condition}
+        onConditionChange={(condition) => updateFilters({ condition })}
+        isClubFilterDisabled={filters.tab === 'free'}
+      />
 
       <PlayersTable
-        players={pagePlayers}
-        total={playersPage?.meta.total_items ?? 0}
+        players={players}
+        total={total}
         counts={counts}
-        tab={tab}
-        onTabChange={changeTab}
+        tab={filters.tab}
+        onTabChange={(tab) => updateFilters({ tab })}
         page={page}
         onPageChange={setPage}
         onAction={openAction}
+        sort={filters.sort}
+        onSortChange={(sort) => updateFilters({ sort })}
       />
 
-      {panel?.type === 'create' && (
-        <CreatePlayerDialog
-          onClose={closePanel}
-          onCreated={(player) => setPanel({ type: 'created', player })}
-        />
-      )}
-      {panel?.type === 'created' && (
-        <PlayerCreatedDialog
-          player={panel.player}
-          onClose={closePanel}
-          onShowDetails={() => openAction('details', panel.player)}
-        />
-      )}
-      {panel?.type === 'details' && (
-        <PlayerDetailsSheet
-          player={panel.player}
-          onClose={closePanel}
-          onAction={openAction}
-        />
-      )}
-      {panel?.type === 'edit' && (
-        <EditPlayerDialog player={panel.player} onClose={closePanel} />
-      )}
-      {panel?.type === 'condition' && (
-        <ChangeConditionDialog player={panel.player} onClose={closePanel} />
-      )}
-      {panel?.type === 'delete' && (
-        <DeletePlayerDialog player={panel.player} onClose={closePanel} />
-      )}
-      {panel?.type === 'buy' && (
-        <BuyPlayerDialog
-          player={panel.player}
-          onClose={closePanel}
-          onPurchased={(result) =>
-            setPanel({ type: 'purchased', player: panel.player, result })
-          }
-        />
-      )}
-      {panel?.type === 'purchased' && (
-        <PurchaseResultDialog
-          player={panel.player}
-          result={panel.result}
-          onClose={closePanel}
-        />
-      )}
+      <PlayersPanels panel={panel} onPanelChange={setPanel} />
     </div>
   );
 }
