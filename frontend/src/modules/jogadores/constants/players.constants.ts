@@ -58,3 +58,6 @@ export const SORT_OPTIONS = [
   { value: 'age_asc', label: 'Menor idade' },
   { value: 'position', label: 'Posição (GOL a ATA)' },
 ];
+
+export const AGE_RANGE = { min: 16, max: 45 };
+export const MARKET_VALUE_RANGE = { min: 0, max: 550 };

@@ -42,6 +42,10 @@ export default function PlayersPage() {
         onSearchChange={(search) => updateFilters({ search })}
         position={filters.position}
         onPositionChange={(position) => updateFilters({ position })}
+        age={filters.age}
+        onAgeChange={(age) => updateFilters({ age })}
+        marketValue={filters.marketValue}
+        onMarketValueChange={(marketValue) => updateFilters({ marketValue })}
         clubId={filters.clubId}
         onClubChange={(clubId) => updateFilters({ clubId })}
         condition={filters.condition}

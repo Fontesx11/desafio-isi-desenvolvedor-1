@@ -1,17 +1,12 @@
-import {
-  ChevronDown,
-  Coins,
-  HeartPulse,
-  Search,
-  Shield,
-  Shirt,
-  User,
-} from 'lucide-react';
+import { Coins, HeartPulse, Search, Shield, Shirt, User } from 'lucide-react';
 import { InputWithIcon } from '@/components/input-with-icon';
 import { FilterMenu } from '@/components/filter-menu';
 import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
-import { Button } from '@/components/ui/button';
+import { RangeFilterMenu, type Range } from '@/components/range-filter-menu';
+import { formatCurrency } from '@/lib/format';
 import {
+  AGE_RANGE,
+  MARKET_VALUE_RANGE,
   CONDITIONS,
   CONDITION_LABELS,
   POSITIONS,
@@ -19,15 +14,14 @@ import {
 } from '../constants/players.constants';
 import type { PlayerCondition, PlayerPosition } from '../types/players.types';
 
-const FILTERS = [
-  { id: 'age', label: 'Idade', icon: User },
-  { id: 'market-value', label: 'Valor de mercado', icon: Coins },
-];
-
 type PlayersFiltersProps = {
   search: string;
   position: PlayerPosition | undefined;
   onPositionChange: (position: PlayerPosition | undefined) => void;
+  age: Range | undefined;
+  onAgeChange: (age: Range | undefined) => void;
+  marketValue: Range | undefined;
+  onMarketValueChange: (marketValue: Range | undefined) => void;
   clubId: number | undefined;
   onClubChange: (clubId: number | undefined) => void;
   condition: PlayerCondition | undefined;
@@ -41,6 +35,10 @@ export function PlayersFilters({
   search,
   position,
   onPositionChange,
+  age,
+  onAgeChange,
+  marketValue,
+  onMarketValueChange,
   clubId,
   onClubChange,
   condition,
@@ -97,18 +95,22 @@ export function PlayersFilters({
         }
         disabled={isClubFilterDisabled}
       />
-      {FILTERS.map((filter) => (
-        <Button
-          key={filter.id}
-          type="button"
-          variant="outline"
-          className="h-9 gap-2 font-normal"
-        >
-          <filter.icon className="text-zinc-500" />
-          {filter.label}
-          <ChevronDown className="text-zinc-400" />
-        </Button>
-      ))}
+      <RangeFilterMenu
+        icon={User}
+        label="Idade"
+        bounds={AGE_RANGE}
+        value={age}
+        onChange={onAgeChange}
+      />
+      <RangeFilterMenu
+        icon={Coins}
+        label="Valor"
+        bounds={MARKET_VALUE_RANGE}
+        step={0.01}
+        value={marketValue}
+        onChange={onMarketValueChange}
+        formatValue={formatCurrency}
+      />
     </div>
   );
 }
