@@ -46,6 +46,7 @@ export function ChangeConditionDialog({
   } = useForm({ resolver: zodResolver(changeConditionSchema) });
 
   const { useUpdatePlayerCondition } = usePlayersQueries();
+
   const { mutate, isPending } = useUpdatePlayerCondition();
 
   function onSubmit(values: ChangeConditionValues) {

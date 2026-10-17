@@ -47,6 +47,7 @@ export function EditPlayerDialog({ player, onClose }: EditPlayerDialogProps) {
   });
 
   const { useUpdatePlayer } = usePlayersQueries();
+
   const { mutate, isPending } = useUpdatePlayer();
 
   function onSubmit(values: EditPlayerValues) {

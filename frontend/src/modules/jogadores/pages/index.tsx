@@ -2,6 +2,7 @@ import { Plus, Users } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/layout/components/page-header';
+import { ActiveFilters } from '../components/active-filters';
 import { PlayersFilters } from '../components/players-filters';
 import { PlayersPanels, type OpenPanel } from '../components/players-panels';
 import { PlayersTable } from '../components/players-table';
@@ -11,7 +12,7 @@ import type { Player, PlayerAction } from '../types/players.types';
 
 export default function PlayersPage() {
   const [panel, setPanel] = useState<OpenPanel | null>(null);
-  const { filters, updateFilters, page, setPage, queryParams } =
+  const { filters, updateFilters, clearFilters, page, setPage, queryParams } =
     usePlayersFilters();
   const { players, total, counts } = usePlayersList(queryParams);
 
@@ -42,15 +43,21 @@ export default function PlayersPage() {
         onSearchChange={(search) => updateFilters({ search })}
         position={filters.position}
         onPositionChange={(position) => updateFilters({ position })}
+        condition={filters.condition}
+        onConditionChange={(condition) => updateFilters({ condition })}
+        clubId={filters.clubId}
+        onClubChange={(clubId) => updateFilters({ clubId })}
         age={filters.age}
         onAgeChange={(age) => updateFilters({ age })}
         marketValue={filters.marketValue}
         onMarketValueChange={(marketValue) => updateFilters({ marketValue })}
-        clubId={filters.clubId}
-        onClubChange={(clubId) => updateFilters({ clubId })}
-        condition={filters.condition}
-        onConditionChange={(condition) => updateFilters({ condition })}
         isClubFilterDisabled={filters.tab === 'free'}
+      />
+
+      <ActiveFilters
+        filters={filters}
+        onChange={updateFilters}
+        onClear={clearFilters}
       />
 
       <PlayersTable

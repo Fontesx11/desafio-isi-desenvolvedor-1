@@ -8,7 +8,7 @@ import type {
   PlayersTab,
 } from '../types/players.types';
 
-type PlayersFilters = {
+export type PlayersFilters = {
   tab: PlayersTab;
   search: string;
   position?: PlayerPosition;
@@ -31,6 +31,16 @@ export function usePlayersFilters() {
     const clubReset = changes.tab === 'free' ? { clubId: undefined } : {};
     setFilters((current) => ({ ...current, ...changes, ...clubReset }));
     setPage(1);
+  }
+
+  function clearFilters() {
+    updateFilters({
+      position: undefined,
+      condition: undefined,
+      clubId: undefined,
+      age: undefined,
+      marketValue: undefined,
+    });
   }
 
   const debouncedSearch = useDebounce(filters.search.trim());
@@ -57,6 +67,7 @@ export function usePlayersFilters() {
   return {
     filters,
     updateFilters,
+    clearFilters,
     page,
     setPage,
     queryParams: params.toString(),

@@ -16,34 +16,33 @@ import type { PlayerCondition, PlayerPosition } from '../types/players.types';
 
 type PlayersFiltersProps = {
   search: string;
+  onSearchChange: (search: string) => void;
   position: PlayerPosition | undefined;
   onPositionChange: (position: PlayerPosition | undefined) => void;
+  condition: PlayerCondition | undefined;
+  onConditionChange: (condition: PlayerCondition | undefined) => void;
+  clubId: number | undefined;
+  onClubChange: (clubId: number | undefined) => void;
   age: Range | undefined;
   onAgeChange: (age: Range | undefined) => void;
   marketValue: Range | undefined;
   onMarketValueChange: (marketValue: Range | undefined) => void;
-  clubId: number | undefined;
-  onClubChange: (clubId: number | undefined) => void;
-  condition: PlayerCondition | undefined;
-  onConditionChange: (condition: PlayerCondition | undefined) => void;
-  onSearchChange: (search: string) => void;
-  // "Só livres" não combina com o filtro por clube
   isClubFilterDisabled: boolean;
 };
 
 export function PlayersFilters({
   search,
+  onSearchChange,
   position,
   onPositionChange,
+  condition,
+  onConditionChange,
+  clubId,
+  onClubChange,
   age,
   onAgeChange,
   marketValue,
   onMarketValueChange,
-  clubId,
-  onClubChange,
-  condition,
-  onConditionChange,
-  onSearchChange,
   isClubFilterDisabled,
 }: PlayersFiltersProps) {
   const { useGetClubs } = useClubsQueries();

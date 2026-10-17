@@ -3,7 +3,6 @@ import { usePlayersQueries } from './usePlayersQueries';
 
 export function usePlayersList(queryParams: string) {
   const { useGetPlayers } = usePlayersQueries();
-
   const { data: playersPage } = useGetPlayers(queryParams);
 
   const { data: allPage } = useGetPlayers('limit=1');
