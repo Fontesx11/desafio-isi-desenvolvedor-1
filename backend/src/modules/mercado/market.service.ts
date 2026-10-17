@@ -1,5 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, FindOptionsWhere, In } from 'typeorm';
 import { roundDivision } from '../../core/utils/math.utils.js';
 import { ClubsService } from '../clubes/clubs.service.js';
 import {
@@ -8,14 +8,17 @@ import {
 } from '../contratos/contracts.service.js';
 import { ContractStatus } from '../contratos/enums/contracts.enum.js';
 import { PlayersService } from '../jogadores/players.service.js';
+import { Transaction } from '../transacoes/entities/transaction.entity.js';
 import { TransactionType } from '../transacoes/enums/transactions.enum.js';
 import {
   CreateTransactionData,
   TransactionsService,
 } from '../transacoes/transactions.service.js';
 import { BuyPlayerDto } from './dtos/buy-player.dto.js';
+import { ListTransactionsQueryDto } from './dtos/list-transactions-query.dto.js';
 import { Purchase } from './dtos/purchase-response.dto.js';
 import { Sale } from './dtos/sale-response.dto.js';
+import { TransactionHistory } from './dtos/transaction-history-response.dto.js';
 
 const PURCHASE_FEE_PERCENT = 5;
 const PURCHASE_FEE_MIN_VALUE_CENTS = 3000;
@@ -163,6 +166,34 @@ export class MarketService {
         clubCash,
       };
     });
+  }
+
+  async findClubTransactions(
+    clubId: number,
+    query: ListTransactionsQueryDto,
+  ): Promise<Transaction[]> {
+    const club = await this.clubsService.findOne({ id: clubId });
+    const condition: FindOptionsWhere<Transaction> = {
+      clubId: club.id,
+      type: In(query.type),
+    };
+
+    if (query.player_id !== undefined) {
+      const player = await this.playersService.findOne({ id: query.player_id });
+      condition.playerId = player.id;
+    }
+
+    return this.transactionsService.findAll(condition);
+  }
+
+  async getTransactionHistory(
+    clubId: number,
+    query: ListTransactionsQueryDto,
+  ): Promise<TransactionHistory> {
+    const transactions = await this.findClubTransactions(clubId, query);
+    const summary = this.transactionsService.calculateSummary(transactions);
+
+    return { transactions, summary };
   }
 
   calculatePurchaseFeeCents(marketValueCents: number): number {
