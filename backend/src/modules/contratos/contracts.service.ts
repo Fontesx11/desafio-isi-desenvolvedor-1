@@ -1,7 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { MS_PER_DAY } from '../../core/utils/date.utils.js';
+import {
+  calculateRemainingDays,
+  MS_PER_DAY,
+} from '../../core/utils/date.utils.js';
 import { Contract } from './entities/contract.entity.js';
 import { ContractStatus } from './enums/contracts.enum.js';
 
@@ -11,6 +14,14 @@ export type CreateContractData = Pick<
   Contract,
   'playerId' | 'clubId' | 'purchaseValue' | 'loyaltyUntil'
 >;
+
+export type ContractSummary = Pick<
+  Contract,
+  'purchaseValue' | 'loyaltyUntil'
+> & {
+  remainingDays: number;
+  penaltyRate: number;
+};
 
 @Injectable()
 export class ContractsService {
@@ -43,5 +54,31 @@ export class ContractsService {
     });
 
     return manager.save(contract);
+  }
+
+  async findActiveByClub(clubId: number): Promise<Contract[]> {
+    return this.contractsRepository.findBy({
+      clubId,
+      status: ContractStatus.ATIVO,
+    });
+  }
+
+  calculateContractSummary(contract: Contract, now: Date): ContractSummary {
+    const remainingDays = calculateRemainingDays(contract.loyaltyUntil, now);
+
+    return {
+      purchaseValue: contract.purchaseValue,
+      loyaltyUntil: contract.loyaltyUntil,
+      remainingDays,
+      penaltyRate: this.calculatePenaltyRate(remainingDays),
+    };
+  }
+
+  private calculatePenaltyRate(remainingDays: number): number {
+    if (remainingDays === 0) return 0;
+    if (remainingDays <= 30) return 5;
+    if (remainingDays <= 180) return 10;
+
+    return 20;
   }
 }

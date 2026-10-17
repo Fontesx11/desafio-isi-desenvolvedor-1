@@ -10,10 +10,14 @@ import {
   FindOptionsWhere,
   Repository,
 } from 'typeorm';
+import { ContractsService } from '../contratos/contracts.service.js';
 import { PlayerSort } from '../jogadores/enums/players.enum.js';
 import { calculatePlayerDynamicValues } from '../jogadores/utils/players.calculations.js';
 import { sortPlayers } from '../jogadores/utils/players.sorting.js';
-import { ClubWithDynamicValues } from './dtos/club-response.dto.js';
+import {
+  ClubDetails,
+  ClubWithDynamicValues,
+} from './dtos/club-response.dto.js';
 import { CreateClubDto } from './dtos/create-club.dto.js';
 import { ListClubsQueryDto } from './dtos/list-clubs-query.dto.js';
 import { Club } from './entities/club.entity.js';
@@ -28,6 +32,7 @@ export class ClubsService {
   constructor(
     @InjectRepository(Club)
     private readonly clubsRepository: Repository<Club>,
+    private readonly contractsService: ContractsService,
   ) {}
 
   async findOne(
@@ -46,10 +51,26 @@ export class ClubsService {
     return club;
   }
 
-  async findById(id: number): Promise<ClubWithDynamicValues> {
+  async findById(id: number): Promise<ClubDetails> {
     const club = await this.findOne({ id }, { players: true });
+    const contracts = await this.contractsService.findActiveByClub(id);
+    const clubWithValues = this.calculateDynamicValues(club);
+    const now = new Date();
 
-    return this.calculateDynamicValues(club);
+    const squad = clubWithValues.squad.map((player) => {
+      const contract = contracts.find((item) => item.playerId === player.id);
+
+      if (!contract) {
+        return { player, contract: null };
+      }
+
+      return {
+        player,
+        contract: this.contractsService.calculateContractSummary(contract, now),
+      };
+    });
+
+    return { club: clubWithValues, squad };
   }
 
   assertCanBuy(club: Club, totalCostCents: number): void {

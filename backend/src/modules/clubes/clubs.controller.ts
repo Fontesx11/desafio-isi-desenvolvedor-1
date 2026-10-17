@@ -28,7 +28,7 @@ export class ClubsController {
 
   @Get(':id')
   async findOne(@IdParam() id: number): Promise<ClubResponseDto> {
-    const club = await this.clubsService.findById(id);
-    return new ClubResponseDto(club, club.squad);
+    const { club, squad } = await this.clubsService.findById(id);
+    return new ClubResponseDto(club, squad);
   }
 }

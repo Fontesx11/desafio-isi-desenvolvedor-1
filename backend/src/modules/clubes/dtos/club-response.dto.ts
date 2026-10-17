@@ -1,3 +1,5 @@
+import { formatBrasiliaDateTime } from '../../../core/utils/date.utils.js';
+import { ContractSummary } from '../../contratos/contracts.service.js';
 import {
   PlayerResponseDto,
   PlayerWithDynamicValues,
@@ -10,6 +12,41 @@ export type ClubWithDynamicValues = Club & {
   netWorth: number;
 };
 
+export type SquadPlayer = {
+  player: PlayerWithDynamicValues;
+  contract: ContractSummary | null;
+};
+
+export type ClubDetails = {
+  club: ClubWithDynamicValues;
+  squad: SquadPlayer[];
+};
+
+export class SquadPlayerResponseDto extends PlayerResponseDto {
+  contract: {
+    purchase_value: number;
+    loyalty_until: string;
+    remaining_days: number;
+    penalty_rate: number;
+  } | null;
+
+  constructor({ player, contract }: SquadPlayer) {
+    super(player);
+
+    if (contract === null) {
+      this.contract = null;
+      return;
+    }
+
+    this.contract = {
+      purchase_value: Number(contract.purchaseValue),
+      loyalty_until: formatBrasiliaDateTime(contract.loyaltyUntil),
+      remaining_days: contract.remainingDays,
+      penalty_rate: contract.penaltyRate,
+    };
+  }
+}
+
 export class ClubResponseDto {
   id: number;
   name: string;
@@ -17,12 +54,9 @@ export class ClubResponseDto {
   cash: number;
   squad_value: number;
   net_worth: number;
-  players?: PlayerResponseDto[];
+  players?: SquadPlayerResponseDto[];
 
-  constructor(
-    club: ClubWithDynamicValues,
-    players?: PlayerWithDynamicValues[],
-  ) {
+  constructor(club: ClubWithDynamicValues, squad?: SquadPlayer[]) {
     this.id = club.id;
     this.name = club.name;
     this.acronym = club.acronym;
@@ -30,8 +64,8 @@ export class ClubResponseDto {
     this.squad_value = club.squadValue;
     this.net_worth = club.netWorth;
 
-    if (players) {
-      this.players = players.map((player) => new PlayerResponseDto(player));
+    if (squad) {
+      this.players = squad.map((item) => new SquadPlayerResponseDto(item));
     }
   }
 }
