@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { CONDITIONS, POSITIONS } from '../constants/players.constants';
 
-// Número inteiro obrigatório numa faixa; campo vazio chega como NaN
 function integerInRange(
   min: number,
   max: number,
@@ -46,7 +45,6 @@ export const attributesSchema = z.object({
   ),
 });
 
-// Regras que cruzam campos (soma dos atributos, potencial) ficam com a API
 export const createPlayerSchema = attributesSchema.extend({
   name: nameField,
   position: positionField,
@@ -61,7 +59,6 @@ export const createPlayerSchema = attributesSchema.extend({
 
 export type CreatePlayerValues = z.infer<typeof createPlayerSchema>;
 
-// A idade não pode diminuir: a tela impede antes de enviar
 export function editPlayerSchema(currentAge: number) {
   return z.object({
     name: nameField,
