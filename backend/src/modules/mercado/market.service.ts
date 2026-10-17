@@ -45,6 +45,15 @@ export class MarketService {
       throw new ConflictException('the player already has a club');
     }
 
+    const clubSoldPlayer = await this.transactionsService.hasSale(
+      club.id,
+      player.id,
+    );
+
+    if (clubSoldPlayer) {
+      throw new ConflictException('the club cannot buy back a player it sold');
+    }
+
     const marketValueCents = Math.round(player.marketValue * 100);
     const feeCents = this.calculatePurchaseFeeCents(marketValueCents);
     const totalCostCents = marketValueCents + feeCents;
