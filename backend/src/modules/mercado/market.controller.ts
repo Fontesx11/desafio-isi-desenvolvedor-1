@@ -6,7 +6,9 @@ import {
   HttpStatus,
   Post,
   Query,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { IdParam } from '../../core/decorators/id-param.decorator.js';
 import { TransactionResponseDto } from '../transacoes/dtos/transaction-response.dto.js';
 import { BuyPlayerDto } from './dtos/buy-player.dto.js';
@@ -51,5 +53,20 @@ export class MarketController {
       ),
       summary: new TransactionSummaryResponseDto(summary),
     };
+  }
+
+  @Get('clubs/:id/transactions/export')
+  async exportTransactionHistory(
+    @IdParam() id: number,
+    @Query() query: ListTransactionsQueryDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<string> {
+    const csv = await this.marketService.exportClubTransactions(id, query);
+    response.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    response.setHeader(
+      'Content-Disposition',
+      `attachment; filename="transacoes_clube_${id}.csv"`,
+    );
+    return csv;
   }
 }

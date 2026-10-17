@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
+import {
+  escapeCsvValue,
+  formatCsvDecimal,
+} from '../../core/utils/csv.utils.js';
+import { formatBrasiliaDateTime } from '../../core/utils/date.utils.js';
+import { CSV_HEADER } from './constants/transactions.constants.js';
 import { Transaction } from './entities/transaction.entity.js';
 import { TransactionType } from './enums/transactions.enum.js';
-
-export type CreateTransactionData = Omit<Transaction, 'id' | 'createdAt'>;
-
-export type TransactionSummary = {
-  totalSpent: string;
-  totalReceived: string;
-  totalFees: string;
-  totalPenalties: string;
-  totalProfit: string;
-};
+import {
+  CreateTransactionData,
+  TransactionSummary,
+} from './interfaces/transaction.interface.js';
 
 @Injectable()
 export class TransactionsService {
@@ -76,5 +76,29 @@ export class TransactionsService {
       totalPenalties: (penaltiesCents / 100).toFixed(2),
       totalProfit: (profitCents / 100).toFixed(2),
     };
+  }
+
+  toCsv(transactions: Transaction[]): string {
+    let csv = `${CSV_HEADER}\n`;
+
+    for (const transaction of transactions) {
+      const profit =
+        transaction.profit === null ? '' : formatCsvDecimal(transaction.profit);
+
+      const values = [
+        formatBrasiliaDateTime(transaction.createdAt),
+        transaction.type,
+        escapeCsvValue(transaction.playerName),
+        formatCsvDecimal(transaction.value),
+        formatCsvDecimal(transaction.fee),
+        formatCsvDecimal(transaction.penalty),
+        profit,
+        formatCsvDecimal(transaction.cashChange),
+      ];
+
+      csv += `${values.join(';')}\n`;
+    }
+
+    return csv;
   }
 }

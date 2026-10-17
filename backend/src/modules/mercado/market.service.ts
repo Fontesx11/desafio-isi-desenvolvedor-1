@@ -8,10 +8,8 @@ import { CreateContractData } from '../contratos/interfaces/contract.interface.j
 import { PlayersService } from '../jogadores/players.service.js';
 import { Transaction } from '../transacoes/entities/transaction.entity.js';
 import { TransactionType } from '../transacoes/enums/transactions.enum.js';
-import {
-  CreateTransactionData,
-  TransactionsService,
-} from '../transacoes/transactions.service.js';
+import { CreateTransactionData } from '../transacoes/interfaces/transaction.interface.js';
+import { TransactionsService } from '../transacoes/transactions.service.js';
 import { BuyPlayerDto } from './dtos/buy-player.dto.js';
 import { ListTransactionsQueryDto } from './dtos/list-transactions-query.dto.js';
 import { Purchase } from './interfaces/purchase.interface.js';
@@ -192,6 +190,15 @@ export class MarketService {
     const summary = this.transactionsService.calculateSummary(transactions);
 
     return { transactions, summary };
+  }
+
+  async exportClubTransactions(
+    clubId: number,
+    query: ListTransactionsQueryDto,
+  ): Promise<string> {
+    const transactions = await this.findClubTransactions(clubId, query);
+
+    return this.transactionsService.toCsv(transactions);
   }
 
   calculatePurchaseFeeCents(marketValueCents: number): number {

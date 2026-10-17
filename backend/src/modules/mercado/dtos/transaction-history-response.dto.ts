@@ -1,4 +1,4 @@
-import { TransactionSummary } from '../../transacoes/transactions.service.js';
+import { TransactionSummary } from '../../transacoes/interfaces/transaction.interface.js';
 
 export class TransactionSummaryResponseDto {
   total_spent: number;
