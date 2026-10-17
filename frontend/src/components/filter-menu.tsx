@@ -16,6 +16,7 @@ type FilterMenuProps<T extends string> = {
   options: { value: T; label: string }[];
   value: T | undefined;
   onChange: (value: T | undefined) => void;
+  disabled?: boolean;
 };
 
 export function FilterMenu<T extends string>({
@@ -24,6 +25,7 @@ export function FilterMenu<T extends string>({
   options,
   value,
   onChange,
+  disabled,
 }: FilterMenuProps<T>) {
   const selected = options.find((option) => option.value === value);
 
@@ -33,6 +35,7 @@ export function FilterMenu<T extends string>({
         <Button
           type="button"
           variant="outline"
+          disabled={disabled}
           className="h-9 gap-2 font-normal"
         >
           <Icon className="text-zinc-500" />

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { InputWithIcon } from '@/components/input-with-icon';
 import { FilterMenu } from '@/components/filter-menu';
+import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
 import { Button } from '@/components/ui/button';
 import {
   CONDITIONS,
@@ -19,7 +20,6 @@ import {
 import type { PlayerCondition, PlayerPosition } from '../types/players.types';
 
 const FILTERS = [
-  { id: 'club', label: 'Clube', icon: Shield },
   { id: 'age', label: 'Idade', icon: User },
   { id: 'market-value', label: 'Valor de mercado', icon: Coins },
 ];
@@ -28,6 +28,8 @@ type PlayersFiltersProps = {
   search: string;
   position: PlayerPosition | undefined;
   onPositionChange: (position: PlayerPosition | undefined) => void;
+  clubId: number | undefined;
+  onClubChange: (clubId: number | undefined) => void;
   condition: PlayerCondition | undefined;
   onConditionChange: (condition: PlayerCondition | undefined) => void;
   onSearchChange: (search: string) => void;
@@ -39,11 +41,16 @@ export function PlayersFilters({
   search,
   position,
   onPositionChange,
+  clubId,
+  onClubChange,
   condition,
   onConditionChange,
   onSearchChange,
   isClubFilterDisabled,
 }: PlayersFiltersProps) {
+  const { useGetClubs } = useClubsQueries();
+  const { data: clubs = [] } = useGetClubs();
+
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-xl border border-zinc-200 p-2">
       <div className="min-w-64 flex-1">
@@ -77,12 +84,24 @@ export function PlayersFilters({
         value={condition}
         onChange={onConditionChange}
       />
+      <FilterMenu
+        icon={Shield}
+        label="Clube"
+        options={clubs.map((club) => ({
+          value: String(club.id),
+          label: club.name,
+        }))}
+        value={clubId === undefined ? undefined : String(clubId)}
+        onChange={(value) =>
+          onClubChange(value === undefined ? undefined : Number(value))
+        }
+        disabled={isClubFilterDisabled}
+      />
       {FILTERS.map((filter) => (
         <Button
           key={filter.id}
           type="button"
           variant="outline"
-          disabled={filter.id === 'club' && isClubFilterDisabled}
           className="h-9 gap-2 font-normal"
         >
           <filter.icon className="text-zinc-500" />

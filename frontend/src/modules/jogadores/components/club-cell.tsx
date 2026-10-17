@@ -1,8 +1,10 @@
 import { Badge } from '@/components/ui/badge';
-import { findClub } from '../utils/players.utils';
+import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
 
 export function ClubCell({ clubId }: { clubId: number | null }) {
-  const club = findClub(clubId);
+  const { useGetClubs } = useClubsQueries();
+  const { data: clubs } = useGetClubs();
+  const club = clubs?.find((item) => item.id === clubId);
 
   if (!club) {
     return <Badge variant="secondary">Livre</Badge>;

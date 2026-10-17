@@ -12,6 +12,7 @@ type PlayersFilters = {
   search: string;
   position?: PlayerPosition;
   condition?: PlayerCondition;
+  clubId?: number;
   sort: string;
 };
 
@@ -24,7 +25,8 @@ export function usePlayersFilters() {
   const [page, setPage] = useState(1);
 
   function updateFilters(changes: Partial<PlayersFilters>) {
-    setFilters((current) => ({ ...current, ...changes }));
+    const clubReset = changes.tab === 'free' ? { clubId: undefined } : {};
+    setFilters((current) => ({ ...current, ...changes, ...clubReset }));
     setPage(1);
   }
 
@@ -36,6 +38,7 @@ export function usePlayersFilters() {
     sort: filters.sort,
   });
   if (filters.position) params.set('position', filters.position);
+  if (filters.clubId) params.set('club_id', String(filters.clubId));
   if (filters.condition) params.set('condition', filters.condition);
   if (debouncedSearch.length >= 2) params.set('search', debouncedSearch);
   if (filters.tab === 'free') params.set('free', 'true');

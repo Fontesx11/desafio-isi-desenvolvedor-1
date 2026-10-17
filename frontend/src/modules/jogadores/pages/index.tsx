@@ -42,6 +42,8 @@ export default function PlayersPage() {
         onSearchChange={(search) => updateFilters({ search })}
         position={filters.position}
         onPositionChange={(position) => updateFilters({ position })}
+        clubId={filters.clubId}
+        onClubChange={(clubId) => updateFilters({ clubId })}
         condition={filters.condition}
         onConditionChange={(condition) => updateFilters({ condition })}
         isClubFilterDisabled={filters.tab === 'free'}
