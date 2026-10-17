@@ -2,8 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
 } from 'typeorm';
+import { Club } from '../../clubes/entities/club.entity.js';
+import { Player } from '../../jogadores/entities/player.entity.js';
 import { ContractStatus } from '../enums/contracts.enum.js';
 
 @Entity({ name: 'contratos' })
@@ -36,4 +41,12 @@ export class Contract {
 
   @Column({ name: 'encerrado_em', type: 'timestamptz', nullable: true })
   endedAt: Date | null;
+
+  @ManyToOne(() => Player)
+  @JoinColumn({ name: 'jogador_id' })
+  player?: Relation<Player>;
+
+  @ManyToOne(() => Club)
+  @JoinColumn({ name: 'clube_id' })
+  club?: Relation<Club>;
 }

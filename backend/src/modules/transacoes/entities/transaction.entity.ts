@@ -2,8 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
 } from 'typeorm';
+import { Club } from '../../clubes/entities/club.entity.js';
+import { Player } from '../../jogadores/entities/player.entity.js';
 import { TransactionType } from '../enums/transactions.enum.js';
 
 @Entity({ name: 'transacoes' })
@@ -51,4 +56,12 @@ export class Transaction {
 
   @CreateDateColumn({ name: 'criado_em', type: 'timestamptz' })
   createdAt: Date;
+
+  @ManyToOne(() => Club)
+  @JoinColumn({ name: 'clube_id' })
+  club?: Relation<Club>;
+
+  @ManyToOne(() => Player)
+  @JoinColumn({ name: 'jogador_id' })
+  player?: Relation<Player>;
 }
