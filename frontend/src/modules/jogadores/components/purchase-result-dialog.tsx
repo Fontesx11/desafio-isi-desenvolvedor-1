@@ -12,9 +12,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { formatCurrency, formatDate, formatTime } from '@/lib/format';
+import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
 import { PURCHASE_TOTAL_COST_MOCK } from '../mocks/players.mock';
 import type { Player, PurchaseResult } from '../types/players.types';
-import { findClub } from '../utils/players.utils';
 
 type PurchaseResultDialogProps = {
   player: Player;
@@ -27,7 +27,9 @@ export function PurchaseResultDialog({
   result,
   onClose,
 }: PurchaseResultDialogProps) {
-  const clubName = findClub(result.club_id)?.name;
+  const { useGetClubs } = useClubsQueries();
+  const { data: clubs } = useGetClubs();
+  const clubName = clubs?.find((club) => club.id === result.club_id)?.name;
   const loyaltyUntil = result.contract.loyalty_until;
 
   const rows = [

@@ -17,13 +17,19 @@ import {
 } from '@/components/ui/sidebar';
 import { LEAGUE_MOCK } from '@/lib/mocks/league.mock';
 import { CLUBS_MOCK } from '@/modules/clubes/mocks/clubs.mock';
+import { usePlayersQueries } from '@/modules/jogadores/hooks/usePlayersQueries';
 import { MENU_GROUPS } from './constants/menu.constants';
-
-const activeItem =
-  'data-[active=true]:bg-background data-[active=true]:shadow-[0_0_0_1px_var(--sidebar-border)] data-[active=true]:[&>svg]:text-primary';
 
 export function AppSidebar() {
   const matchRoute = useMatchRoute();
+  const { useGetPlayersTotal } = usePlayersQueries();
+  const playersTotal = useGetPlayersTotal();
+
+  const counts: Partial<Record<string, number>> = {
+    '/players': playersTotal,
+    '/clubs': LEAGUE_MOCK.clubsCount,
+    '/matches': LEAGUE_MOCK.matchesCount,
+  };
 
   return (
     <Sidebar variant="inset">
@@ -50,7 +56,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       asChild
                       isActive={!!matchRoute({ to: item.to, fuzzy: true })}
-                      className={activeItem}
+                      variant="nav"
                     >
                       <Link to={item.to}>
                         <item.icon />
@@ -63,9 +69,9 @@ export function AppSidebar() {
                       <span>{item.title}</span>
                     </SidebarMenuButton>
                   )}
-                  {item.count !== undefined && (
+                  {item.to && counts[item.to] !== undefined && (
                     <SidebarMenuBadge className="text-zinc-500">
-                      {item.count}
+                      {counts[item.to]}
                     </SidebarMenuBadge>
                   )}
                 </SidebarMenuItem>
@@ -86,11 +92,7 @@ export function AppSidebar() {
 
               return (
                 <SidebarMenuItem key={club.id}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive}
-                    className={activeItem}
-                  >
+                  <SidebarMenuButton asChild isActive={isActive} variant="nav">
                     <Link to="/clubs/$clubId" params={params}>
                       <span
                         className={cn(
@@ -116,7 +118,7 @@ export function AppSidebar() {
           <FooterInfo
             icon={<Trophy />}
             title={LEAGUE_MOCK.name}
-            description={`${LEAGUE_MOCK.clubsCount} clubes · ${LEAGUE_MOCK.playersCount} jogadores`}
+            description={`${LEAGUE_MOCK.clubsCount} clubes · ${playersTotal} jogadores`}
           />
           <FooterInfo
             icon={<Swords />}

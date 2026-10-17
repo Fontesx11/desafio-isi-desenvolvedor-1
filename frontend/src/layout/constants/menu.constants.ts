@@ -6,43 +6,26 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react';
-import { LEAGUE_MOCK } from '@/lib/mocks/league.mock';
 
 type MenuItem = {
   title: string;
   icon: LucideIcon;
   // Sem rota enquanto a página não existe
   to?: LinkProps['to'];
-  count?: number;
 };
 
 export const MENU_GROUPS: { label: string; items: MenuItem[] }[] = [
   {
     label: 'Mercado',
     items: [
-      {
-        title: 'Jogadores',
-        icon: Users,
-        to: '/players',
-        count: LEAGUE_MOCK.playersCount,
-      },
-      {
-        title: 'Clubes',
-        icon: Shield,
-        to: '/clubs',
-        count: LEAGUE_MOCK.clubsCount,
-      },
+      { title: 'Jogadores', icon: Users, to: '/players' },
+      { title: 'Clubes', icon: Shield, to: '/clubs' },
     ],
   },
   {
     label: 'Liga',
     items: [
-      {
-        title: 'Partidas',
-        icon: Swords,
-        to: '/matches',
-        count: LEAGUE_MOCK.matchesCount,
-      },
+      { title: 'Partidas', icon: Swords, to: '/matches' },
       { title: 'Classificação', icon: ListOrdered, to: '/standings' },
     ],
   },

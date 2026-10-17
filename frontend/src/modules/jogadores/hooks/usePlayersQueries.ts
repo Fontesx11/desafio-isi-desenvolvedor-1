@@ -27,6 +27,11 @@ export function usePlayersQueries() {
       queryFn: () => getPlayers(queryParams),
     });
 
+  const useGetPlayersTotal = () => {
+    const { data } = useGetPlayers('limit=1');
+    return data?.meta.total_items ?? 0;
+  };
+
   const useCreatePlayer = () =>
     useMutation({
       mutationFn: (data: CreatePlayer) => savePlayer(data),
@@ -59,6 +64,7 @@ export function usePlayersQueries() {
 
   return {
     useGetPlayers,
+    useGetPlayersTotal,
     useCreatePlayer,
     useUpdatePlayer,
     useUpdatePlayerCondition,

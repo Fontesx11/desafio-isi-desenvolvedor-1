@@ -19,8 +19,9 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { formatCurrency } from '@/lib/format';
+import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
 import type { Player, PlayerAction } from '../types/players.types';
-import { findClub, isFreePlayer } from '../utils/players.utils';
+import { isFreePlayer } from '../utils/players.utils';
 import { AttributeBars } from './attribute-bars';
 import { ConditionBadge } from './condition-badge';
 import { PlayerAvatar } from './player-avatar';
@@ -36,7 +37,9 @@ export function PlayerDetailsSheet({
   onClose,
   onAction,
 }: PlayerDetailsSheetProps) {
-  const club = findClub(player.club_id);
+  const { useGetClubs } = useClubsQueries();
+  const { data: clubs } = useGetClubs();
+  const club = clubs?.find((item) => item.id === player.club_id);
   const stats: {
     label: string;
     value: string | number;
