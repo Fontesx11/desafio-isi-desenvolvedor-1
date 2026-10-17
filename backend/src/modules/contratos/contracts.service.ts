@@ -11,21 +11,12 @@ import {
 } from '../../core/utils/date.utils.js';
 import { Contract } from './entities/contract.entity.js';
 import { ContractStatus } from './enums/contracts.enum.js';
+import {
+  ContractSummary,
+  CreateContractData,
+} from './interfaces/contract.interface.js';
 
 const MAX_LOYALTY_DAYS = 1095;
-
-export type CreateContractData = Pick<
-  Contract,
-  'playerId' | 'clubId' | 'purchaseValue' | 'loyaltyUntil'
->;
-
-export type ContractSummary = Pick<
-  Contract,
-  'purchaseValue' | 'loyaltyUntil'
-> & {
-  remainingDays: number;
-  penaltyRate: number;
-};
 
 @Injectable()
 export class ContractsService {

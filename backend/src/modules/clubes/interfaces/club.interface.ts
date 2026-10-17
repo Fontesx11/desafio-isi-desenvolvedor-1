@@ -1,4 +1,4 @@
-import { ContractSummary } from '../../contratos/contracts.service.js';
+import { ContractSummary } from '../../contratos/interfaces/contract.interface.js';
 import { PlayerWithDynamicValues } from '../../jogadores/interfaces/player.interface.js';
 import { Club } from '../entities/club.entity.js';
 

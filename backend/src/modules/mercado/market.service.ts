@@ -2,11 +2,9 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { DataSource, FindOptionsWhere, In } from 'typeorm';
 import { roundDivision } from '../../core/utils/math.utils.js';
 import { ClubsService } from '../clubes/clubs.service.js';
-import {
-  ContractsService,
-  CreateContractData,
-} from '../contratos/contracts.service.js';
+import { ContractsService } from '../contratos/contracts.service.js';
 import { ContractStatus } from '../contratos/enums/contracts.enum.js';
+import { CreateContractData } from '../contratos/interfaces/contract.interface.js';
 import { PlayersService } from '../jogadores/players.service.js';
 import { Transaction } from '../transacoes/entities/transaction.entity.js';
 import { TransactionType } from '../transacoes/enums/transactions.enum.js';
