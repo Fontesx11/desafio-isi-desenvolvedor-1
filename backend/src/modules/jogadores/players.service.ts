@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 import { Page, paginate } from '../../core/utils/pagination.utils.js';
 import { ClubsService } from '../clubes/clubs.service.js';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
@@ -102,6 +102,14 @@ export class PlayersService {
     await this.playersRepository.save(player);
 
     return calculatePlayerDynamicValues(player);
+  }
+
+  async assignToClub(
+    manager: EntityManager,
+    playerId: number,
+    clubId: number,
+  ): Promise<void> {
+    await manager.update(Player, { id: playerId }, { clubId });
   }
 
   async remove(id: number): Promise<void> {

@@ -4,7 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsRelations, FindOptionsWhere, Repository } from 'typeorm';
+import {
+  EntityManager,
+  FindOptionsRelations,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { PlayerSort } from '../jogadores/enums/players.enum.js';
 import { calculatePlayerDynamicValues } from '../jogadores/utils/players.calculations.js';
 import { sortPlayers } from '../jogadores/utils/players.sorting.js';
@@ -16,6 +21,7 @@ import { sortClubs } from './utils/clubs.sorting.js';
 
 const CLUB_LIMIT = 20;
 const INITIAL_CASH = '300.00';
+const SQUAD_LIMIT = 12;
 
 @Injectable()
 export class ClubsService {
@@ -44,6 +50,35 @@ export class ClubsService {
     const club = await this.findOne({ id }, { players: true });
 
     return this.calculateDynamicValues(club);
+  }
+
+  assertCanBuy(club: Club, totalCostCents: number): void {
+    const cashLimitCents = Math.round(Number(club.cash) * 100) / 2;
+
+    if (totalCostCents > cashLimitCents) {
+      throw new ConflictException(
+        'the total cost cannot exceed 50% of the club cash',
+      );
+    }
+
+    if (club.players.length >= SQUAD_LIMIT) {
+      throw new ConflictException(
+        `a club can have at most ${SQUAD_LIMIT} players`,
+      );
+    }
+  }
+
+  async debitCash(
+    manager: EntityManager,
+    club: Club,
+    amountCents: number,
+  ): Promise<string> {
+    const cashCents = Math.round(Number(club.cash) * 100) - amountCents;
+    const cash = (cashCents / 100).toFixed(2);
+
+    await manager.update(Club, { id: club.id }, { cash });
+
+    return cash;
   }
 
   async create(dto: CreateClubDto): Promise<ClubWithDynamicValues> {
