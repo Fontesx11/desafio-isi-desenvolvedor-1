@@ -15,16 +15,16 @@ import {
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { ATTRIBUTES } from '../constants/players.constants';
-import { CREATED_PLAYER_MOCK } from '../mocks/players.mock';
 import {
   attributesSchema,
   createPlayerSchema,
   type CreatePlayerValues,
 } from '../schemas/players.schema';
-import type { Player } from '../types/players.types';
+import type { CreatePlayer, Player } from '../types/players.types';
 import { AttributeBars } from './attribute-bars';
 import { LockedValue } from './locked-value';
 import { PositionPicker } from './position-picker';
+import { usePlayersQueries } from '../hooks/usePlayersQueries';
 
 type CreatePlayerDialogProps = {
   onClose: () => void;
@@ -46,9 +46,12 @@ export function CreatePlayerDialog({
   });
   const hasErrors = Object.keys(errors).length > 0;
 
-  // Sem a API, o resultado usa os valores calculados do mockup
-  function onSubmit(values: CreatePlayerValues) {
-    onCreated({ ...CREATED_PLAYER_MOCK, ...values });
+  const { useCreatePlayer } = usePlayersQueries();
+
+  const { mutate, isPending } = useCreatePlayer();
+
+  function onSubmit(values: CreatePlayer) {
+    mutate(values, { onSuccess: onCreated });
   }
 
   return (
@@ -191,7 +194,11 @@ export function CreatePlayerDialog({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button type="submit" form="create-player-form">
+            <Button
+              type="submit"
+              form="create-player-form"
+              disabled={isPending}
+            >
               Salvar jogador
             </Button>
           </div>
@@ -201,7 +208,6 @@ export function CreatePlayerDialog({
   );
 }
 
-// Desenha só o que foi digitado; não calcula overall nem valor base
 function AttributesPreview({
   control,
 }: {

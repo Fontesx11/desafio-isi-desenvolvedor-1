@@ -13,16 +13,14 @@ import { PlayersFilters } from '../components/players-filters';
 import { PlayersTable } from '../components/players-table';
 import { PurchaseResultDialog } from '../components/purchase-result-dialog';
 import { PAGE_SIZE } from '../constants/players.constants';
-import { PLAYERS_MOCK } from '../mocks/players.mock';
 import type {
   Player,
   PlayerAction,
   PlayersTab,
   PurchaseResult,
 } from '../types/players.types';
-import { isFreePlayer } from '../utils/players.utils';
+import { usePlayersQueries } from '../hooks/usePlayersQueries';
 
-// Qual modal ou painel está aberto, e para qual jogador
 type OpenPanel =
   | { type: 'create' }
   | { type: PlayerAction | 'created'; player: Player }
@@ -33,19 +31,25 @@ export default function PlayersPage() {
   const [page, setPage] = useState(1);
   const [panel, setPanel] = useState<OpenPanel | null>(null);
 
-  // Sem a API, as abas e a paginação usam os dados fixos
+  const { useGetPlayers } = usePlayersQueries();
+
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(PAGE_SIZE),
+  });
+  if (tab === 'free') params.set('free', 'true');
+  const { data: playersPage } = useGetPlayers(params.toString());
+
+  const { data: allPage } = useGetPlayers('limit=1');
+  const { data: freePage } = useGetPlayers('limit=1&free=true');
+  const allCount = allPage?.meta.total_items ?? 0;
+  const freeCount = freePage?.meta.total_items ?? 0;
   const counts: Record<PlayersTab, number> = {
-    all: PLAYERS_MOCK.length,
-    free: PLAYERS_MOCK.filter(isFreePlayer).length,
-    'in-clubs': PLAYERS_MOCK.filter((player) => !isFreePlayer(player)).length,
+    all: allCount,
+    free: freeCount,
+    'in-clubs': allCount - freeCount,
   };
-  const tabPlayers = PLAYERS_MOCK.filter(
-    (player) => tab === 'all' || (tab === 'free') === isFreePlayer(player),
-  );
-  const pagePlayers = tabPlayers.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE,
-  );
+  const pagePlayers = playersPage?.data ?? [];
 
   function changeTab(next: PlayersTab) {
     setTab(next);
@@ -82,7 +86,7 @@ export default function PlayersPage() {
 
       <PlayersTable
         players={pagePlayers}
-        total={tabPlayers.length}
+        total={playersPage?.meta.total_items ?? 0}
         counts={counts}
         tab={tab}
         onTabChange={changeTab}

@@ -13,6 +13,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import type { Player } from '../types/players.types';
 import { PlayerSummaryCard } from './player-summary-card';
+import { usePlayersQueries } from '../hooks/usePlayersQueries';
 
 type DeletePlayerDialogProps = {
   player: Player;
@@ -23,12 +24,18 @@ export function DeletePlayerDialog({
   player,
   onClose,
 }: DeletePlayerDialogProps) {
-  // Sem a API por enquanto: só confirma na tela
+  const { useDeletePlayer } = usePlayersQueries();
+  const { mutate, isPending } = useDeletePlayer();
+
   function handleConfirm() {
-    toast.success('Jogador excluído', {
-      description: `${player.name} saiu da lista. Transações e partidas antigas dele continuam gravadas.`,
+    mutate(player.id, {
+      onSuccess: () => {
+        toast.success('Jogador excluído', {
+          description: `${player.name} saiu da lista. Transações e partidas antigas dele continuam gravadas.`,
+        });
+        onClose();
+      },
     });
-    onClose();
   }
 
   return (
@@ -52,7 +59,11 @@ export function DeletePlayerDialog({
         <AlertDialogFooter className="mx-0 mb-0 rounded-none bg-transparent px-0 pt-5 pb-0">
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
-            onClick={handleConfirm}
+            onClick={(event) => {
+              event.preventDefault();
+              handleConfirm();
+            }}
+            disabled={isPending}
             className="bg-red-600 text-white hover:bg-red-700"
           >
             <Trash2 />

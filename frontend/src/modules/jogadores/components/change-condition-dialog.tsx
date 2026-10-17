@@ -26,6 +26,7 @@ import {
   type ChangeConditionValues,
 } from '../schemas/players.schema';
 import type { Player } from '../types/players.types';
+import { usePlayersQueries } from '../hooks/usePlayersQueries';
 import { ConditionBadge } from './condition-badge';
 import { PlayerSummaryCard } from './player-summary-card';
 
@@ -44,12 +45,21 @@ export function ChangeConditionDialog({
     formState: { errors },
   } = useForm({ resolver: zodResolver(changeConditionSchema) });
 
-  // Sem a API por enquanto: só confirma na tela
-  function onSubmit({ condition }: ChangeConditionValues) {
-    toast.success('Condição alterada', {
-      description: `${player.name} agora está ${CONDITION_LABELS[condition]}.`,
-    });
-    onClose();
+  const { useUpdatePlayerCondition } = usePlayersQueries();
+  const { mutate, isPending } = useUpdatePlayerCondition();
+
+  function onSubmit(values: ChangeConditionValues) {
+    mutate(
+      { id: player.id, data: values },
+      {
+        onSuccess: () => {
+          toast.success('Condição alterada', {
+            description: `${player.name} agora está ${CONDITION_LABELS[values.condition]}.`,
+          });
+          onClose();
+        },
+      },
+    );
   }
 
   return (
@@ -85,7 +95,6 @@ export function ChangeConditionDialog({
                   className="gap-3"
                 >
                   {CONDITIONS.map((condition) => {
-                    // De Doente não passa direto para Apto: a tela impede
                     const isBlocked =
                       condition === 'APTO' && player.condition === 'DOENTE';
 
@@ -134,7 +143,11 @@ export function ChangeConditionDialog({
           <Button type="button" variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="submit" form="change-condition-form">
+          <Button
+            type="submit"
+            form="change-condition-form"
+            disabled={isPending}
+          >
             Salvar condição
           </Button>
         </DialogFooter>

@@ -25,6 +25,29 @@ export type Player = PlayerAttributes & {
   club_id: number | null;
 };
 
+export type UpdatePlayer = Pick<
+  CreatePlayer,
+  'name' | 'position' | 'agility' | 'age'
+>;
+
+export type UpdatePlayerCondition = {
+  condition: PlayerCondition;
+};
+
+export type CreatePlayer = {
+  name: string;
+  position: PlayerPosition;
+  age: number;
+  agility: number;
+  pace: number;
+  shooting: number;
+  passing: number;
+  dribbling: number;
+  defending: number;
+  physical: number;
+  potential: number;
+};
+
 export type PlayersTab = 'all' | 'free' | 'in-clubs';
 
 export type PlayerAction = 'details' | 'edit' | 'condition' | 'delete' | 'buy';
@@ -47,4 +70,14 @@ export type PurchaseResult = {
     status: 'ATIVO';
   };
   club_cash: number;
+};
+
+export type Page<T> = {
+  data: T[];
+  meta: {
+    page: number;
+    limit: number;
+    total_items: number;
+    total_pages: number;
+  };
 };

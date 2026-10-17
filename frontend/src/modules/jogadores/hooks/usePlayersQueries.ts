@@ -1,0 +1,67 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import {
+  deletePlayer,
+  getPlayers,
+  savePlayer,
+  updatePlayer,
+  updatePlayerCondition,
+} from '../services/players.service';
+import type {
+  CreatePlayer,
+  UpdatePlayer,
+  UpdatePlayerCondition,
+} from '../types/players.types';
+
+export function usePlayersQueries() {
+  const queryClient = useQueryClient();
+
+  const refreshPlayers = () =>
+    queryClient.invalidateQueries({ queryKey: ['players'] });
+
+  const showError = (error: Error) => toast.error(error.message);
+
+  const useGetPlayers = (queryParams = '') =>
+    useQuery({
+      queryKey: ['players', queryParams],
+      queryFn: () => getPlayers(queryParams),
+    });
+
+  const useCreatePlayer = () =>
+    useMutation({
+      mutationFn: (data: CreatePlayer) => savePlayer(data),
+      onSuccess: refreshPlayers,
+      onError: showError,
+    });
+
+  const useUpdatePlayer = () =>
+    useMutation({
+      mutationFn: ({ id, data }: { id: number; data: UpdatePlayer }) =>
+        updatePlayer(id, data),
+      onSuccess: refreshPlayers,
+      onError: showError,
+    });
+
+  const useUpdatePlayerCondition = () =>
+    useMutation({
+      mutationFn: ({ id, data }: { id: number; data: UpdatePlayerCondition }) =>
+        updatePlayerCondition(id, data),
+      onSuccess: refreshPlayers,
+      onError: showError,
+    });
+
+  const useDeletePlayer = () =>
+    useMutation({
+      mutationFn: (id: number) => deletePlayer(id),
+      onSuccess: refreshPlayers,
+      onError: showError,
+    });
+
+  return {
+    useGetPlayers,
+    useCreatePlayer,
+    useUpdatePlayer,
+    useUpdatePlayerCondition,
+    useDeletePlayer,
+  };
+}

@@ -20,6 +20,7 @@ import {
   type EditPlayerValues,
 } from '../schemas/players.schema';
 import type { Player } from '../types/players.types';
+import { usePlayersQueries } from '../hooks/usePlayersQueries';
 import { isFreePlayer } from '../utils/players.utils';
 import { PositionPicker } from './position-picker';
 
@@ -45,12 +46,21 @@ export function EditPlayerDialog({ player, onClose }: EditPlayerDialogProps) {
     },
   });
 
-  // Sem a API por enquanto: só confirma na tela
+  const { useUpdatePlayer } = usePlayersQueries();
+  const { mutate, isPending } = useUpdatePlayer();
+
   function onSubmit(values: EditPlayerValues) {
-    toast.success('Jogador atualizado', {
-      description: `Os dados de ${values.name} foram salvos.`,
-    });
-    onClose();
+    mutate(
+      { id: player.id, data: values },
+      {
+        onSuccess: () => {
+          toast.success('Jogador atualizado', {
+            description: `Os dados de ${values.name} foram salvos.`,
+          });
+          onClose();
+        },
+      },
+    );
   }
 
   return (
@@ -145,7 +155,7 @@ export function EditPlayerDialog({ player, onClose }: EditPlayerDialogProps) {
           <Button type="button" variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="submit" form="edit-player-form">
+          <Button type="submit" form="edit-player-form" disabled={isPending}>
             Salvar alterações
           </Button>
         </DialogFooter>

@@ -95,7 +95,6 @@ export function PlayersTable({
     {
       id: 'base-value',
       header: 'Valor base',
-      // O título quebra em duas linhas quando a janela é estreita
       className: 'text-right whitespace-normal',
       cell: (player) => (
         <span className="text-zinc-500">
@@ -179,7 +178,6 @@ export function PlayersTable({
   );
 }
 
-// Faixas da regra de condição: até 30 soma pontos, de 80 em diante corta
 function AgilityBar({ value }: { value: number }) {
   return (
     <span className="flex items-center gap-2">
