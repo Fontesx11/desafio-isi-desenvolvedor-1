@@ -14,13 +14,13 @@ import { ContractsService } from '../contratos/contracts.service.js';
 import { PlayerSort } from '../jogadores/enums/players.enum.js';
 import { calculatePlayerDynamicValues } from '../jogadores/utils/players.calculations.js';
 import { sortPlayers } from '../jogadores/utils/players.sorting.js';
-import {
-  ClubDetails,
-  ClubWithDynamicValues,
-} from './dtos/club-response.dto.js';
 import { CreateClubDto } from './dtos/create-club.dto.js';
 import { ListClubsQueryDto } from './dtos/list-clubs-query.dto.js';
 import { Club } from './entities/club.entity.js';
+import {
+  ClubDetails,
+  ClubWithDynamicValues,
+} from './interfaces/club.interface.js';
 import { sortClubs } from './utils/clubs.sorting.js';
 
 const CLUB_LIMIT = 20;

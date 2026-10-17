@@ -16,9 +16,9 @@ import {
 } from '../transacoes/transactions.service.js';
 import { BuyPlayerDto } from './dtos/buy-player.dto.js';
 import { ListTransactionsQueryDto } from './dtos/list-transactions-query.dto.js';
-import { Purchase } from './dtos/purchase-response.dto.js';
-import { Sale } from './dtos/sale-response.dto.js';
-import { TransactionHistory } from './dtos/transaction-history-response.dto.js';
+import { Purchase } from './interfaces/purchase.interface.js';
+import { Sale } from './interfaces/sale.interface.js';
+import { TransactionHistory } from './interfaces/transaction-history.interface.js';
 
 const PURCHASE_FEE_PERCENT = 5;
 const PURCHASE_FEE_MIN_VALUE_CENTS = 3000;

@@ -1,26 +1,9 @@
 import { formatBrasiliaDateTime } from '../../../core/utils/date.utils.js';
-import { ContractSummary } from '../../contratos/contracts.service.js';
+import { PlayerResponseDto } from '../../jogadores/dtos/player-response.dto.js';
 import {
-  PlayerResponseDto,
-  PlayerWithDynamicValues,
-} from '../../jogadores/dtos/player-response.dto.js';
-import { Club } from '../entities/club.entity.js';
-
-export type ClubWithDynamicValues = Club & {
-  squad: PlayerWithDynamicValues[];
-  squadValue: number;
-  netWorth: number;
-};
-
-export type SquadPlayer = {
-  player: PlayerWithDynamicValues;
-  contract: ContractSummary | null;
-};
-
-export type ClubDetails = {
-  club: ClubWithDynamicValues;
-  squad: SquadPlayer[];
-};
+  ClubWithDynamicValues,
+  SquadPlayer,
+} from '../interfaces/club.interface.js';
 
 export class SquadPlayerResponseDto extends PlayerResponseDto {
   contract: {

@@ -1,17 +1,4 @@
-import { TransactionResponseDto } from '../../transacoes/dtos/transaction-response.dto.js';
-import { Transaction } from '../../transacoes/entities/transaction.entity.js';
 import { TransactionSummary } from '../../transacoes/transactions.service.js';
-
-export type TransactionHistory = {
-  transactions: Transaction[];
-  summary: TransactionSummary;
-};
-
-export type TransactionHistoryResponse = {
-  data: TransactionResponseDto[];
-  summary: TransactionSummaryResponseDto;
-};
-
 
 export class TransactionSummaryResponseDto {
   total_spent: number;
@@ -28,4 +15,3 @@ export class TransactionSummaryResponseDto {
     this.total_profit = Number(summary.totalProfit);
   }
 }
-

@@ -1,10 +1,5 @@
-import { Player } from '../entities/player.entity.js';
 import { PlayerCondition, PlayerPosition } from '../enums/players.enum.js';
-
-export type PlayerWithDynamicValues = Player & {
-  overall: number;
-  marketValue: number;
-};
+import { PlayerWithDynamicValues } from '../interfaces/player.interface.js';
 
 export class PlayerResponseDto {
   id: number;

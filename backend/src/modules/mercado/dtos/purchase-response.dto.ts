@@ -1,14 +1,7 @@
 import { formatBrasiliaDateTime } from '../../../core/utils/date.utils.js';
-import { Contract } from '../../contratos/entities/contract.entity.js';
 import { ContractStatus } from '../../contratos/enums/contracts.enum.js';
-import { Transaction } from '../../transacoes/entities/transaction.entity.js';
 import { TransactionResponseDto } from '../../transacoes/dtos/transaction-response.dto.js';
-
-export type Purchase = {
-  transaction: Transaction;
-  contract: Contract;
-  clubCash: string;
-};
+import { Purchase } from '../interfaces/purchase.interface.js';
 
 export class PurchaseResponseDto extends TransactionResponseDto {
   contract: {

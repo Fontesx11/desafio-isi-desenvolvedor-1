@@ -2,8 +2,8 @@ import {
   pointsInRange,
   roundDivision,
 } from '../../../core/utils/math.utils.js';
-import type { PlayerWithDynamicValues } from '../dtos/player-response.dto.js';
 import type { Player } from '../entities/player.entity.js';
+import type { PlayerWithDynamicValues } from '../interfaces/player.interface.js';
 import { PlayerCondition, PlayerPosition } from '../enums/players.enum.js';
 
 export interface PlayerAttributes {

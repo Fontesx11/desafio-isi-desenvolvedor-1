@@ -1,6 +1,6 @@
 import { compareNames } from '../../../core/utils/string.utils.js';
-import { PlayerWithDynamicValues } from '../dtos/player-response.dto.js';
 import { PlayerSort, POSITION_ORDER } from '../enums/players.enum.js';
+import { PlayerWithDynamicValues } from '../interfaces/player.interface.js';
 
 function compareBy(
   option: PlayerSort,

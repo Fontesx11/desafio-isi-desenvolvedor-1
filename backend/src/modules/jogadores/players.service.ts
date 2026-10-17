@@ -9,10 +9,10 @@ import { Page, paginate } from '../../core/utils/pagination.utils.js';
 import { ClubsService } from '../clubes/clubs.service.js';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
 import { ListPlayersQueryDto } from './dtos/list-players-query.dto.js';
-import { PlayerWithDynamicValues } from './dtos/player-response.dto.js';
 import { UpdatePlayerDto } from './dtos/update-player.dto.js';
 import { Player } from './entities/player.entity.js';
 import { PlayerCondition } from './enums/players.enum.js';
+import { PlayerWithDynamicValues } from './interfaces/player.interface.js';
 import {
   calculateBaseValueCents,
   calculateOverall,

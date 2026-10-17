@@ -1,6 +1,6 @@
 import { normalizeForComparison } from '../../../core/utils/string.utils.js';
 import { ListPlayersQueryDto } from '../dtos/list-players-query.dto.js';
-import { PlayerWithDynamicValues } from '../dtos/player-response.dto.js';
+import { PlayerWithDynamicValues } from '../interfaces/player.interface.js';
 
 export function filterPlayers(
   players: PlayerWithDynamicValues[],

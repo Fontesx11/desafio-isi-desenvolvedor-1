@@ -1,6 +1,6 @@
 import { compareNames } from '../../../core/utils/string.utils.js';
-import { ClubWithDynamicValues } from '../dtos/club-response.dto.js';
 import { ClubSort } from '../enums/clubs.enum.js';
+import { ClubWithDynamicValues } from '../interfaces/club.interface.js';
 
 function compareBy(
   option: ClubSort,

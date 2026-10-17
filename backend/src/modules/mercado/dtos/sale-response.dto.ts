@@ -1,15 +1,6 @@
 import { ContractStatus } from '../../contratos/enums/contracts.enum.js';
 import { TransactionResponseDto } from '../../transacoes/dtos/transaction-response.dto.js';
-import { Transaction } from '../../transacoes/entities/transaction.entity.js';
-
-export type Sale = {
-  transaction: Transaction;
-  purchaseValue: string;
-  remainingDays: number;
-  penaltyRate: number;
-  contractStatus: ContractStatus;
-  clubCash: string;
-};
+import { Sale } from '../interfaces/sale.interface.js';
 
 export class SaleResponseDto extends TransactionResponseDto {
   purchase_value: number;

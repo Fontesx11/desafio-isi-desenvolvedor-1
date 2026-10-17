@@ -13,10 +13,8 @@ import { BuyPlayerDto } from './dtos/buy-player.dto.js';
 import { ListTransactionsQueryDto } from './dtos/list-transactions-query.dto.js';
 import { PurchaseResponseDto } from './dtos/purchase-response.dto.js';
 import { SaleResponseDto } from './dtos/sale-response.dto.js';
-import {
-  TransactionHistoryResponse,
-  TransactionSummaryResponseDto,
-} from './dtos/transaction-history-response.dto.js';
+import { TransactionSummaryResponseDto } from './dtos/transaction-history-response.dto.js';
+import { TransactionHistoryResponse } from './interfaces/transaction-history.interface.js';
 import { MarketService } from './market.service.js';
 
 @Controller()
