@@ -89,12 +89,12 @@ export class ClubsService {
     }
   }
 
-  async debitCash(
+  async changeCash(
     manager: EntityManager,
     club: Club,
-    amountCents: number,
+    changeCents: number,
   ): Promise<string> {
-    const cashCents = Math.round(Number(club.cash) * 100) - amountCents;
+    const cashCents = Math.round(Number(club.cash) * 100) + changeCents;
     const cash = (cashCents / 100).toFixed(2);
 
     await manager.update(Club, { id: club.id }, { cash });
