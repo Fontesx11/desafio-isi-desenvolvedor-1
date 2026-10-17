@@ -112,6 +112,13 @@ export class PlayersService {
     await manager.update(Player, { id: playerId }, { clubId });
   }
 
+  async releaseFromClub(
+    manager: EntityManager,
+    playerId: number,
+  ): Promise<void> {
+    await manager.update(Player, { id: playerId }, { clubId: null });
+  }
+
   async remove(id: number): Promise<void> {
     const player = await this.findOne({ id });
 

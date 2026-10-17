@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import {
@@ -61,6 +65,28 @@ export class ContractsService {
       clubId,
       status: ContractStatus.ATIVO,
     });
+  }
+
+  async findActiveByPlayer(playerId: number): Promise<Contract> {
+    const contract = await this.contractsRepository.findOneBy({
+      playerId,
+      status: ContractStatus.ATIVO,
+    });
+
+    if (!contract) {
+      throw new NotFoundException('active contract not found');
+    }
+
+    return contract;
+  }
+
+  async close(
+    manager: EntityManager,
+    contract: Contract,
+    status: ContractStatus,
+    endedAt: Date,
+  ): Promise<void> {
+    await manager.update(Contract, { id: contract.id }, { status, endedAt });
   }
 
   calculateContractSummary(contract: Contract, now: Date): ContractSummary {
