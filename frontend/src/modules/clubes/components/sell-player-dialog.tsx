@@ -15,8 +15,8 @@ import {
   formatTime,
 } from '@/lib/format';
 import { PlayerSummaryCard } from '@/modules/jogadores/components/player-summary-card';
+import { useMarketQueries } from '@/modules/mercado/hooks/useMarketQueries';
 import type { SaleResult } from '@/modules/mercado/types/market.types';
-import { SALE_RESULT_MOCK } from '../mocks/clubs.mock';
 import type { SquadPlayer } from '../types/clubs.types';
 import { PenaltyBadge } from './penalty-badge';
 
@@ -54,10 +54,11 @@ export function SellPlayerDialog({
     },
   ];
 
-  // simulacao
-  // Sem a API: o resultado é a venda fixa do mockup
+  const { useSellPlayer } = useMarketQueries();
+  const { mutate, isPending } = useSellPlayer();
+
   function handleConfirm() {
-    onSold(SALE_RESULT_MOCK);
+    mutate(player.id, { onSuccess: onSold });
   }
 
   return (
@@ -104,7 +105,7 @@ export function SellPlayerDialog({
           <Button type="button" variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="button" onClick={handleConfirm}>
+          <Button type="button" onClick={handleConfirm} disabled={isPending}>
             <Handshake />
             Confirmar venda
           </Button>

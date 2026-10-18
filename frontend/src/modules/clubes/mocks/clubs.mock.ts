@@ -1,5 +1,4 @@
 import { toPlayer } from '@/modules/jogadores/mocks/players.mock';
-import type { SaleResult } from '@/modules/mercado/types/market.types';
 import type {
   Club,
   Formation,
@@ -83,25 +82,6 @@ export function findLineupMock(clubId: number): {
     bench: isAguias ? [AGUIAS_SQUAD[3]] : [],
   };
 }
-
-export const SALE_RESULT_MOCK: SaleResult = {
-  id: 12,
-  club_id: 1,
-  player_id: 7,
-  player_name: 'Felipe Moura',
-  type: 'VENDA',
-  value: 52,
-  fee: 0.78,
-  penalty: 5.2,
-  profit: 7.8,
-  cash_change: 46.02,
-  created_at: '2026-11-12T15:00:00-03:00',
-  purchase_value: 44.2,
-  remaining_days: 144,
-  penalty_rate: 10,
-  contract_status: 'RESCINDIDO',
-  club_cash: 97.6,
-};
 
 type TransactionRow = [
   id: number,
