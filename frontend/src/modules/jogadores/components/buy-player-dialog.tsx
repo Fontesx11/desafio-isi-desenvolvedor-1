@@ -120,7 +120,7 @@ export function BuyPlayerDialog({
                     <Shield className="text-zinc-400" />
                     <SelectValue placeholder="Escolha o clube" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper">
                     {clubs.map((club) => (
                       <SelectItem key={club.id} value={String(club.id)}>
                         {club.name} ({club.acronym}) · caixa{' '}
@@ -137,7 +137,7 @@ export function BuyPlayerDialog({
             label="Fim da fidelidade"
             htmlFor="buy-loyalty-date"
             error={errors.loyaltyDate?.message ?? errors.loyaltyTime?.message}
-            description="Depois do momento da compra e até 1.095 dias. Horário de Brasília; enviado com o fuso (-03:00)."
+            description="Depois do momento da compra e até 1.095 dias."
           >
             <div className="grid grid-cols-[1fr_9rem] gap-3">
               <InputWithIcon

@@ -9,7 +9,7 @@ function RootLayout() {
   return (
     <>
       <Outlet />
-      <Toaster position="bottom-right" closeButton />
+      <Toaster duration={2000} position="top-right" richColors />
     </>
   );
 }

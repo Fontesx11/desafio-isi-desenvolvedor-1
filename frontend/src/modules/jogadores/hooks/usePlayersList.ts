@@ -10,9 +10,13 @@ export function usePlayersList(queryParams: string) {
     refetch,
   } = useGetPlayers(queryParams);
 
-  const { data: allPage } = useGetPlayers('limit=1');
-  const { data: freePage } = useGetPlayers('limit=1&free=true');
-  const { data: inClubsPage } = useGetPlayers('limit=1&free=false');
+  const countParams = new URLSearchParams(queryParams);
+  ['page', 'sort', 'free'].forEach((key) => countParams.delete(key));
+  countParams.set('limit', '1');
+
+  const { data: allPage } = useGetPlayers(countParams.toString());
+  const { data: freePage } = useGetPlayers(`${countParams}&free=true`);
+  const { data: inClubsPage } = useGetPlayers(`${countParams}&free=false`);
 
   const counts: Record<PlayersTab, number> = {
     all: allPage?.meta.total_items ?? 0,
