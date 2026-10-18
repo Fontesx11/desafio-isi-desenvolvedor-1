@@ -8,6 +8,7 @@ import { LineupsModule } from './modules/escalacoes/lineups.module.js';
 import { PlayersModule } from './modules/jogadores/players.module.js';
 import { LeagueModule } from './modules/liga/league.module.js';
 import { MarketModule } from './modules/mercado/market.module.js';
+import { MatchesModule } from './modules/partidas/matches.module.js';
 import { TransactionsModule } from './modules/transacoes/transactions.module.js';
 
 @Module({
@@ -20,6 +21,7 @@ import { TransactionsModule } from './modules/transacoes/transactions.module.js'
     TransactionsModule,
     MarketModule,
     LineupsModule,
+    MatchesModule,
     LeagueModule,
   ],
 })

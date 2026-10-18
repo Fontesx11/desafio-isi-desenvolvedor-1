@@ -1,6 +1,9 @@
-import { Body, Controller, Get, Put } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import { IdParam } from '../../core/decorators/id-param.decorator.js';
 import { PlayerResponseDto } from '../jogadores/dtos/player-response.dto.js';
+import { MatchResponseDto } from '../partidas/dtos/match-response.dto.js';
+import { CreateMatchDto } from './dtos/create-match.dto.js';
 import { UpdateLineupDto } from './dtos/update-lineup.dto.js';
 import { ClubLineupResponse } from './interfaces/lineup.interface.js';
 import { LeagueService } from './league.service.js';
@@ -32,5 +35,15 @@ export class LeagueController {
       complete: lineup.complete,
       players: lineup.players.map((player) => new PlayerResponseDto(player)),
     };
+  }
+
+  @Post('matches')
+  async playMatch(
+    @Body() dto: CreateMatchDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<MatchResponseDto> {
+    const details = await this.leagueService.playMatch(dto);
+    response.location(`/api/v1/matches/${details.match.id}`);
+    return new MatchResponseDto(details);
   }
 }
