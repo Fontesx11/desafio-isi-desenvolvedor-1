@@ -5,6 +5,7 @@ import { ClubsService } from '../clubes/clubs.service.js';
 import { ContractsService } from '../contratos/contracts.service.js';
 import { ContractStatus } from '../contratos/enums/contracts.enum.js';
 import { CreateContractData } from '../contratos/interfaces/contract.interface.js';
+import { LineupsService } from '../escalacoes/lineups.service.js';
 import { PlayersService } from '../jogadores/players.service.js';
 import { Transaction } from '../transacoes/entities/transaction.entity.js';
 import { TransactionType } from '../transacoes/enums/transactions.enum.js';
@@ -31,6 +32,7 @@ export class MarketService {
     private readonly clubsService: ClubsService,
     private readonly contractsService: ContractsService,
     private readonly transactionsService: TransactionsService,
+    private readonly lineupsService: LineupsService,
   ) {}
 
   async buyPlayer(id: number, dto: BuyPlayerDto): Promise<Purchase> {
@@ -147,6 +149,7 @@ export class MarketService {
         creditCents,
       );
       await this.playersService.releaseFromClub(manager, player.id);
+      await this.lineupsService.removePlayer(manager, player.id);
       await this.contractsService.close(manager, contract, contractStatus, now);
       const transaction = await this.transactionsService.create(
         manager,

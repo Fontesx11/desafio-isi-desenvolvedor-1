@@ -27,4 +27,8 @@ export class LineupsService {
 
     await manager.save(lineup);
   }
+
+  async removePlayer(manager: EntityManager, playerId: number): Promise<void> {
+    await manager.delete(Lineup, { playerId });
+  }
 }
