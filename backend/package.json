@@ -25,7 +25,8 @@
     "migration:revert": "dbmate down",
     "dbstatus": "dbmate status",
     "db:up": "docker compose -f ../docker-compose.yaml up -d desafio-db",
-    "db:down": "docker compose -f ../docker-compose.yaml down"
+    "db:down": "docker compose -f ../docker-compose.yaml down",
+    "db:reset": "docker compose -f ../docker-compose.yaml exec desafio-db psql -U postgres -c \"DROP DATABASE desafio WITH (FORCE)\" && docker compose -f ../docker-compose.yaml restart desafio-app"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
