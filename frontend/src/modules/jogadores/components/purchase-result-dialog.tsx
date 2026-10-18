@@ -13,7 +13,8 @@ import {
 } from '@/components/ui/dialog';
 import { formatCurrency, formatDate, formatTime } from '@/lib/format';
 import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
-import type { Player, PurchaseResult } from '../types/players.types';
+import type { PurchaseResult } from '@/modules/mercado/types/market.types';
+import type { Player } from '../types/players.types';
 
 type PurchaseResultDialogProps = {
   player: Player;

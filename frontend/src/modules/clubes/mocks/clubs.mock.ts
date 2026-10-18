@@ -1,9 +1,9 @@
 import { toPlayer } from '@/modules/jogadores/mocks/players.mock';
+import type { SaleResult } from '@/modules/mercado/types/market.types';
 import type {
   Club,
   Formation,
   PlayerContract,
-  SaleResult,
   SquadPlayer,
   Transaction,
   TransactionsSummary,

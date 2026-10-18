@@ -15,8 +15,9 @@ import {
   formatTime,
 } from '@/lib/format';
 import { PlayerSummaryCard } from '@/modules/jogadores/components/player-summary-card';
+import type { SaleResult } from '@/modules/mercado/types/market.types';
 import { SALE_RESULT_MOCK } from '../mocks/clubs.mock';
-import type { SaleResult, SquadPlayer } from '../types/clubs.types';
+import type { SquadPlayer } from '../types/clubs.types';
 import { PenaltyBadge } from './penalty-badge';
 
 type SellPlayerDialogProps = {

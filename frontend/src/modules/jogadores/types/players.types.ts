@@ -52,31 +52,6 @@ export type PlayersTab = 'all' | 'free' | 'in-clubs';
 
 export type PlayerAction = 'details' | 'edit' | 'condition' | 'delete' | 'buy';
 
-export type BuyPlayer = {
-  club_id: number;
-  loyalty_until: string;
-};
-
-export type PurchaseResult = {
-  id: number;
-  club_id: number;
-  player_id: number;
-  player_name: string;
-  type: 'COMPRA';
-  value: number;
-  fee: number;
-  penalty: number;
-  profit: number | null;
-  cash_change: number;
-  created_at: string;
-  contract: {
-    purchase_value: number;
-    loyalty_until: string;
-    status: 'ATIVO';
-  };
-  club_cash: number;
-};
-
 export type Page<T> = {
   data: T[];
   meta: {

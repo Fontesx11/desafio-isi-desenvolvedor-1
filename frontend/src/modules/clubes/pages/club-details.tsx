@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import type { SaleResult } from '@/modules/mercado/types/market.types';
 import { ClubAcronym } from '../components/club-acronym';
 import { ClubStats } from '../components/club-stats';
 import { LineupTab } from '../components/lineup-tab';
@@ -21,7 +22,7 @@ import { SellPlayerDialog } from '../components/sell-player-dialog';
 import { SquadTable } from '../components/squad-table';
 import { TransactionsTab } from '../components/transactions-tab';
 import { useClubsQueries } from '../hooks/useClubsQueries';
-import type { SaleResult, SquadPlayer } from '../types/clubs.types';
+import type { SquadPlayer } from '../types/clubs.types';
 
 // Qual modal da venda está aberto
 type SalePanel =

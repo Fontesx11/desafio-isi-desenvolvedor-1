@@ -1,8 +1,5 @@
-import type {
-  Player,
-  PlayerAction,
-  PurchaseResult,
-} from '../types/players.types';
+import type { PurchaseResult } from '@/modules/mercado/types/market.types';
+import type { Player, PlayerAction } from '../types/players.types';
 import { BuyPlayerDialog } from './buy-player-dialog';
 import { ChangeConditionDialog } from './change-condition-dialog';
 import { CreatePlayerDialog } from './create-player-dialog';

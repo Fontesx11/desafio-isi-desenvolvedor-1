@@ -16,7 +16,7 @@ import {
   formatInteger,
   formatSignedCurrency,
 } from '@/lib/format';
-import type { SaleResult } from '../types/clubs.types';
+import type { SaleResult } from '@/modules/mercado/types/market.types';
 
 const CONTRACT_STATUS_STYLES: Record<SaleResult['contract_status'], string> = {
   RESCINDIDO: 'border-amber-200 bg-amber-50 text-amber-700',

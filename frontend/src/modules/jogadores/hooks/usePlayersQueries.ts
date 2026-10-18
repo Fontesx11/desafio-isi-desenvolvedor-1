@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
-  buyPlayer,
   deletePlayer,
   getPlayers,
   savePlayer,
@@ -9,7 +8,6 @@ import {
   updatePlayerCondition,
 } from '../services/players.service';
 import type {
-  BuyPlayer,
   CreatePlayer,
   UpdatePlayer,
   UpdatePlayerCondition,
@@ -64,17 +62,6 @@ export function usePlayersQueries() {
       onError: showError,
     });
 
-  const useBuyPlayer = () =>
-    useMutation({
-      mutationFn: ({ id, data }: { id: number; data: BuyPlayer }) =>
-        buyPlayer(id, data),
-      onSuccess: () => {
-        refreshPlayers();
-        queryClient.invalidateQueries({ queryKey: ['clubs'] });
-      },
-      onError: showError,
-    });
-
   return {
     useGetPlayers,
     useGetPlayersTotal,
@@ -82,6 +69,5 @@ export function usePlayersQueries() {
     useUpdatePlayer,
     useUpdatePlayerCondition,
     useDeletePlayer,
-    useBuyPlayer,
   };
 }

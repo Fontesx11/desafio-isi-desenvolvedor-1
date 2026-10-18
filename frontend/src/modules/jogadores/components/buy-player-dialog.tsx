@@ -21,12 +21,13 @@ import {
 } from '@/components/ui/select';
 import { formatCurrency } from '@/lib/format';
 import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
-import { usePlayersQueries } from '../hooks/usePlayersQueries';
+import { useMarketQueries } from '@/modules/mercado/hooks/useMarketQueries';
+import type { PurchaseResult } from '@/modules/mercado/types/market.types';
 import {
   buyPlayerSchema,
   type BuyPlayerValues,
 } from '../schemas/players.schema';
-import type { Player, PurchaseResult } from '../types/players.types';
+import type { Player } from '../types/players.types';
 import { PlayerSummaryCard } from './player-summary-card';
 
 type BuyPlayerDialogProps = {
@@ -53,7 +54,7 @@ export function BuyPlayerDialog({
   const { useGetClubs } = useClubsQueries();
   const { data: clubs = [] } = useGetClubs();
 
-  const { useBuyPlayer } = usePlayersQueries();
+  const { useBuyPlayer } = useMarketQueries();
   const { mutate, isPending } = useBuyPlayer();
 
   const clubId = useWatch({ control, name: 'clubId' });

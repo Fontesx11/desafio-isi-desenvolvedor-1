@@ -1,0 +1,43 @@
+export type BuyPlayer = {
+  club_id: number;
+  loyalty_until: string;
+};
+
+export type PurchaseResult = {
+  id: number;
+  club_id: number;
+  player_id: number;
+  player_name: string;
+  type: 'COMPRA';
+  value: number;
+  fee: number;
+  penalty: number;
+  profit: number | null;
+  cash_change: number;
+  created_at: string;
+  contract: {
+    purchase_value: number;
+    loyalty_until: string;
+    status: 'ATIVO';
+  };
+  club_cash: number;
+};
+
+export type SaleResult = {
+  id: number;
+  club_id: number;
+  player_id: number;
+  player_name: string;
+  type: 'VENDA';
+  value: number;
+  fee: number;
+  penalty: number;
+  profit: number;
+  cash_change: number;
+  created_at: string;
+  purchase_value: number;
+  remaining_days: number;
+  penalty_rate: number;
+  contract_status: 'RESCINDIDO' | 'ENCERRADO';
+  club_cash: number;
+};
