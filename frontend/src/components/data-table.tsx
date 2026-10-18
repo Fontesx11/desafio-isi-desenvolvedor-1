@@ -1,5 +1,6 @@
 import { cn } from 'cn';
 import { Fragment, type ReactNode } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -8,6 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
+const LOADING_ROWS = 5;
 
 export type DataTableColumn<T> = {
   id: string;
@@ -22,6 +25,7 @@ type DataTableProps<T> = {
   getRowKey: (row: T) => string | number;
   emptyMessage: string;
   groupHeader?: (row: T, index: number) => ReactNode;
+  isLoading?: boolean;
 };
 
 export function DataTable<T>({
@@ -30,6 +34,7 @@ export function DataTable<T>({
   getRowKey,
   emptyMessage,
   groupHeader,
+  isLoading = false,
 }: DataTableProps<T>) {
   return (
     <Table>
@@ -49,7 +54,21 @@ export function DataTable<T>({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {rows.length === 0 ? (
+        {isLoading &&
+          Array.from({ length: LOADING_ROWS }, (_, rowIndex) => (
+            <TableRow key={rowIndex}>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.id}
+                  className="h-14 px-2.5 first:pl-4 last:pr-4"
+                >
+                  <Skeleton className="h-4 w-full" />
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+
+        {!isLoading && rows.length === 0 && (
           <TableRow>
             <TableCell
               colSpan={columns.length}
@@ -58,7 +77,9 @@ export function DataTable<T>({
               {emptyMessage}
             </TableCell>
           </TableRow>
-        ) : (
+        )}
+
+        {!isLoading &&
           rows.map((row, index) => {
             const header = groupHeader?.(row, index);
             return (
@@ -85,8 +106,7 @@ export function DataTable<T>({
                 </TableRow>
               </Fragment>
             );
-          })
-        )}
+          })}
       </TableBody>
     </Table>
   );

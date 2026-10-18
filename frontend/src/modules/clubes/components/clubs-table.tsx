@@ -64,9 +64,15 @@ type ClubsTableProps = {
   clubs: Club[];
   sort: ClubSort;
   onSortChange: (sort: ClubSort) => void;
+  isLoading: boolean;
 };
 
-export function ClubsTable({ clubs, sort, onSortChange }: ClubsTableProps) {
+export function ClubsTable({
+  clubs,
+  sort,
+  onSortChange,
+  isLoading,
+}: ClubsTableProps) {
   return (
     <section className="overflow-hidden rounded-xl border border-zinc-200">
       <div className="flex justify-end p-3">
@@ -78,6 +84,7 @@ export function ClubsTable({ clubs, sort, onSortChange }: ClubsTableProps) {
         rows={clubs}
         getRowKey={(club) => club.id}
         emptyMessage="Nenhum clube encontrado."
+        isLoading={isLoading}
       />
     </section>
   );
