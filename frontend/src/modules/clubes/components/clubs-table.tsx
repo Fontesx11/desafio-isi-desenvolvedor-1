@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router';
 import { ChevronRight } from 'lucide-react';
-import { useState } from 'react';
 import { DataTable, type DataTableColumn } from '@/components/data-table';
 import { SortMenu } from '@/components/sort-menu';
 import { Badge } from '@/components/ui/badge';
@@ -61,15 +60,17 @@ const columns: DataTableColumn<Club>[] = [
   },
 ];
 
-export function ClubsTable({ clubs }: { clubs: Club[] }) {
-  // simulacao
-  // A ordenação só troca a opção marcada; a lista não muda
-  const [sort, setSort] = useState<ClubSort>('name');
+type ClubsTableProps = {
+  clubs: Club[];
+  sort: ClubSort;
+  onSortChange: (sort: ClubSort) => void;
+};
 
+export function ClubsTable({ clubs, sort, onSortChange }: ClubsTableProps) {
   return (
     <section className="overflow-hidden rounded-xl border border-zinc-200">
       <div className="flex justify-end p-3">
-        <SortMenu options={SORT_OPTIONS} value={sort} onChange={setSort} />
+        <SortMenu options={SORT_OPTIONS} value={sort} onChange={onSortChange} />
       </div>
 
       <DataTable

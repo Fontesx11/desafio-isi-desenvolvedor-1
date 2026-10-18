@@ -1,4 +1,12 @@
 import { api } from '@/shared/api/api';
-import type { Club } from '../types/clubs.types';
+import type { Club, ClubSort, CreateClub } from '../types/clubs.types';
 
-export const getClubs = async () => (await api.get<Club[]>('/clubs')).data;
+export const getClubs = async (sort: ClubSort) => {
+  const { data } = await api.get<Club[]>('/clubs', { params: { sort } });
+  return data;
+};
+
+export const saveClub = async (club: CreateClub) => {
+  const { data } = await api.post<Club>('/clubs', club);
+  return data;
+};

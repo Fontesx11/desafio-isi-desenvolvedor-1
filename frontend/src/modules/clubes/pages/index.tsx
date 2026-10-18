@@ -7,15 +7,16 @@ import { PageHeader } from '@/layout/components/page-header';
 import { formatCurrency } from '@/lib/format';
 import { ClubsTable } from '../components/clubs-table';
 import { CreateClubDialog } from '../components/create-club-dialog';
-import { CLUBS_MOCK } from '../mocks/clubs.mock';
-import type { Club } from '../types/clubs.types';
+import { useClubsQueries } from '../hooks/useClubsQueries';
+import type { Club, ClubSort } from '../types/clubs.types';
 
 export default function ClubsPage() {
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
+  const [sort, setSort] = useState<ClubSort>('name');
+  const { useGetClubs } = useClubsQueries();
+  const { data: clubs = [] } = useGetClubs(sort);
 
-  // simulacao
-  // Mostra o aviso e abre a página do clube dos dados fixos
   function handleCreated(club: Club) {
     setIsCreating(false);
     toast.success('Clube criado', {
@@ -42,7 +43,7 @@ export default function ClubsPage() {
         }
       />
 
-      <ClubsTable clubs={CLUBS_MOCK} />
+      <ClubsTable clubs={clubs} sort={sort} onSortChange={setSort} />
 
       {isCreating && (
         <CreateClubDialog

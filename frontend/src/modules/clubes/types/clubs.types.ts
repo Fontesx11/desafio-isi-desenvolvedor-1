@@ -9,6 +9,8 @@ export type Club = {
   net_worth: number;
 };
 
+export type CreateClub = Pick<Club, 'name' | 'acronym'>;
+
 export type PlayerContract = {
   purchase_value: number;
   loyalty_until: string;
