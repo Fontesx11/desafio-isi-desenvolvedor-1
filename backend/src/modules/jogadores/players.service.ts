@@ -4,9 +4,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
+import {
+  DataSource,
+  EntityManager,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { Page, paginate } from '../../core/utils/pagination.utils.js';
 import { ClubsService } from '../clubes/clubs.service.js';
+import { LineupsService } from '../escalacoes/lineups.service.js';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
 import { ListPlayersQueryDto } from './dtos/list-players-query.dto.js';
 import { UpdatePlayerDto } from './dtos/update-player.dto.js';
@@ -24,9 +30,11 @@ import { sortPlayers } from './utils/players.sorting.js';
 @Injectable()
 export class PlayersService {
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(Player)
     private readonly playersRepository: Repository<Player>,
     private readonly clubsService: ClubsService,
+    private readonly lineupsService: LineupsService,
   ) {}
 
   async create(dto: CreatePlayerDto): Promise<PlayerWithDynamicValues> {
@@ -76,7 +84,14 @@ export class PlayersService {
 
     if (player.condition !== condition) {
       player.condition = condition;
-      await this.playersRepository.save(player);
+
+      await this.dataSource.transaction(async (manager) => {
+        await manager.save(player);
+
+        if (condition === PlayerCondition.DOENTE) {
+          await this.lineupsService.removePlayer(manager, player.id);
+        }
+      });
     }
 
     return calculatePlayerDynamicValues(player);

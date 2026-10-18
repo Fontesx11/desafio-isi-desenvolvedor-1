@@ -1,9 +1,11 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import type { Mock } from 'vitest';
 import { buildPlayer, meiaLuaDto } from '../../../test/mocks/players.mock.js';
 import { ClubsService } from '../clubes/clubs.service.js';
+import { LineupsService } from '../escalacoes/lineups.service.js';
 import { ListPlayersQueryDto } from './dtos/list-players-query.dto.js';
 import { UpdatePlayerDto } from './dtos/update-player.dto.js';
 import { Player } from './entities/player.entity.js';
@@ -23,6 +25,9 @@ describe('PlayersService', () => {
     find: Mock;
   };
   let clubsService: { findOne: Mock };
+  let entityManager: { save: Mock };
+  let dataSource: { transaction: Mock };
+  let lineupsService: { removePlayer: Mock };
 
   beforeEach(async () => {
     playersRepository = {
@@ -38,12 +43,22 @@ describe('PlayersService', () => {
       find: vi.fn(),
     };
     clubsService = { findOne: vi.fn() };
+    entityManager = { save: vi.fn() };
+    dataSource = {
+      transaction: vi.fn(
+        async (work: (manager: typeof entityManager) => Promise<void>) =>
+          work(entityManager),
+      ),
+    };
+    lineupsService = { removePlayer: vi.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PlayersService,
+        { provide: DataSource, useValue: dataSource },
         { provide: getRepositoryToken(Player), useValue: playersRepository },
         { provide: ClubsService, useValue: clubsService },
+        { provide: LineupsService, useValue: lineupsService },
       ],
     }).compile();
 
@@ -71,7 +86,7 @@ describe('PlayersService', () => {
 
       expect(player.condition).toBe(MAL_CONDICIONADO);
       expect(player.marketValue).toBe(37);
-      expect(playersRepository.save).toHaveBeenCalledOnce();
+      expect(entityManager.save).toHaveBeenCalledOnce();
     });
 
     it('rejects DOENTE directly to APTO with 409, without saving', async () => {
@@ -82,7 +97,7 @@ describe('PlayersService', () => {
       await expect(service.changePlayerCondition(2, APTO)).rejects.toThrow(
         ConflictException,
       );
-      expect(playersRepository.save).not.toHaveBeenCalled();
+      expect(entityManager.save).not.toHaveBeenCalled();
     });
 
     it('accepts the current condition without saving', async () => {
@@ -91,7 +106,7 @@ describe('PlayersService', () => {
       const player = await service.changePlayerCondition(2, APTO);
 
       expect(player.condition).toBe(APTO);
-      expect(playersRepository.save).not.toHaveBeenCalled();
+      expect(entityManager.save).not.toHaveBeenCalled();
     });
   });
 
