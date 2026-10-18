@@ -3,5 +3,5 @@ import ClubsPage from '@/modules/clubes/pages';
 
 export const Route = createFileRoute('/_app/clubs/')({
   component: ClubsPage,
-  staticData: { breadcrumb: ['Mercado', 'Clubes'] },
+  staticData: { breadcrumb: ['Clubes'] },
 });
