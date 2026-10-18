@@ -8,13 +8,15 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
 
+  const frontendUrl = config.get('CORS_ORIGIN');
+
   configureApp(app);
-  app.enableCors({ origin: config.get('CORS_ORIGIN') });
+  app.enableCors({ origin: frontendUrl });
   app.enableShutdownHooks();
 
   const port = Number(config.get('PORT', 13000));
   await app.listen(port);
 
-  printBanner(port);
+  printBanner(port, frontendUrl);
 }
 await bootstrap();

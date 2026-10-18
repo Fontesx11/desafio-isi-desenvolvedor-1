@@ -17,6 +17,18 @@ services:
     depends_on:
       - desafio-db
 
+  desafio-web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:13000/api/v1
+    container_name: fontes-desafio-web
+    ports:
+      - 15173:15173
+    depends_on:
+      - desafio-app
+
   desafio-db:
     image: postgres:18-alpine
     container_name: fontes-desafio-db
