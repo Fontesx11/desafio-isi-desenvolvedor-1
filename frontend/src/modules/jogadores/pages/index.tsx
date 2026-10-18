@@ -1,5 +1,6 @@
-import { Plus, Users } from 'lucide-react';
+import { Plus, RefreshCw, ServerOff, Users } from 'lucide-react';
 import { useState } from 'react';
+import { ListState } from '@/components/list-state';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/layout/components/page-header';
 import { ActiveFilters } from '../components/active-filters';
@@ -14,7 +15,8 @@ export default function PlayersPage() {
   const [panel, setPanel] = useState<OpenPanel | null>(null);
   const { filters, updateFilters, clearFilters, page, setPage, queryParams } =
     usePlayersFilters();
-  const { players, total, counts } = usePlayersList(queryParams);
+  const { players, total, counts, isLoading, error, refetch } =
+    usePlayersList(queryParams);
 
   function openAction(action: PlayerAction, player: Player) {
     setPanel({ type: action, player });
@@ -60,18 +62,40 @@ export default function PlayersPage() {
         onClear={clearFilters}
       />
 
-      <PlayersTable
-        players={players}
-        total={total}
-        counts={counts}
-        tab={filters.tab}
-        onTabChange={(tab) => updateFilters({ tab })}
-        page={page}
-        onPageChange={setPage}
-        onAction={openAction}
-        sort={filters.sort}
-        onSortChange={(sort) => updateFilters({ sort })}
-      />
+      {error && (
+        <ListState
+          icon={ServerOff}
+          title="Não foi possível carregar os jogadores"
+          description={error.message}
+          action={
+            <Button
+              type="button"
+              variant="outline"
+              className="gap-2"
+              onClick={() => refetch()}
+            >
+              <RefreshCw />
+              Tentar de novo
+            </Button>
+          }
+        />
+      )}
+
+      {!error && (
+        <PlayersTable
+          players={players}
+          total={total}
+          counts={counts}
+          tab={filters.tab}
+          onTabChange={(tab) => updateFilters({ tab })}
+          page={page}
+          onPageChange={setPage}
+          onAction={openAction}
+          sort={filters.sort}
+          onSortChange={(sort) => updateFilters({ sort })}
+          isLoading={isLoading}
+        />
+      )}
 
       <PlayersPanels panel={panel} onPanelChange={setPanel} />
     </div>

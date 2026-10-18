@@ -36,6 +36,7 @@ type PlayersTableProps = {
   onAction: (action: PlayerAction, player: Player) => void;
   sort: string;
   onSortChange: (sort: string) => void;
+  isLoading: boolean;
 };
 
 export function PlayersTable({
@@ -49,6 +50,7 @@ export function PlayersTable({
   onAction,
   sort,
   onSortChange,
+  isLoading,
 }: PlayersTableProps) {
   const columns: DataTableColumn<Player>[] = [
     {
@@ -166,6 +168,7 @@ export function PlayersTable({
         rows={players}
         getRowKey={(player) => player.id}
         emptyMessage="Nenhum jogador encontrado."
+        isLoading={isLoading}
       />
 
       <TablePagination
