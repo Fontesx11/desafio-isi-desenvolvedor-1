@@ -1,5 +1,6 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarDays, Clock, Info, Shield, ShoppingCart } from 'lucide-react';
-import { useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { FormField } from '@/components/form-field';
 import { InputWithIcon } from '@/components/input-with-icon';
 import { Button } from '@/components/ui/button';
@@ -19,8 +20,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { formatCurrency } from '@/lib/format';
-import { CLUBS_MOCK } from '@/modules/clubes/mocks/clubs.mock';
-import { PURCHASE_RESULT_MOCK } from '../mocks/players.mock';
+import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
+import { usePlayersQueries } from '../hooks/usePlayersQueries';
+import {
+  buyPlayerSchema,
+  type BuyPlayerValues,
+} from '../schemas/players.schema';
 import type { Player, PurchaseResult } from '../types/players.types';
 import { PlayerSummaryCard } from './player-summary-card';
 
@@ -35,13 +40,36 @@ export function BuyPlayerDialog({
   onClose,
   onPurchased,
 }: BuyPlayerDialogProps) {
-  const [clubId, setClubId] = useState('');
-  const selectedClub = CLUBS_MOCK.find((club) => String(club.id) === clubId);
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(buyPlayerSchema),
+    defaultValues: { clubId: '', loyaltyDate: '', loyaltyTime: '' },
+  });
 
-  // simulacao
-  // Sem validação e sem a API: o resultado é a compra fixa do mockup
-  function handleConfirm() {
-    onPurchased(PURCHASE_RESULT_MOCK);
+  const { useGetClubs } = useClubsQueries();
+  const { data: clubs = [] } = useGetClubs();
+
+  const { useBuyPlayer } = usePlayersQueries();
+  const { mutate, isPending } = useBuyPlayer();
+
+  const clubId = useWatch({ control, name: 'clubId' });
+  const selectedClub = clubs.find((club) => String(club.id) === clubId);
+
+  function onSubmit(values: BuyPlayerValues) {
+    mutate(
+      {
+        id: player.id,
+        data: {
+          club_id: Number(values.clubId),
+          loyalty_until: `${values.loyaltyDate}T${values.loyaltyTime}-03:00`,
+        },
+      },
+      { onSuccess: onPurchased },
+    );
   }
 
   return (
@@ -66,49 +94,68 @@ export function BuyPlayerDialog({
           }
         />
 
-        <FormField
-          label="Clube comprador"
-          htmlFor="buy-club"
-          description={`${selectedClub ? `Caixa atual: ${formatCurrency(selectedClub.cash)}. ` : ''}O custo total (valor + taxa) pode ir até 50% do caixa.`}
+        <form
+          id="buy-player-form"
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-6"
         >
-          <Select value={clubId} onValueChange={setClubId}>
-            <SelectTrigger
-              id="buy-club"
-              // Ícone, texto à esquerda e a seta no canto direito
-              className="w-full justify-start [&>svg:last-child]:ml-auto"
-            >
-              <Shield className="text-zinc-400" />
-              <SelectValue placeholder="Escolha o clube" />
-            </SelectTrigger>
-            <SelectContent>
-              {CLUBS_MOCK.map((club) => (
-                <SelectItem key={club.id} value={String(club.id)}>
-                  {club.name} ({club.acronym}) · caixa{' '}
-                  {formatCurrency(club.cash)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </FormField>
+          <FormField
+            label="Clube comprador"
+            htmlFor="buy-club"
+            error={errors.clubId?.message}
+            description={`${selectedClub ? `Caixa atual: ${formatCurrency(selectedClub.cash)}. ` : ''}O custo total (valor + taxa) pode ir até 50% do caixa.`}
+          >
+            <Controller
+              control={control}
+              name="clubId"
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    id="buy-club"
+                    aria-invalid={!!errors.clubId}
+                    className="w-full justify-start [&>svg:last-child]:ml-auto"
+                  >
+                    <Shield className="text-zinc-400" />
+                    <SelectValue placeholder="Escolha o clube" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {clubs.map((club) => (
+                      <SelectItem key={club.id} value={String(club.id)}>
+                        {club.name} ({club.acronym}) · caixa{' '}
+                        {formatCurrency(club.cash)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </FormField>
 
-        <FormField
-          label="Fim da fidelidade"
-          htmlFor="buy-loyalty-date"
-          description="Depois do momento da compra e até 1.095 dias. Horário de Brasília; enviado com o fuso (-03:00)."
-        >
-          <div className="grid grid-cols-[1fr_9rem] gap-3">
-            <InputWithIcon
-              id="buy-loyalty-date"
-              type="date"
-              icon={CalendarDays}
-            />
-            <InputWithIcon
-              type="time"
-              icon={Clock}
-              aria-label="Hora do fim da fidelidade"
-            />
-          </div>
-        </FormField>
+          <FormField
+            label="Fim da fidelidade"
+            htmlFor="buy-loyalty-date"
+            error={errors.loyaltyDate?.message ?? errors.loyaltyTime?.message}
+            description="Depois do momento da compra e até 1.095 dias. Horário de Brasília; enviado com o fuso (-03:00)."
+          >
+            <div className="grid grid-cols-[1fr_9rem] gap-3">
+              <InputWithIcon
+                id="buy-loyalty-date"
+                type="date"
+                icon={CalendarDays}
+                aria-invalid={!!errors.loyaltyDate}
+                {...register('loyaltyDate')}
+              />
+              <InputWithIcon
+                type="time"
+                icon={Clock}
+                aria-label="Hora do fim da fidelidade"
+                aria-invalid={!!errors.loyaltyTime}
+                {...register('loyaltyTime')}
+              />
+            </div>
+          </FormField>
+        </form>
 
         <p className="flex gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-zinc-600">
           <Info className="mt-0.5 size-4 shrink-0 text-zinc-500" />A taxa é de
@@ -120,7 +167,7 @@ export function BuyPlayerDialog({
           <Button type="button" variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="button" onClick={handleConfirm}>
+          <Button type="submit" form="buy-player-form" disabled={isPending}>
             <ShoppingCart />
             Confirmar compra
           </Button>

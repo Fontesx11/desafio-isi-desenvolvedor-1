@@ -80,3 +80,11 @@ export const changeConditionSchema = z.object({
 });
 
 export type ChangeConditionValues = z.infer<typeof changeConditionSchema>;
+
+export const buyPlayerSchema = z.object({
+  clubId: z.string().min(1, 'Escolha o clube comprador.'),
+  loyaltyDate: z.string().min(1, 'Informe a data do fim da fidelidade.'),
+  loyaltyTime: z.string().min(1, 'Informe a hora do fim da fidelidade.'),
+});
+
+export type BuyPlayerValues = z.infer<typeof buyPlayerSchema>;
