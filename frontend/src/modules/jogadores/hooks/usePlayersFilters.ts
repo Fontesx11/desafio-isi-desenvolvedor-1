@@ -63,6 +63,7 @@ export function usePlayersFilters() {
   if (filters.condition) params.set('condition', filters.condition);
   if (debouncedSearch.length >= 2) params.set('search', debouncedSearch);
   if (filters.tab === 'free') params.set('free', 'true');
+  if (filters.tab === 'in-clubs') params.set('free', 'false');
 
   return {
     filters,

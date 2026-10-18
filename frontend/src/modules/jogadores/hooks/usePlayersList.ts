@@ -12,13 +12,12 @@ export function usePlayersList(queryParams: string) {
 
   const { data: allPage } = useGetPlayers('limit=1');
   const { data: freePage } = useGetPlayers('limit=1&free=true');
-  const allCount = allPage?.meta.total_items ?? 0;
-  const freeCount = freePage?.meta.total_items ?? 0;
+  const { data: inClubsPage } = useGetPlayers('limit=1&free=false');
 
   const counts: Record<PlayersTab, number> = {
-    all: allCount,
-    free: freeCount,
-    'in-clubs': allCount - freeCount,
+    all: allPage?.meta.total_items ?? 0,
+    free: freePage?.meta.total_items ?? 0,
+    'in-clubs': inClubsPage?.meta.total_items ?? 0,
   };
 
   return {
