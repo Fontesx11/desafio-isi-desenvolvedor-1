@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { downloadFile } from '@/lib/download';
 import { formatCurrency, formatDate, formatTime } from '@/lib/format';
 import { PlayerAvatar } from '@/modules/jogadores/components/player-avatar';
 import { useMarketQueries } from '@/modules/mercado/hooks/useMarketQueries';
@@ -126,16 +127,18 @@ export function TransactionsTab({ clubId }: { clubId: number }) {
 
   const params = new URLSearchParams({ type: types.join(',') });
   if (playerId !== 'all') params.set('player_id', playerId);
+  const queryParams = params.toString();
 
-  const { useGetTransactions } = useMarketQueries();
+  const { useGetTransactions, useExportTransactions } = useMarketQueries();
   const {
     data: history,
     isLoading,
     isError,
     error,
     refetch,
-  } = useGetTransactions(clubId, params.toString());
+  } = useGetTransactions(clubId, queryParams);
   const { data: fullHistory } = useGetTransactions(clubId);
+  const { mutate: exportCsv } = useExportTransactions();
 
   const historyPlayers = (fullHistory?.data ?? []).filter(
     (transaction, index, transactions) =>
@@ -146,6 +149,16 @@ export function TransactionsTab({ clubId }: { clubId: number }) {
 
   function handleTypesChange(selectedTypes: string[]) {
     if (selectedTypes.length > 0) setTypes(selectedTypes);
+  }
+
+  function handleExport() {
+    exportCsv(
+      { clubId, queryParams },
+      {
+        onSuccess: (csv) =>
+          downloadFile(csv, `transacoes_clube_${clubId}.csv`, 'text/csv'),
+      },
+    );
   }
 
   return (
@@ -159,7 +172,7 @@ export function TransactionsTab({ clubId }: { clubId: number }) {
               momento de cada operação.
             </p>
           </div>
-          <Button type="button" variant="outline">
+          <Button type="button" variant="outline" onClick={handleExport}>
             <Download />
             Exportar CSV
           </Button>

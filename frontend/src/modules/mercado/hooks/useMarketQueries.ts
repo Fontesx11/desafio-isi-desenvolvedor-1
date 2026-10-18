@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   buyPlayer,
+  exportTransactions,
   getTransactions,
   sellPlayer,
 } from '../services/market.service';
@@ -24,6 +25,18 @@ export function useMarketQueries() {
       queryFn: () => getTransactions(clubId, queryParams),
     });
 
+  const useExportTransactions = () =>
+    useMutation({
+      mutationFn: ({
+        clubId,
+        queryParams,
+      }: {
+        clubId: number;
+        queryParams: string;
+      }) => exportTransactions(clubId, queryParams),
+      onError: showError,
+    });
+
   const useBuyPlayer = () =>
     useMutation({
       mutationFn: ({ id, data }: { id: number; data: BuyPlayer }) =>
@@ -39,5 +52,10 @@ export function useMarketQueries() {
       onError: showError,
     });
 
-  return { useGetTransactions, useBuyPlayer, useSellPlayer };
+  return {
+    useGetTransactions,
+    useExportTransactions,
+    useBuyPlayer,
+    useSellPlayer,
+  };
 }
