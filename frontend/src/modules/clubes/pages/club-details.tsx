@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import {
   ClipboardList,
   History,
@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { PlayerDetailsSheet } from '@/modules/jogadores/components/player-details-sheet';
 import type { SaleResult } from '@/modules/mercado/types/market.types';
 import { ClubAcronym } from '../components/club-acronym';
 import { ClubStats } from '../components/club-stats';
@@ -32,8 +33,10 @@ export default function ClubDetailsPage() {
   const { clubId } = useParams({ from: '/_app/clubs/$clubId' });
   const [tab, setTab] = useState('squad');
   const [salePanel, setSalePanel] = useState<SalePanel | null>(null);
+  const [detailsPlayer, setDetailsPlayer] = useState<SquadPlayer | null>(null);
   const { useGetClub } = useClubsQueries();
   const { data: club, isError, error, refetch } = useGetClub(Number(clubId));
+  const navigate = useNavigate();
 
   if (isError) {
     return (
@@ -75,8 +78,7 @@ export default function ClubDetailsPage() {
           <h1 className="text-2xl font-semibold tracking-tight">{club.name}</h1>
           <Badge variant="outline">Sigla {club.acronym}</Badge>
         </div>
-        {/* simulacao: botão sem ação até a etapa de Compra */}
-        <Button type="button" className="h-10 gap-2 px-4">
+        <Button type="button" className="h-10 gap-2 px-4" onClick={()=> navigate({ to: '/players' })}>
           <ShoppingCart />
           Comprar jogadores
         </Button>
@@ -104,6 +106,7 @@ export default function ClubDetailsPage() {
           <SquadTable
             players={club.players}
             onSell={(player) => setSalePanel({ type: 'sell', player })}
+            onShowDetails={setDetailsPlayer}
           />
         </TabsContent>
 
@@ -117,6 +120,12 @@ export default function ClubDetailsPage() {
         </TabsContent>
       </Tabs>
 
+      {detailsPlayer && (
+        <PlayerDetailsSheet
+          player={detailsPlayer}
+          onClose={() => setDetailsPlayer(null)}
+        />
+      )}
       {salePanel?.type === 'sell' && (
         <SellPlayerDialog
           player={salePanel.player}

@@ -1,4 +1,4 @@
-import { Handshake } from 'lucide-react';
+import { Eye, Handshake } from 'lucide-react';
 import { DataTable, type DataTableColumn } from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -16,9 +16,14 @@ import { PenaltyBadge } from './penalty-badge';
 type SquadTableProps = {
   players: SquadPlayer[];
   onSell: (player: SquadPlayer) => void;
+  onShowDetails: (player: SquadPlayer) => void;
 };
 
-export function SquadTable({ players, onSell }: SquadTableProps) {
+export function SquadTable({
+  players,
+  onSell,
+  onShowDetails,
+}: SquadTableProps) {
   const columns: DataTableColumn<SquadPlayer>[] = [
     {
       id: 'player',
@@ -98,15 +103,27 @@ export function SquadTable({ players, onSell }: SquadTableProps) {
       header: <span className="sr-only">Ações</span>,
       className: 'w-0',
       cell: (player) => (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => onSell(player)}
-        >
-          <Handshake />
-          Vender
-        </Button>
+        <span className="flex items-center gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={`Ver detalhes de ${player.name}`}
+            title="Ver detalhes"
+            onClick={() => onShowDetails(player)}
+          >
+            <Eye />
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => onSell(player)}
+          >
+            <Handshake />
+            Vender
+          </Button>
+        </span>
       ),
     },
   ];

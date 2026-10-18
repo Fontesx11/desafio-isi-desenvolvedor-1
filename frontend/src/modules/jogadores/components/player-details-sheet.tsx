@@ -29,7 +29,7 @@ import { PlayerAvatar } from './player-avatar';
 type PlayerDetailsSheetProps = {
   player: Player;
   onClose: () => void;
-  onAction: (action: PlayerAction, player: Player) => void;
+  onAction?: (action: PlayerAction, player: Player) => void;
 };
 
 export function PlayerDetailsSheet({
@@ -144,34 +144,36 @@ export function PlayerDetailsSheet({
           </dl>
         </div>
 
-        <SheetFooter className="flex-row gap-2 border-t border-zinc-200 p-6">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onAction('edit', player)}
-          >
-            <Pencil />
-            Editar
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onAction('condition', player)}
-          >
-            <HeartPulse />
-            Alterar condição
-          </Button>
-          {isFreePlayer(player) && (
+        {onAction && (
+          <SheetFooter className="flex-row gap-2 border-t border-zinc-200 p-6">
             <Button
               type="button"
-              className="ml-auto"
-              onClick={() => onAction('buy', player)}
+              variant="outline"
+              onClick={() => onAction('edit', player)}
             >
-              <ShoppingCart />
-              Comprar
+              <Pencil />
+              Editar
             </Button>
-          )}
-        </SheetFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onAction('condition', player)}
+            >
+              <HeartPulse />
+              Alterar condição
+            </Button>
+            {isFreePlayer(player) && (
+              <Button
+                type="button"
+                className="ml-auto"
+                onClick={() => onAction('buy', player)}
+              >
+                <ShoppingCart />
+                Comprar
+              </Button>
+            )}
+          </SheetFooter>
+        )}
       </SheetContent>
     </Sheet>
   );

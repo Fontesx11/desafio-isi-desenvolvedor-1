@@ -99,7 +99,7 @@ export function EditPlayerDialog({ player, onClose }: EditPlayerDialogProps) {
             error={errors.position?.message}
             description={
               hasClub &&
-              'Jogador com clube não muda de posição: as outras posições ficam desabilitadas.'
+              'Jogador com clube não muda de posição'
             }
           >
             <Controller

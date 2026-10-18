@@ -8,7 +8,6 @@ declare module '@tanstack/react-router' {
     router: typeof router;
   }
 
-  // Trilha do cabeçalho do layout, definida em cada rota
   interface StaticDataRouteOption {
     breadcrumb?: string[];
   }

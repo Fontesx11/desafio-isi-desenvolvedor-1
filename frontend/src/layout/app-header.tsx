@@ -8,7 +8,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
@@ -44,15 +43,7 @@ export function AppHeader() {
           ))}
         </BreadcrumbList>
       </Breadcrumb>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        className="ml-auto"
-        aria-label="Atualizar"
-      >
-        <RefreshCw />
-      </Button>
+      
     </header>
   );
 }

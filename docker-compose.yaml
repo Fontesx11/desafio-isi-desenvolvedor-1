@@ -21,11 +21,15 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        - VITE_API_URL=http://localhost:13000/api/v1
+    entrypoint: ./.docker/entrypoint.sh
     container_name: fontes-desafio-web
     ports:
       - 15173:15173
+    environment:
+      - VITE_API_URL=http://localhost:13000/api/v1
+    volumes:
+      - ./frontend:/home/node/app
+      - web-node-modules:/home/node/app/node_modules
     depends_on:
       - desafio-app
 
@@ -45,3 +49,4 @@ services:
 volumes:
   db-data:
   app-node-modules:
+  web-node-modules:
