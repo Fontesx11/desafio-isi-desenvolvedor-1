@@ -29,7 +29,7 @@ export function AppSidebar() {
 
   const counts: Partial<Record<string, number>> = {
     '/players': playersTotal,
-    '/clubs': LEAGUE_MOCK.clubsCount,
+    '/clubs': clubs.length,
     '/matches': LEAGUE_MOCK.matchesCount,
   };
 
@@ -120,7 +120,7 @@ export function AppSidebar() {
           <FooterInfo
             icon={<Trophy />}
             title={LEAGUE_MOCK.name}
-            description={`${LEAGUE_MOCK.clubsCount} clubes · ${playersTotal} jogadores`}
+            description={`${clubs.length} clubes · ${playersTotal} jogadores`}
           />
           <FooterInfo
             icon={<Swords />}
