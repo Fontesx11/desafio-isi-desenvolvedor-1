@@ -25,27 +25,3 @@ export type ClubDetails = Club & { players: SquadPlayer[] };
 export type ClubSort = 'name' | 'net_worth_desc' | 'net_worth_asc';
 
 export type Formation = '3-1' | '2-2' | '2-1-1' | '1-2-1';
-
-export type TransactionType = 'COMPRA' | 'VENDA';
-
-export type Transaction = {
-  id: number;
-  club_id: number;
-  player_id: number;
-  player_name: string;
-  type: TransactionType;
-  value: number;
-  fee: number;
-  penalty: number;
-  profit: number | null;
-  cash_change: number;
-  created_at: string;
-};
-
-export type TransactionsSummary = {
-  total_spent: number;
-  total_received: number;
-  total_fees: number;
-  total_penalties: number;
-  total_profit: number;
-};

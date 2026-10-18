@@ -1,11 +1,13 @@
 import { toPlayer } from '@/modules/jogadores/mocks/players.mock';
 import type {
+  Transaction,
+  TransactionsSummary,
+} from '@/modules/mercado/types/market.types';
+import type {
   Club,
   Formation,
   PlayerContract,
   SquadPlayer,
-  Transaction,
-  TransactionsSummary,
 } from '../types/clubs.types';
 
 // prettier-ignore

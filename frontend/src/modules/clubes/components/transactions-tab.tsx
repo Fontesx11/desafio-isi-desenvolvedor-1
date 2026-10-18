@@ -25,12 +25,15 @@ import {
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { formatCurrency, formatDate, formatTime } from '@/lib/format';
 import { PlayerAvatar } from '@/modules/jogadores/components/player-avatar';
+import type {
+  Transaction,
+  TransactionType,
+} from '@/modules/mercado/types/market.types';
 import { TRANSACTION_TYPE_LABELS } from '../constants/clubs.constants';
 import {
   findTransactionsMock,
   TRANSACTION_PLAYERS_MOCK,
 } from '../mocks/clubs.mock';
-import type { Transaction, TransactionType } from '../types/clubs.types';
 
 const TYPE_ICONS: Record<TransactionType, LucideIcon> = {
   COMPRA: ShoppingCart,
@@ -97,7 +100,6 @@ const columns: DataTableColumn<Transaction>[] = [
     id: 'profit',
     header: 'Lucro',
     className: 'text-right',
-    // A compra não tem lucro: a API devolve null
     cell: (transaction) =>
       transaction.profit === null ? (
         '–'
@@ -116,8 +118,6 @@ const columns: DataTableColumn<Transaction>[] = [
 ];
 
 export function TransactionsTab({ clubId }: { clubId: number }) {
-  // simulacao
-  // Histórico dos dados fixos; os filtros só mudam o que está marcado
   const [{ data, summary }] = useState(() => findTransactionsMock(clubId));
   const [types, setTypes] = useState<string[]>(['COMPRA', 'VENDA']);
   const [playerId, setPlayerId] = useState('all');
@@ -171,7 +171,6 @@ export function TransactionsTab({ clubId }: { clubId: number }) {
               momento de cada operação.
             </p>
           </div>
-          {/* simulacao: sem ação até ligar a API (arquivo da RN18) */}
           <Button type="button" variant="outline">
             <Download />
             Exportar CSV

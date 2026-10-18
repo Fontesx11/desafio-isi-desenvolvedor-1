@@ -1,8 +1,5 @@
-import type {
-  ClubSort,
-  Formation,
-  TransactionType,
-} from '../types/clubs.types';
+import type { TransactionType } from '@/modules/mercado/types/market.types';
+import type { ClubSort, Formation } from '../types/clubs.types';
 
 export const SORT_OPTIONS: { value: ClubSort; label: string }[] = [
   { value: 'name', label: 'Nome' },
