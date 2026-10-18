@@ -19,9 +19,12 @@ export interface DuelPair {
   defender: number;
 }
 
-export interface MatchDetails {
+export interface MatchSummary {
   match: Match;
   result: MatchResult;
+}
+
+export interface MatchDetails extends MatchSummary {
   duels: MatchDuel[];
 }
 

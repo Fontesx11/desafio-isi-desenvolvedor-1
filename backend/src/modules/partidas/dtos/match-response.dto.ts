@@ -1,10 +1,10 @@
 import { formatBrasiliaDateTime } from '../../../core/utils/date.utils.js';
 import { MatchDuel } from '../entities/match-duel.entity.js';
+import { Match } from '../entities/match.entity.js';
 import { MatchResult } from '../enums/matches.enum.js';
 import {
   DuelPlayerResponse,
   MatchClubResponse,
-  MatchDetails,
 } from '../interfaces/match.interface.js';
 
 export class MatchDuelResponseDto {
@@ -43,9 +43,9 @@ export class MatchResponseDto {
   home: MatchClubResponse;
   away: MatchClubResponse;
   result: MatchResult;
-  duels: MatchDuelResponseDto[];
+  duels?: MatchDuelResponseDto[];
 
-  constructor({ match, result, duels }: MatchDetails) {
+  constructor(match: Match, result: MatchResult, duels?: MatchDuel[]) {
     this.id = match.id;
     this.played_at = formatBrasiliaDateTime(match.playedAt);
     this.home = {
@@ -61,6 +61,9 @@ export class MatchResponseDto {
       goals: match.awayGoals,
     };
     this.result = result;
-    this.duels = duels.map((duel) => new MatchDuelResponseDto(duel));
+
+    if (duels) {
+      this.duels = duels.map((duel) => new MatchDuelResponseDto(duel));
+    }
   }
 }

@@ -4,8 +4,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import {
+  DataSource,
+  EntityManager,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { roundDivision } from '../../core/utils/math.utils.js';
+import { ClubsService } from '../clubes/clubs.service.js';
 import { Player } from '../jogadores/entities/player.entity.js';
 import {
   PlayerCondition,
@@ -20,6 +26,7 @@ import {
   MAL_CONDICIONADO_PERCENT,
 } from './constants/matches.constants.js';
 import { CreateMatchDto } from './dtos/create-match.dto.js';
+import { ListMatchesQueryDto } from './dtos/list-matches-query.dto.js';
 import { MatchDuel } from './entities/match-duel.entity.js';
 import { Match } from './entities/match.entity.js';
 import { DuelAttribute, MatchResult } from './enums/matches.enum.js';
@@ -27,6 +34,7 @@ import {
   CreateMatchData,
   CreateMatchDuelData,
   MatchDetails,
+  MatchSummary,
 } from './interfaces/match.interface.js';
 
 @Injectable()
@@ -37,6 +45,7 @@ export class MatchesService {
     @InjectRepository(MatchDuel)
     private readonly matchDuelsRepository: Repository<MatchDuel>,
     private readonly dataSource: DataSource,
+    private readonly clubsService: ClubsService,
     private readonly leagueService: LeagueService,
   ) {}
 
@@ -173,6 +182,26 @@ export class MatchesService {
     });
 
     return { match, result: this.calculateResult(match), duels };
+  }
+
+  async findAll(query: ListMatchesQueryDto): Promise<MatchSummary[]> {
+    let conditions: FindOptionsWhere<Match>[] = [];
+
+    if (query.club_id !== undefined) {
+      const club = await this.clubsService.findOne({ id: query.club_id });
+      conditions = [{ homeClubId: club.id }, { awayClubId: club.id }];
+    }
+
+    const matches = await this.matchesRepository.find({
+      where: conditions,
+      relations: { homeClub: true, awayClub: true },
+      order: { playedAt: 'DESC', id: 'DESC' },
+    });
+
+    return matches.map((match) => ({
+      match,
+      result: this.calculateResult(match),
+    }));
   }
 
   calculateResult(match: Match): MatchResult {
