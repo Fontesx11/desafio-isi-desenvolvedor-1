@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { getClubs, saveClub } from '../services/clubs.service';
+import { getClub, getClubs, saveClub } from '../services/clubs.service';
 import type { ClubSort, CreateClub } from '../types/clubs.types';
 
 export function useClubsQueries() {
@@ -17,6 +17,12 @@ export function useClubsQueries() {
       queryFn: () => getClubs(sort),
     });
 
+  const useGetClub = (id: number) =>
+    useQuery({
+      queryKey: ['clubs', id],
+      queryFn: () => getClub(id),
+    });
+
   const useCreateClub = () =>
     useMutation({
       mutationFn: (data: CreateClub) => saveClub(data),
@@ -24,5 +30,5 @@ export function useClubsQueries() {
       onError: showError,
     });
 
-  return { useGetClubs, useCreateClub };
+  return { useGetClubs, useGetClub, useCreateClub };
 }

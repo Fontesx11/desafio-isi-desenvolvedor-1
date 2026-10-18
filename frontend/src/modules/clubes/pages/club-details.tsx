@@ -1,8 +1,17 @@
-import { useLoaderData } from '@tanstack/react-router';
-import { ClipboardList, History, Shirt, ShoppingCart } from 'lucide-react';
+import { useParams } from '@tanstack/react-router';
+import {
+  ClipboardList,
+  History,
+  RefreshCw,
+  ServerOff,
+  Shirt,
+  ShoppingCart,
+} from 'lucide-react';
 import { useState } from 'react';
+import { ListState } from '@/components/list-state';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ClubAcronym } from '../components/club-acronym';
 import { ClubStats } from '../components/club-stats';
@@ -11,6 +20,7 @@ import { SaleResultDialog } from '../components/sale-result-dialog';
 import { SellPlayerDialog } from '../components/sell-player-dialog';
 import { SquadTable } from '../components/squad-table';
 import { TransactionsTab } from '../components/transactions-tab';
+import { useClubsQueries } from '../hooks/useClubsQueries';
 import type { SaleResult, SquadPlayer } from '../types/clubs.types';
 
 // Qual modal da venda está aberto
@@ -18,9 +28,43 @@ type SalePanel =
   { type: 'sell'; player: SquadPlayer } | { type: 'sold'; result: SaleResult };
 
 export default function ClubDetailsPage() {
-  const { club } = useLoaderData({ from: '/_app/clubs/$clubId' });
+  const { clubId } = useParams({ from: '/_app/clubs/$clubId' });
   const [tab, setTab] = useState('squad');
   const [salePanel, setSalePanel] = useState<SalePanel | null>(null);
+  const { useGetClub } = useClubsQueries();
+  const { data: club, isError, error, refetch } = useGetClub(Number(clubId));
+
+  if (isError) {
+    return (
+      <ListState
+        icon={ServerOff}
+        title="Não foi possível carregar o clube"
+        description={error.message}
+        action={
+          <Button
+            type="button"
+            variant="outline"
+            className="gap-2"
+            onClick={() => refetch()}
+          >
+            <RefreshCw />
+            Tentar de novo
+          </Button>
+        }
+      />
+    );
+  }
+
+  if (!club) {
+    return (
+      <section className="space-y-3 rounded-xl border border-zinc-200 p-6">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
+        <p className="text-sm text-zinc-500">Carregando...</p>
+      </section>
+    );
+  }
 
   return (
     <div className="space-y-6">

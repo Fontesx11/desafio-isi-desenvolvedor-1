@@ -1,8 +1,18 @@
 import { api } from '@/shared/api/api';
-import type { Club, ClubSort, CreateClub } from '../types/clubs.types';
+import type {
+  Club,
+  ClubDetails,
+  ClubSort,
+  CreateClub,
+} from '../types/clubs.types';
 
 export const getClubs = async (sort: ClubSort) => {
   const { data } = await api.get<Club[]>('/clubs', { params: { sort } });
+  return data;
+};
+
+export const getClub = async (id: number) => {
+  const { data } = await api.get<ClubDetails>(`/clubs/${id}`);
   return data;
 };
 

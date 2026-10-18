@@ -1,7 +1,6 @@
 import { toPlayer } from '@/modules/jogadores/mocks/players.mock';
 import type {
   Club,
-  ClubDetails,
   Formation,
   PlayerContract,
   SaleResult,
@@ -47,27 +46,6 @@ const AGUIAS_SQUAD: SquadPlayer[] = [
   withContract(toPlayer([25, 'Sávio Lima', 'MEI', 85, 31, 'MAL_CONDICIONADO', 26.18, 22.25, [66, 60, 72, 70, 48, 58], 76, 66, 1]), [22.25, '2027-05-08T11:00:00-03:00', 177, 10]),
   withContract(toPlayer([11, 'João Silva', 'ATA', 72, 23, 'APTO', 52, 52, [80, 82, 68, 76, 36, 70], 86, 77, 1]), [52, '2029-11-04T17:10:00-03:00', 1089, 20]),
 ];
-
-export const CREATED_CLUB_MOCK: ClubDetails = {
-  id: 7,
-  name: 'Leões da Serra',
-  acronym: 'LDS',
-  cash: 300,
-  squad_value: 0,
-  net_worth: 300,
-  players: [],
-};
-
-// simulacao
-// Sem a API, só a Águias FC tem elenco; os outros clubes aparecem vazios, e um
-// id que não existe abre a Águias FC
-export function findClubDetails(clubId: number): ClubDetails {
-  if (clubId === CREATED_CLUB_MOCK.id) {
-    return CREATED_CLUB_MOCK;
-  }
-  const club = CLUBS_MOCK.find((item) => item.id === clubId) ?? CLUBS_MOCK[0];
-  return { ...club, players: club.id === 1 ? AGUIAS_SQUAD : [] };
-}
 
 export type LineupSlotMock = {
   label: string;
