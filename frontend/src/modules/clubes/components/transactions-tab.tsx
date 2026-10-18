@@ -6,12 +6,15 @@ import {
   ShoppingCart,
   TrendingDown,
   TrendingUp,
+  RefreshCw,
+  ServerOff,
   TriangleAlert,
   User,
   type LucideIcon,
 } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { DataTable, type DataTableColumn } from '@/components/data-table';
+import { ListState } from '@/components/list-state';
 import { SignedValue } from '@/components/signed-value';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -25,15 +28,15 @@ import {
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { formatCurrency, formatDate, formatTime } from '@/lib/format';
 import { PlayerAvatar } from '@/modules/jogadores/components/player-avatar';
+import { useMarketQueries } from '@/modules/mercado/hooks/useMarketQueries';
 import type {
   Transaction,
+  TransactionsSummary,
   TransactionType,
 } from '@/modules/mercado/types/market.types';
 import { TRANSACTION_TYPE_LABELS } from '../constants/clubs.constants';
-import {
-  findTransactionsMock,
-  TRANSACTION_PLAYERS_MOCK,
-} from '../mocks/clubs.mock';
+
+const TRANSACTION_TYPES: TransactionType[] = ['COMPRA', 'VENDA'];
 
 const TYPE_ICONS: Record<TransactionType, LucideIcon> = {
   COMPRA: ShoppingCart,
@@ -118,10 +121,130 @@ const columns: DataTableColumn<Transaction>[] = [
 ];
 
 export function TransactionsTab({ clubId }: { clubId: number }) {
-  const [{ data, summary }] = useState(() => findTransactionsMock(clubId));
-  const [types, setTypes] = useState<string[]>(['COMPRA', 'VENDA']);
+  const [types, setTypes] = useState<string[]>(TRANSACTION_TYPES);
   const [playerId, setPlayerId] = useState('all');
 
+  const params = new URLSearchParams({ type: types.join(',') });
+  if (playerId !== 'all') params.set('player_id', playerId);
+
+  const { useGetTransactions } = useMarketQueries();
+  const {
+    data: history,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetTransactions(clubId, params.toString());
+  const { data: fullHistory } = useGetTransactions(clubId);
+
+  const historyPlayers = (fullHistory?.data ?? []).filter(
+    (transaction, index, transactions) =>
+      transactions.findIndex(
+        (item) => item.player_id === transaction.player_id,
+      ) === index,
+  );
+
+  function handleTypesChange(selectedTypes: string[]) {
+    if (selectedTypes.length > 0) setTypes(selectedTypes);
+  }
+
+  return (
+    <section className="overflow-hidden rounded-xl border border-zinc-200">
+      <div className="space-y-4 p-4">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="font-semibold">Histórico de transações</h2>
+            <p className="text-sm text-zinc-500">
+              Da mais recente para a mais antiga, com o nome e os valores do
+              momento de cada operação.
+            </p>
+          </div>
+          <Button type="button" variant="outline">
+            <Download />
+            Exportar CSV
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-zinc-600">Tipo</span>
+          <ToggleGroup
+            type="multiple"
+            variant="outline"
+            value={types}
+            onValueChange={handleTypesChange}
+            className="gap-2"
+          >
+            {TRANSACTION_TYPES.map((type) => (
+              <ToggleGroupItem
+                key={type}
+                value={type}
+                className="gap-2 px-3 data-[state=on]:border-primary data-[state=on]:bg-blue-50 data-[state=on]:text-primary"
+              >
+                <Check />
+                {TRANSACTION_TYPE_LABELS[type]}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+          <Select value={playerId} onValueChange={setPlayerId}>
+            <SelectTrigger
+              aria-label="Filtrar por jogador"
+              className="justify-start [&>svg:last-child]:ml-auto"
+            >
+              <User className="text-zinc-400" />
+              <span className="text-zinc-500">Jogador:</span>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">todos</SelectItem>
+              {historyPlayers.map((transaction) => (
+                <SelectItem
+                  key={transaction.player_id}
+                  value={String(transaction.player_id)}
+                >
+                  {transaction.player_name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {isError && (
+        <ListState
+          icon={ServerOff}
+          title="Não foi possível carregar o histórico"
+          description={error.message}
+          className="rounded-none border-x-0 border-b-0"
+          action={
+            <Button
+              type="button"
+              variant="outline"
+              className="gap-2"
+              onClick={() => refetch()}
+            >
+              <RefreshCw />
+              Tentar de novo
+            </Button>
+          }
+        />
+      )}
+
+      {!isError && (
+        <DataTable
+          columns={columns}
+          rows={history?.data ?? []}
+          getRowKey={(transaction) => transaction.id}
+          emptyMessage="Nenhuma transação ainda."
+          isLoading={isLoading}
+        />
+      )}
+
+      {history && <SummaryTotals summary={history.summary} />}
+    </section>
+  );
+}
+
+function SummaryTotals({ summary }: { summary: TransactionsSummary }) {
   const totals: {
     label: string;
     value: ReactNode;
@@ -161,82 +284,17 @@ export function TransactionsTab({ clubId }: { clubId: number }) {
   ];
 
   return (
-    <section className="overflow-hidden rounded-xl border border-zinc-200">
-      <div className="space-y-4 p-4">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="font-semibold">Histórico de transações</h2>
-            <p className="text-sm text-zinc-500">
-              Da mais recente para a mais antiga, com o nome e os valores do
-              momento de cada operação.
-            </p>
-          </div>
-          <Button type="button" variant="outline">
-            <Download />
-            Exportar CSV
-          </Button>
+    <dl className="grid grid-cols-5 divide-x divide-zinc-200 border-t border-zinc-200 bg-zinc-50">
+      {totals.map((total) => (
+        <div key={total.label} className="space-y-1 p-4">
+          <dt className="flex items-center gap-1.5 text-sm text-zinc-500">
+            <total.icon className="size-4" />
+            {total.label}
+          </dt>
+          <dd className="text-lg font-semibold">{total.value}</dd>
+          <dd className="text-xs text-zinc-500">{total.hint}</dd>
         </div>
-
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-zinc-600">Tipo</span>
-          <ToggleGroup
-            type="multiple"
-            variant="outline"
-            value={types}
-            onValueChange={setTypes}
-            className="gap-2"
-          >
-            {(['COMPRA', 'VENDA'] as const).map((type) => (
-              <ToggleGroupItem
-                key={type}
-                value={type}
-                className="gap-2 px-3 data-[state=on]:border-primary data-[state=on]:bg-blue-50 data-[state=on]:text-primary"
-              >
-                <Check />
-                {TRANSACTION_TYPE_LABELS[type]}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-          <Select value={playerId} onValueChange={setPlayerId}>
-            <SelectTrigger
-              aria-label="Filtrar por jogador"
-              className="justify-start [&>svg:last-child]:ml-auto"
-            >
-              <User className="text-zinc-400" />
-              <span className="text-zinc-500">Jogador:</span>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">todos</SelectItem>
-              {TRANSACTION_PLAYERS_MOCK.map((player) => (
-                <SelectItem key={player.id} value={String(player.id)}>
-                  {player.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <DataTable
-        columns={columns}
-        rows={data}
-        getRowKey={(transaction) => transaction.id}
-        emptyMessage="Nenhuma transação ainda."
-      />
-
-      <dl className="grid grid-cols-5 divide-x divide-zinc-200 border-t border-zinc-200 bg-zinc-50">
-        {totals.map((total) => (
-          <div key={total.label} className="space-y-1 p-4">
-            <dt className="flex items-center gap-1.5 text-sm text-zinc-500">
-              <total.icon className="size-4" />
-              {total.label}
-            </dt>
-            <dd className="text-lg font-semibold">{total.value}</dd>
-            <dd className="text-xs text-zinc-500">{total.hint}</dd>
-          </div>
-        ))}
-      </dl>
-    </section>
+      ))}
+    </dl>
   );
 }
