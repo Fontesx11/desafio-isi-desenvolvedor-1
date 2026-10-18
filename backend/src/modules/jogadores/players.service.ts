@@ -158,7 +158,7 @@ export class PlayersService {
     query: ListPlayersQueryDto,
   ): Promise<Page<PlayerWithDynamicValues>> {
     if (query.club_id !== undefined) {
-      await this.clubsService.findOne({ id: query.club_id });
+      await this.clubsService.find({ where: { id: query.club_id } });
     }
 
     const players = await this.playersRepository.find();

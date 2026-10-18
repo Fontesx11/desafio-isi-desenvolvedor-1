@@ -13,7 +13,6 @@ import {
 import { roundDivision } from '../../core/utils/math.utils.js';
 import { ClubsService } from '../clubes/clubs.service.js';
 import { Club } from '../clubes/entities/club.entity.js';
-import { ClubSort } from '../clubes/enums/clubs.enum.js';
 import { Player } from '../jogadores/entities/player.entity.js';
 import {
   PlayerCondition,
@@ -197,7 +196,9 @@ export class MatchesService {
     let conditions: FindOptionsWhere<Match>[] = [];
 
     if (query.club_id !== undefined) {
-      const club = await this.clubsService.findOne({ id: query.club_id });
+      const club = await this.clubsService.find({
+        where: { id: query.club_id },
+      });
       conditions = [{ homeClubId: club.id }, { awayClubId: club.id }];
     }
 
@@ -214,7 +215,10 @@ export class MatchesService {
   }
 
   async calculateStandings(): Promise<ClubStanding[]> {
-    const clubs = await this.clubsService.findAll({ sort: ClubSort.NAME });
+    const clubs = await this.clubsService.find(
+      { select: { id: true, name: true } },
+      'many',
+    );
     const matches = await this.matchesRepository.find();
     const standings = clubs.map((club) =>
       this.calculateClubStats(club, matches),

@@ -37,10 +37,10 @@ export class MarketService {
 
   async buyPlayer(id: number, dto: BuyPlayerDto): Promise<Purchase> {
     const player = await this.playersService.findById(id);
-    const club = await this.clubsService.findOne(
-      { id: dto.club_id },
-      { players: true },
-    );
+    const club = await this.clubsService.find({
+      where: { id: dto.club_id },
+      relations: { players: true },
+    });
 
     if (player.clubId !== null) {
       throw new ConflictException('the player already has a club');
@@ -107,7 +107,7 @@ export class MarketService {
       throw new ConflictException('the player has no club');
     }
 
-    const club = await this.clubsService.findOne({ id: player.clubId });
+    const club = await this.clubsService.find({ where: { id: player.clubId } });
     const contract = await this.contractsService.findActiveByPlayer(player.id);
     const now = new Date();
     const { remainingDays, penaltyRate } =
@@ -171,7 +171,7 @@ export class MarketService {
     clubId: number,
     query: ListTransactionsQueryDto,
   ): Promise<Transaction[]> {
-    const club = await this.clubsService.findOne({ id: clubId });
+    const club = await this.clubsService.find({ where: { id: clubId } });
     const condition: FindOptionsWhere<Transaction> = {
       clubId: club.id,
       type: In(query.type),

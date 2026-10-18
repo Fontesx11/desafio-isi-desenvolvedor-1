@@ -6,8 +6,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   EntityManager,
-  FindOptionsRelations,
-  FindOptionsWhere,
+  FindManyOptions,
+  FindOneOptions,
   Repository,
 } from 'typeorm';
 import { ContractsService } from '../contratos/contracts.service.js';
@@ -36,14 +36,17 @@ export class ClubsService {
     private readonly contractsService: ContractsService,
   ) {}
 
-  async findOne(
-    condition: FindOptionsWhere<Club>,
-    relations?: FindOptionsRelations<Club>,
-  ): Promise<Club> {
-    const club = await this.clubsRepository.findOne({
-      where: condition,
-      relations,
-    });
+  async find(options: FindManyOptions<Club>, mode: 'many'): Promise<Club[]>;
+  async find(options: FindOneOptions<Club>, mode?: 'one'): Promise<Club>;
+  async find(
+    options: FindManyOptions<Club>,
+    mode: 'one' | 'many' = 'one',
+  ): Promise<Club | Club[]> {
+    if (mode === 'many') {
+      return this.clubsRepository.find(options);
+    }
+
+    const club = await this.clubsRepository.findOne(options);
 
     if (!club) {
       throw new NotFoundException('Club not found');
@@ -53,7 +56,10 @@ export class ClubsService {
   }
 
   async findById(id: number): Promise<ClubDetails> {
-    const club = await this.findOne({ id }, { players: true });
+    const club = await this.find({
+      where: { id },
+      relations: { players: true },
+    });
     const contracts = await this.contractsService.findActiveByClub(id);
     const clubWithValues = this.calculateDynamicValues(club);
     const now = new Date();

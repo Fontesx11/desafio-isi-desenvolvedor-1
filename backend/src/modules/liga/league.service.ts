@@ -27,7 +27,7 @@ export class LeagueService {
     clubId: number,
     dto: UpdateLineupDto,
   ): Promise<ClubLineup> {
-    await this.clubsService.findOne({ id: clubId });
+    await this.clubsService.find({ where: { id: clubId } });
 
     const players: Player[] = [];
 
@@ -89,10 +89,10 @@ export class LeagueService {
   }
 
   async findLineup(clubId: number): Promise<ClubLineup> {
-    const club = await this.clubsService.findOne(
-      { id: clubId },
-      { players: true },
-    );
+    const club = await this.clubsService.find({
+      where: { id: clubId },
+      relations: { players: true },
+    });
     const lineup = await this.lineupsService.findByClub(clubId);
     const { squad } = this.clubsService.calculateDynamicValues(club);
 
