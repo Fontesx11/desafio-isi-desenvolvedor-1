@@ -1,9 +1,28 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
+import { roundDivision } from '../../core/utils/math.utils.js';
+import { Player } from '../jogadores/entities/player.entity.js';
+import {
+  PlayerCondition,
+  PlayerPosition,
+} from '../jogadores/enums/players.enum.js';
+import { ClubLineup } from '../liga/interfaces/lineup.interface.js';
+import { LeagueService } from '../liga/league.service.js';
+import {
+  AWAY_FIRST_DUEL,
+  DUEL_PAIRS,
+  HOME_FIRST_DUEL,
+  MAL_CONDICIONADO_PERCENT,
+} from './constants/matches.constants.js';
+import { CreateMatchDto } from './dtos/create-match.dto.js';
 import { MatchDuel } from './entities/match-duel.entity.js';
 import { Match } from './entities/match.entity.js';
-import { MatchResult } from './enums/matches.enum.js';
+import { DuelAttribute, MatchResult } from './enums/matches.enum.js';
 import {
   CreateMatchData,
   CreateMatchDuelData,
@@ -17,7 +36,109 @@ export class MatchesService {
     private readonly matchesRepository: Repository<Match>,
     @InjectRepository(MatchDuel)
     private readonly matchDuelsRepository: Repository<MatchDuel>,
+    private readonly dataSource: DataSource,
+    private readonly leagueService: LeagueService,
   ) {}
+
+  async playMatch(dto: CreateMatchDto): Promise<MatchDetails> {
+    const homeLineup = await this.leagueService.findLineup(dto.home_club_id);
+    const awayLineup = await this.leagueService.findLineup(dto.away_club_id);
+
+    if (
+      !homeLineup.complete ||
+      !awayLineup.complete ||
+      homeLineup.formation === null ||
+      awayLineup.formation === null
+    ) {
+      throw new ConflictException('both clubs must have a complete lineup');
+    }
+
+    const homeAttacks = this.calculateAttacks(
+      homeLineup,
+      awayLineup,
+      HOME_FIRST_DUEL,
+    );
+    const awayAttacks = this.calculateAttacks(
+      awayLineup,
+      homeLineup,
+      AWAY_FIRST_DUEL,
+    );
+
+    const matchData: CreateMatchData = {
+      homeClubId: homeLineup.clubId,
+      awayClubId: awayLineup.clubId,
+      homeGoals: homeAttacks.filter((duel) => duel.goal).length,
+      awayGoals: awayAttacks.filter((duel) => duel.goal).length,
+      homeFormation: homeLineup.formation,
+      awayFormation: awayLineup.formation,
+    };
+    const duels = [...homeAttacks, ...awayAttacks];
+
+    const matchId = await this.dataSource.transaction(async (manager) => {
+      const match = await this.create(manager, matchData, duels);
+      return match.id;
+    });
+
+    return this.findById(matchId);
+  }
+
+  calculateAttacks(
+    attackingLineup: ClubLineup,
+    defendingLineup: ClubLineup,
+    firstOrder: number,
+  ): CreateMatchDuelData[] {
+    return DUEL_PAIRS.map((pair, index) => {
+      const attacker = attackingLineup.players[pair.attacker];
+      const defender = defendingLineup.players[pair.defender];
+      const attackAttribute = this.getAttackAttribute(attacker.position);
+      const attackValue = this.applyConditionPenalty(
+        attacker,
+        attacker[attackAttribute],
+      );
+      const defenseValue = this.applyConditionPenalty(
+        defender,
+        defender.defending,
+      );
+
+      return {
+        order: firstOrder + index,
+        attackingClubId: attackingLineup.clubId,
+        attackerId: attacker.id,
+        attackerName: attacker.name,
+        attackerPosition: attacker.position,
+        attackerCondition: attacker.condition,
+        attackAttribute,
+        attackValue,
+        defenderId: defender.id,
+        defenderName: defender.name,
+        defenderPosition: defender.position,
+        defenderCondition: defender.condition,
+        defenseAttribute: DuelAttribute.DEFENDING,
+        defenseValue,
+        goal: attackValue > defenseValue,
+      };
+    });
+  }
+
+  getAttackAttribute(position: PlayerPosition): DuelAttribute {
+    if (position === PlayerPosition.ATA) {
+      return DuelAttribute.SHOOTING;
+    }
+
+    if (position === PlayerPosition.MEI) {
+      return DuelAttribute.PASSING;
+    }
+
+    return DuelAttribute.DRIBBLING;
+  }
+
+  applyConditionPenalty(player: Player, value: number): number {
+    if (player.condition === PlayerCondition.MAL_CONDICIONADO) {
+      return roundDivision(value * MAL_CONDICIONADO_PERCENT, 100);
+    }
+
+    return value;
+  }
 
   async create(
     manager: EntityManager,

@@ -14,6 +14,11 @@ export type CreateMatchData = Omit<
 
 export type CreateMatchDuelData = Omit<MatchDuel, 'id' | 'matchId'>;
 
+export interface DuelPair {
+  attacker: number;
+  defender: number;
+}
+
 export interface MatchDetails {
   match: Match;
   result: MatchResult;
