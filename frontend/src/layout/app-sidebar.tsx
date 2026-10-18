@@ -16,7 +16,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { LEAGUE_MOCK } from '@/lib/mocks/league.mock';
-import { CLUBS_MOCK } from '@/modules/clubes/mocks/clubs.mock';
+import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
 import { usePlayersQueries } from '@/modules/jogadores/hooks/usePlayersQueries';
 import { MENU_GROUPS } from './constants/menu.constants';
 
@@ -24,6 +24,8 @@ export function AppSidebar() {
   const matchRoute = useMatchRoute();
   const { useGetPlayersTotal } = usePlayersQueries();
   const playersTotal = useGetPlayersTotal();
+  const { useGetClubs } = useClubsQueries();
+  const { data: clubs = [] } = useGetClubs();
 
   const counts: Partial<Record<string, number>> = {
     '/players': playersTotal,
@@ -86,7 +88,7 @@ export function AppSidebar() {
             <Plus />
           </SidebarGroupAction>
           <SidebarMenu>
-            {CLUBS_MOCK.map((club) => {
+            {clubs.map((club) => {
               const params = { clubId: String(club.id) };
               const isActive = !!matchRoute({ to: '/clubs/$clubId', params });
 
