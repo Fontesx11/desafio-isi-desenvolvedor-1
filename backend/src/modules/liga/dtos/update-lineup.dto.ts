@@ -1,12 +1,4 @@
-import {
-  ArrayMaxSize,
-  ArrayMinSize,
-  ArrayUnique,
-  IsArray,
-  IsEnum,
-  IsInt,
-  Min,
-} from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsEnum, IsInt, Min } from 'class-validator';
 import { ClubFormation } from '../../clubes/enums/clubs.enum.js';
 import { LINEUP_SIZE } from '../../escalacoes/constants/lineups.constants.js';
 

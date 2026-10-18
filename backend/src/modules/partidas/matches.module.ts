@@ -9,11 +9,7 @@ import { MatchesService } from './matches.service.js';
 import { StandingsController } from './standings.controller.js';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Match, MatchDuel]),
-    ClubsModule,
-    LeagueModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Match, MatchDuel]), ClubsModule, LeagueModule],
   controllers: [MatchesController, StandingsController],
   providers: [MatchesService],
 })

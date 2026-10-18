@@ -2,11 +2,7 @@ import { compareNames } from '../../../core/utils/string.utils.js';
 import { PlayerSort, POSITION_ORDER } from '../enums/players.enum.js';
 import { PlayerWithDynamicValues } from '../interfaces/player.interface.js';
 
-function compareBy(
-  option: PlayerSort,
-  left: PlayerWithDynamicValues,
-  right: PlayerWithDynamicValues,
-): number {
+function compareBy(option: PlayerSort, left: PlayerWithDynamicValues, right: PlayerWithDynamicValues): number {
   switch (option) {
     case PlayerSort.NAME:
       return compareNames(left.name, right.name);
@@ -23,10 +19,7 @@ function compareBy(
   }
 }
 
-export function sortPlayers(
-  players: PlayerWithDynamicValues[],
-  sort: PlayerSort[],
-): PlayerWithDynamicValues[] {
+export function sortPlayers(players: PlayerWithDynamicValues[], sort: PlayerSort[]): PlayerWithDynamicValues[] {
   return players.toSorted((left, right) => {
     for (const option of sort) {
       const result = compareBy(option, left, right);

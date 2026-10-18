@@ -10,10 +10,7 @@ export class LeagueController {
   constructor(private readonly leagueService: LeagueService) {}
 
   @Put('clubs/:id/lineup')
-  async updateLineup(
-    @IdParam() id: number,
-    @Body() dto: UpdateLineupDto,
-  ): Promise<ClubLineupResponse> {
+  async updateLineup(@IdParam() id: number, @Body() dto: UpdateLineupDto): Promise<ClubLineupResponse> {
     const lineup = await this.leagueService.updateLineup(id, dto);
     return {
       club_id: lineup.clubId,

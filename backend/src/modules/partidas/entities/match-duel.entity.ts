@@ -1,8 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import {
-  PlayerCondition,
-  PlayerPosition,
-} from '../../jogadores/enums/players.enum.js';
+import { PlayerCondition, PlayerPosition } from '../../jogadores/enums/players.enum.js';
 import { DuelAttribute } from '../enums/matches.enum.js';
 
 @Entity({ name: 'duelos_partida' })

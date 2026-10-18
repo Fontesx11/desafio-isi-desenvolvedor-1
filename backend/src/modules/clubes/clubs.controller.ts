@@ -11,10 +11,7 @@ export class ClubsController {
   constructor(private readonly clubsService: ClubsService) {}
 
   @Post()
-  async create(
-    @Body() dto: CreateClubDto,
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<ClubResponseDto> {
+  async create(@Body() dto: CreateClubDto, @Res({ passthrough: true }) response: Response): Promise<ClubResponseDto> {
     const club = await this.clubsService.create(dto);
     response.location(`/api/v1/clubs/${club.id}`);
     return new ClubResponseDto(club);

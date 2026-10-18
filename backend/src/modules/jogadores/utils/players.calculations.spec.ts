@@ -1,9 +1,5 @@
 import { PlayerCondition, PlayerPosition } from '../enums/players.enum.js';
-import {
-  calculateBaseValueCents,
-  calculateMarketValueCents,
-  calculateOverall,
-} from './players.calculations.js';
+import { calculateBaseValueCents, calculateMarketValueCents, calculateOverall } from './players.calculations.js';
 
 const { APTO, MAL_CONDICIONADO, DOENTE } = PlayerCondition;
 
@@ -14,25 +10,18 @@ describe('calculateOverall', () => {
     [PlayerPosition.LAT, [72, 70, 78, 76, 70, 66], 72],
     [PlayerPosition.ZAG, [50, 90, 60, 40, 80, 75], 73],
     [PlayerPosition.GOL, [55, 30, 65, 40, 72, 68], 68],
-  ])(
-    '%s %j -> %i',
-    (
-      position,
-      [pace, shooting, passing, dribbling, defending, physical],
-      expected,
-    ) => {
-      expect(
-        calculateOverall(position, {
-          pace,
-          shooting,
-          passing,
-          dribbling,
-          defending,
-          physical,
-        }),
-      ).toBe(expected);
-    },
-  );
+  ])('%s %j -> %i', (position, [pace, shooting, passing, dribbling, defending, physical], expected) => {
+    expect(
+      calculateOverall(position, {
+        pace,
+        shooting,
+        passing,
+        dribbling,
+        defending,
+        physical,
+      }),
+    ).toBe(expected);
+  });
 });
 
 describe('calculateBaseValueCents', () => {
@@ -46,12 +35,9 @@ describe('calculateBaseValueCents', () => {
     [70, 84, 22, 3000],
     [45, 90, 18, 363],
     [40, 66, 36, 100],
-  ])(
-    'overall %i, potential %i, age %i -> %i cents',
-    (overall, potential, age, expected) => {
-      expect(calculateBaseValueCents(overall, potential, age)).toBe(expected);
-    },
-  );
+  ])('overall %i, potential %i, age %i -> %i cents', (overall, potential, age, expected) => {
+    expect(calculateBaseValueCents(overall, potential, age)).toBe(expected);
+  });
 });
 
 describe('calculateMarketValueCents', () => {
@@ -66,12 +52,7 @@ describe('calculateMarketValueCents', () => {
     [8200, DOENTE, 10, 40, 4920],
     [950, MAL_CONDICIONADO, 85, 25, 879],
     [100, MAL_CONDICIONADO, 50, 35, 100],
-  ])(
-    'base %i, %s, agility %i, age %i -> %i cents',
-    (base, condition, agility, age, expected) => {
-      expect(calculateMarketValueCents(base, condition, agility, age)).toBe(
-        expected,
-      );
-    },
-  );
+  ])('base %i, %s, agility %i, age %i -> %i cents', (base, condition, agility, age, expected) => {
+    expect(calculateMarketValueCents(base, condition, agility, age)).toBe(expected);
+  });
 });

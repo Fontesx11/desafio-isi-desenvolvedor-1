@@ -1,9 +1,6 @@
 import { CreatePlayerDto } from '../../src/modules/jogadores/dtos/create-player.dto.js';
 import { Player } from '../../src/modules/jogadores/entities/player.entity.js';
-import {
-  PlayerCondition,
-  PlayerPosition,
-} from '../../src/modules/jogadores/enums/players.enum.js';
+import { PlayerCondition, PlayerPosition } from '../../src/modules/jogadores/enums/players.enum.js';
 import { PlayerWithDynamicValues } from '../../src/modules/jogadores/interfaces/player.interface.js';
 
 export const meiaLuaDto: CreatePlayerDto = {

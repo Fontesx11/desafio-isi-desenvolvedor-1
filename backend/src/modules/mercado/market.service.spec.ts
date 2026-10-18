@@ -1,15 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import {
-  aguiasAfterPurchaseMock,
-  aguiasMock,
-} from '../../../test/mocks/clubs.mock.js';
+import { aguiasAfterPurchaseMock, aguiasMock } from '../../../test/mocks/clubs.mock.js';
 import { meiaLuaContractMock } from '../../../test/mocks/contracts.mock.js';
-import {
-  meiaLuaBeforePurchaseMock,
-  meiaLuaBeforeSaleMock,
-} from '../../../test/mocks/players.mock.js';
+import { meiaLuaBeforePurchaseMock, meiaLuaBeforeSaleMock } from '../../../test/mocks/players.mock.js';
 import { ClubsService } from '../clubes/clubs.service.js';
 import { Club } from '../clubes/entities/club.entity.js';
 import { ContractsService } from '../contratos/contracts.service.js';
@@ -31,8 +25,7 @@ describe('MarketService', () => {
     releaseFromClub: vi.fn(),
   };
   const manager = {
-    create: (target: new () => object, data: object) =>
-      Object.assign(new target(), data),
+    create: (target: new () => object, data: object) => Object.assign(new target(), data),
     save: (entity: object) => entity,
     update: vi.fn(),
   };
@@ -50,8 +43,7 @@ describe('MarketService', () => {
         {
           provide: DataSource,
           useValue: {
-            transaction: (work: (entityManager: typeof manager) => unknown) =>
-              work(manager),
+            transaction: (work: (entityManager: typeof manager) => unknown) => work(manager),
           },
         },
         { provide: PlayersService, useValue: playersService },
@@ -93,12 +85,8 @@ describe('MarketService', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-11-05T16:40:00-03:00'));
     playersService.findById.mockResolvedValue(meiaLuaBeforeSaleMock);
-    vi.spyOn(clubsRepository, 'findOne').mockResolvedValue(
-      aguiasAfterPurchaseMock,
-    );
-    vi.spyOn(contractsRepository, 'findOneBy').mockResolvedValue(
-      meiaLuaContractMock,
-    );
+    vi.spyOn(clubsRepository, 'findOne').mockResolvedValue(aguiasAfterPurchaseMock);
+    vi.spyOn(contractsRepository, 'findOneBy').mockResolvedValue(meiaLuaContractMock);
 
     const sale = await service.sellPlayer(2);
 

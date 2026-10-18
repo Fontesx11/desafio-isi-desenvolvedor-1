@@ -1,9 +1,6 @@
 import { formatBrasiliaDateTime } from '../../../core/utils/date.utils.js';
 import { PlayerResponseDto } from '../../jogadores/dtos/player-response.dto.js';
-import {
-  ClubWithDynamicValues,
-  SquadPlayer,
-} from '../interfaces/club.interface.js';
+import { ClubWithDynamicValues, SquadPlayer } from '../interfaces/club.interface.js';
 
 export class SquadPlayerResponseDto extends PlayerResponseDto {
   contract: {

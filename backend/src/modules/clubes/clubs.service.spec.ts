@@ -35,12 +35,8 @@ describe('ClubsService', () => {
   it('shows Águias FC with squad value 37.00, net worth 298.15 and the contract with 120 days and 10% penalty right after the purchase', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-11-02T10:15:00-03:00'));
-    vi.spyOn(clubsRepository, 'findOne').mockResolvedValue(
-      aguiasAfterPurchaseMock,
-    );
-    vi.spyOn(contractsRepository, 'findBy').mockResolvedValue([
-      meiaLuaContractMock,
-    ]);
+    vi.spyOn(clubsRepository, 'findOne').mockResolvedValue(aguiasAfterPurchaseMock);
+    vi.spyOn(contractsRepository, 'findBy').mockResolvedValue([meiaLuaContractMock]);
 
     const { club, squad } = await service.findById(1);
 

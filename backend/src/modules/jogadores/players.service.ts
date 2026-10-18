@@ -1,15 +1,6 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  DataSource,
-  EntityManager,
-  FindOptionsWhere,
-  Repository,
-} from 'typeorm';
+import { DataSource, EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 import { Page, paginate } from '../../core/utils/pagination.utils.js';
 import { ClubsService } from '../clubes/clubs.service.js';
 import { LineupsService } from '../escalacoes/lineups.service.js';
@@ -19,11 +10,7 @@ import { UpdatePlayerDto } from './dtos/update-player.dto.js';
 import { Player } from './entities/player.entity.js';
 import { PlayerCondition } from './enums/players.enum.js';
 import { PlayerWithDynamicValues } from './interfaces/player.interface.js';
-import {
-  calculateBaseValueCents,
-  calculateOverall,
-  calculatePlayerDynamicValues,
-} from './utils/players.calculations.js';
+import { calculateBaseValueCents, calculateOverall, calculatePlayerDynamicValues } from './utils/players.calculations.js';
 import { filterPlayers } from './utils/players.filtering.js';
 import { sortPlayers } from './utils/players.sorting.js';
 
@@ -39,11 +26,7 @@ export class PlayersService {
 
   async create(dto: CreatePlayerDto): Promise<PlayerWithDynamicValues> {
     const overall = calculateOverall(dto.position, dto);
-    const baseValueCents = calculateBaseValueCents(
-      overall,
-      dto.potential,
-      dto.age,
-    );
+    const baseValueCents = calculateBaseValueCents(overall, dto.potential, dto.age);
 
     const player = this.playersRepository.create({
       name: dto.name,
@@ -67,19 +50,11 @@ export class PlayersService {
     return calculatePlayerDynamicValues(player);
   }
 
-  async changePlayerCondition(
-    id: number,
-    condition: PlayerCondition,
-  ): Promise<PlayerWithDynamicValues> {
+  async changePlayerCondition(id: number, condition: PlayerCondition): Promise<PlayerWithDynamicValues> {
     const player = await this.findOne({ id });
 
-    if (
-      player.condition === PlayerCondition.DOENTE &&
-      condition === PlayerCondition.APTO
-    ) {
-      throw new ConflictException(
-        'condition cannot change directly from DOENTE to APTO',
-      );
+    if (player.condition === PlayerCondition.DOENTE && condition === PlayerCondition.APTO) {
+      throw new ConflictException('condition cannot change directly from DOENTE to APTO');
     }
 
     if (player.condition !== condition) {
@@ -97,16 +72,11 @@ export class PlayersService {
     return calculatePlayerDynamicValues(player);
   }
 
-  async update(
-    id: number,
-    dto: UpdatePlayerDto,
-  ): Promise<PlayerWithDynamicValues> {
+  async update(id: number, dto: UpdatePlayerDto): Promise<PlayerWithDynamicValues> {
     const player = await this.findOne({ id });
 
     if (player.clubId !== null && dto.position !== player.position) {
-      throw new ConflictException(
-        'a player with a club cannot change position',
-      );
+      throw new ConflictException('a player with a club cannot change position');
     }
 
     if (dto.age < player.age) {
@@ -119,18 +89,11 @@ export class PlayersService {
     return calculatePlayerDynamicValues(player);
   }
 
-  async assignToClub(
-    manager: EntityManager,
-    playerId: number,
-    clubId: number,
-  ): Promise<void> {
+  async assignToClub(manager: EntityManager, playerId: number, clubId: number): Promise<void> {
     await manager.update(Player, { id: playerId }, { clubId });
   }
 
-  async releaseFromClub(
-    manager: EntityManager,
-    playerId: number,
-  ): Promise<void> {
+  async releaseFromClub(manager: EntityManager, playerId: number): Promise<void> {
     await manager.update(Player, { id: playerId }, { clubId: null });
   }
 
@@ -154,9 +117,7 @@ export class PlayersService {
     return player;
   }
 
-  async findAll(
-    query: ListPlayersQueryDto,
-  ): Promise<Page<PlayerWithDynamicValues>> {
+  async findAll(query: ListPlayersQueryDto): Promise<Page<PlayerWithDynamicValues>> {
     if (query.club_id !== undefined) {
       await this.clubsService.find({ where: { id: query.club_id } });
     }

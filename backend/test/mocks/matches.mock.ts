@@ -1,9 +1,6 @@
 import { Club } from '../../src/modules/clubes/entities/club.entity.js';
 import { ClubFormation } from '../../src/modules/clubes/enums/clubs.enum.js';
-import {
-  PlayerCondition,
-  PlayerPosition,
-} from '../../src/modules/jogadores/enums/players.enum.js';
+import { PlayerCondition, PlayerPosition } from '../../src/modules/jogadores/enums/players.enum.js';
 import { ClubLineup } from '../../src/modules/liga/interfaces/lineup.interface.js';
 import { Match } from '../../src/modules/partidas/entities/match.entity.js';
 import { aguiasMock } from './clubs.mock.js';

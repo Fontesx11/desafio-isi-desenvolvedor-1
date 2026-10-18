@@ -1,16 +1,10 @@
 import { ClubFormation } from '../../clubes/enums/clubs.enum.js';
-import {
-  PlayerCondition,
-  PlayerPosition,
-} from '../../jogadores/enums/players.enum.js';
+import { PlayerCondition, PlayerPosition } from '../../jogadores/enums/players.enum.js';
 import { MatchDuel } from '../entities/match-duel.entity.js';
 import { Match } from '../entities/match.entity.js';
 import { DuelAttribute, MatchResult } from '../enums/matches.enum.js';
 
-export type CreateMatchData = Omit<
-  Match,
-  'id' | 'playedAt' | 'homeClub' | 'awayClub'
->;
+export type CreateMatchData = Omit<Match, 'id' | 'playedAt' | 'homeClub' | 'awayClub'>;
 
 export type CreateMatchDuelData = Omit<MatchDuel, 'id' | 'matchId'>;
 

@@ -1,15 +1,6 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  EntityManager,
-  FindManyOptions,
-  FindOneOptions,
-  Repository,
-} from 'typeorm';
+import { EntityManager, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { ContractsService } from '../contratos/contracts.service.js';
 import { PlayerSort } from '../jogadores/enums/players.enum.js';
 import { calculatePlayerDynamicValues } from '../jogadores/utils/players.calculations.js';
@@ -18,10 +9,7 @@ import { CreateClubDto } from './dtos/create-club.dto.js';
 import { ListClubsQueryDto } from './dtos/list-clubs-query.dto.js';
 import { Club } from './entities/club.entity.js';
 import { ClubFormation } from './enums/clubs.enum.js';
-import {
-  ClubDetails,
-  ClubWithDynamicValues,
-} from './interfaces/club.interface.js';
+import { ClubDetails, ClubWithDynamicValues } from './interfaces/club.interface.js';
 import { sortClubs } from './utils/clubs.sorting.js';
 
 const CLUB_LIMIT = 20;
@@ -38,10 +26,7 @@ export class ClubsService {
 
   async find(options: FindManyOptions<Club>, mode: 'many'): Promise<Club[]>;
   async find(options: FindOneOptions<Club>, mode?: 'one'): Promise<Club>;
-  async find(
-    options: FindManyOptions<Club>,
-    mode: 'one' | 'many' = 'one',
-  ): Promise<Club | Club[]> {
+  async find(options: FindManyOptions<Club>, mode: 'one' | 'many' = 'one'): Promise<Club | Club[]> {
     if (mode === 'many') {
       return this.clubsRepository.find(options);
     }
@@ -84,23 +69,15 @@ export class ClubsService {
     const cashLimitCents = Math.round(Number(club.cash) * 100) / 2;
 
     if (totalCostCents > cashLimitCents) {
-      throw new ConflictException(
-        'the total cost cannot exceed 50% of the club cash',
-      );
+      throw new ConflictException('the total cost cannot exceed 50% of the club cash');
     }
 
     if (club.players.length >= SQUAD_LIMIT) {
-      throw new ConflictException(
-        `a club can have at most ${SQUAD_LIMIT} players`,
-      );
+      throw new ConflictException(`a club can have at most ${SQUAD_LIMIT} players`);
     }
   }
 
-  async changeCash(
-    manager: EntityManager,
-    club: Club,
-    changeCents: number,
-  ): Promise<string> {
+  async changeCash(manager: EntityManager, club: Club, changeCents: number): Promise<string> {
     const cashCents = Math.round(Number(club.cash) * 100) + changeCents;
     const cash = (cashCents / 100).toFixed(2);
 
@@ -109,11 +86,7 @@ export class ClubsService {
     return cash;
   }
 
-  async changeFormation(
-    manager: EntityManager,
-    clubId: number,
-    formation: ClubFormation,
-  ): Promise<void> {
+  async changeFormation(manager: EntityManager, clubId: number, formation: ClubFormation): Promise<void> {
     await manager.update(Club, { id: clubId }, { formation });
   }
 
@@ -121,9 +94,7 @@ export class ClubsService {
     const clubsCount = await this.clubsRepository.count();
 
     if (clubsCount >= CLUB_LIMIT) {
-      throw new ConflictException(
-        `the league accepts at most ${CLUB_LIMIT} clubs`,
-      );
+      throw new ConflictException(`the league accepts at most ${CLUB_LIMIT} clubs`);
     }
 
     const nameTaken = await this.clubsRepository
@@ -160,9 +131,7 @@ export class ClubsService {
     const clubs = await this.clubsRepository.find({
       relations: { players: true },
     });
-    const clubsWithValues = clubs.map((club) =>
-      this.calculateDynamicValues(club),
-    );
+    const clubsWithValues = clubs.map((club) => this.calculateDynamicValues(club));
 
     return sortClubs(clubsWithValues, query.sort);
   }

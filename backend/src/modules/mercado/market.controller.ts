@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Query,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { IdParam } from '../../core/decorators/id-param.decorator.js';
 import { TransactionResponseDto } from '../transacoes/dtos/transaction-response.dto.js';
@@ -25,10 +16,7 @@ export class MarketController {
 
   @Post('players/:id/buy')
   @HttpCode(HttpStatus.OK)
-  async buyPlayer(
-    @IdParam() id: number,
-    @Body() dto: BuyPlayerDto,
-  ): Promise<PurchaseResponseDto> {
+  async buyPlayer(@IdParam() id: number, @Body() dto: BuyPlayerDto): Promise<PurchaseResponseDto> {
     const purchase = await this.marketService.buyPlayer(id, dto);
     return new PurchaseResponseDto(purchase);
   }
@@ -41,16 +29,10 @@ export class MarketController {
   }
 
   @Get('clubs/:id/transactions')
-  async getTransactionHistory(
-    @IdParam() id: number,
-    @Query() query: ListTransactionsQueryDto,
-  ): Promise<TransactionHistoryResponse> {
-    const { transactions, summary } =
-      await this.marketService.getTransactionHistory(id, query);
+  async getTransactionHistory(@IdParam() id: number, @Query() query: ListTransactionsQueryDto): Promise<TransactionHistoryResponse> {
+    const { transactions, summary } = await this.marketService.getTransactionHistory(id, query);
     return {
-      data: transactions.map(
-        (transaction) => new TransactionResponseDto(transaction),
-      ),
+      data: transactions.map((transaction) => new TransactionResponseDto(transaction)),
       summary: new TransactionSummaryResponseDto(summary),
     };
   }
@@ -63,10 +45,7 @@ export class MarketController {
   ): Promise<string> {
     const csv = await this.marketService.exportClubTransactions(id, query);
     response.setHeader('Content-Type', 'text/csv; charset=utf-8');
-    response.setHeader(
-      'Content-Disposition',
-      `attachment; filename="transacoes_clube_${id}.csv"`,
-    );
+    response.setHeader('Content-Disposition', `attachment; filename="transacoes_clube_${id}.csv"`);
     return csv;
   }
 }

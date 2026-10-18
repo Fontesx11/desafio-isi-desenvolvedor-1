@@ -1,11 +1,4 @@
-import {
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryColumn,
-  type Relation,
-} from 'typeorm';
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, type Relation } from 'typeorm';
 import { Club } from '../../clubes/entities/club.entity.js';
 import { Player } from '../../jogadores/entities/player.entity.js';
 

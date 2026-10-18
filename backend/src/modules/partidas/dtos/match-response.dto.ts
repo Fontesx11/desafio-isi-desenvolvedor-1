@@ -2,10 +2,7 @@ import { formatBrasiliaDateTime } from '../../../core/utils/date.utils.js';
 import { MatchDuel } from '../entities/match-duel.entity.js';
 import { Match } from '../entities/match.entity.js';
 import { MatchResult } from '../enums/matches.enum.js';
-import {
-  DuelPlayerResponse,
-  MatchClubResponse,
-} from '../interfaces/match.interface.js';
+import { DuelPlayerResponse, MatchClubResponse } from '../interfaces/match.interface.js';
 
 export class MatchDuelResponseDto {
   order: number;

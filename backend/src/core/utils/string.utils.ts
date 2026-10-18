@@ -30,8 +30,5 @@ function compareCodePoints(left: string, right: string): number {
 }
 
 export function compareNames(left: string, right: string): number {
-  return compareCodePoints(
-    normalizeForComparison(left),
-    normalizeForComparison(right),
-  );
+  return compareCodePoints(normalizeForComparison(left), normalizeForComparison(right));
 }

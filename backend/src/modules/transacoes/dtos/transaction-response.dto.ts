@@ -24,8 +24,7 @@ export class TransactionResponseDto {
     this.value = Number(transaction.value);
     this.fee = Number(transaction.fee);
     this.penalty = Number(transaction.penalty);
-    this.profit =
-      transaction.profit === null ? null : Number(transaction.profit);
+    this.profit = transaction.profit === null ? null : Number(transaction.profit);
     this.cash_change = Number(transaction.cashChange);
     this.created_at = formatBrasiliaDateTime(transaction.createdAt);
   }

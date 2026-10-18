@@ -21,8 +21,7 @@ describe('PlayersService', () => {
         {
           provide: DataSource,
           useValue: {
-            transaction: (work: (entityManager: typeof manager) => unknown) =>
-              work(manager),
+            transaction: (work: (entityManager: typeof manager) => unknown) => work(manager),
           },
         },
         { provide: ClubsService, useValue: {} },
@@ -40,9 +39,7 @@ describe('PlayersService', () => {
 
     const player = await service.create(meiaLuaDto);
 
-    expect(playersRepository.create).toHaveBeenCalledWith(
-      expect.objectContaining({ baseValue: '40.00' }),
-    );
+    expect(playersRepository.create).toHaveBeenCalledWith(expect.objectContaining({ baseValue: '40.00' }));
     expect(player.overall).toBe(75);
     expect(player.marketValue).toBe(40);
   });
@@ -52,10 +49,7 @@ describe('PlayersService', () => {
       ...meiaLuaMock,
     });
 
-    const player = await service.changePlayerCondition(
-      2,
-      PlayerCondition.MAL_CONDICIONADO,
-    );
+    const player = await service.changePlayerCondition(2, PlayerCondition.MAL_CONDICIONADO);
 
     expect(player.marketValue).toBe(37);
     expect(manager.save).toHaveBeenCalledOnce();

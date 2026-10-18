@@ -8,9 +8,6 @@ export class CreateMatchDto {
 
   @IsInt()
   @Min(1)
-  @CrossFieldRule<CreateMatchDto>(
-    (dto) => dto.away_club_id !== dto.home_club_id,
-    'away_club_id must be different from home_club_id',
-  )
+  @CrossFieldRule<CreateMatchDto>((dto) => dto.away_club_id !== dto.home_club_id, 'away_club_id must be different from home_club_id')
   away_club_id: number;
 }

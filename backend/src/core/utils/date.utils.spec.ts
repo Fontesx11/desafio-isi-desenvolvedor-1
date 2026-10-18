@@ -1,20 +1,11 @@
-import {
-  calculateRemainingDays,
-  formatBrasiliaDateTime,
-  isBrasiliaDateTime,
-} from './date.utils.js';
+import { calculateRemainingDays, formatBrasiliaDateTime, isBrasiliaDateTime } from './date.utils.js';
 
 const MINUTE_MS = 60 * 1000;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 
 describe('isBrasiliaDateTime', () => {
-  it.each([
-    '2027-03-02T10:15-03:00',
-    '2027-03-02T23:59-03:00',
-    '2028-02-29T10:15-03:00',
-    '2000-02-29T10:15-03:00',
-  ])('accepts %s', (value) => {
+  it.each(['2027-03-02T10:15-03:00', '2027-03-02T23:59-03:00', '2028-02-29T10:15-03:00', '2000-02-29T10:15-03:00'])('accepts %s', (value) => {
     expect(isBrasiliaDateTime(value)).toBe(true);
   });
 
@@ -54,9 +45,7 @@ describe('formatBrasiliaDateTime', () => {
   });
 
   it('round-trips a date sent in the RN01 format', () => {
-    expect(formatBrasiliaDateTime(new Date('2027-03-02T10:15-03:00'))).toBe(
-      '2027-03-02T10:15:00-03:00',
-    );
+    expect(formatBrasiliaDateTime(new Date('2027-03-02T10:15-03:00'))).toBe('2027-03-02T10:15:00-03:00');
   });
 });
 
@@ -72,11 +61,7 @@ describe('calculateRemainingDays', () => {
     ['exactly 180 days', 180 * DAY_MS, 180],
     ['180 days and 1 minute', 180 * DAY_MS + MINUTE_MS, 181],
     ['200 days', 200 * DAY_MS, 200],
-    [
-      '116 days, 17 hours and 35 minutes',
-      116 * DAY_MS + 17 * HOUR_MS + 35 * MINUTE_MS,
-      117,
-    ],
+    ['116 days, 17 hours and 35 minutes', 116 * DAY_MS + 17 * HOUR_MS + 35 * MINUTE_MS, 117],
   ])('%s -> %i', (_label, offsetMs, expected) => {
     const until = new Date(now.getTime() + offsetMs);
 

@@ -11,23 +11,16 @@ export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
   @Post()
-  async playMatch(
-    @Body() dto: CreateMatchDto,
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<MatchResponseDto> {
+  async playMatch(@Body() dto: CreateMatchDto, @Res({ passthrough: true }) response: Response): Promise<MatchResponseDto> {
     const { match, result, duels } = await this.matchesService.playMatch(dto);
     response.location(`/api/v1/matches/${match.id}`);
     return new MatchResponseDto(match, result, duels);
   }
 
   @Get()
-  async findAll(
-    @Query() query: ListMatchesQueryDto,
-  ): Promise<MatchResponseDto[]> {
+  async findAll(@Query() query: ListMatchesQueryDto): Promise<MatchResponseDto[]> {
     const matches = await this.matchesService.findAll(query);
-    return matches.map(
-      ({ match, result }) => new MatchResponseDto(match, result),
-    );
+    return matches.map(({ match, result }) => new MatchResponseDto(match, result));
   }
 
   @Get(':id')

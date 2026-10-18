@@ -1,12 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  type Relation,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, type Relation } from 'typeorm';
 import { Club } from '../../clubes/entities/club.entity.js';
 import { Player } from '../../jogadores/entities/player.entity.js';
 import { TransactionType } from '../enums/transactions.enum.js';

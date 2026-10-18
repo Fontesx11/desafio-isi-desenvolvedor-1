@@ -1,9 +1,6 @@
 import { ValidateBy } from 'class-validator';
 
-export function CrossFieldRule<T extends object>(
-  isValid: (object: T) => boolean,
-  message: string,
-) {
+export function CrossFieldRule<T extends object>(isValid: (object: T) => boolean, message: string) {
   return ValidateBy({
     name: 'crossFieldRule',
     validator: {

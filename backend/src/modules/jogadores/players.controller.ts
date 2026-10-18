@@ -1,26 +1,11 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Patch,
-  Post,
-  Put,
-  Query,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Patch, Post, Put, Query, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { IdParam } from '../../core/decorators/id-param.decorator.js';
 import { Page } from '../../core/utils/pagination.utils.js';
 import { CreatePlayerDto } from './dtos/create-player.dto.js';
 import { ListPlayersQueryDto } from './dtos/list-players-query.dto.js';
 import { PlayerResponseDto } from './dtos/player-response.dto.js';
-import {
-  UpdatePlayerConditionDto,
-  UpdatePlayerDto,
-} from './dtos/update-player.dto.js';
+import { UpdatePlayerConditionDto, UpdatePlayerDto } from './dtos/update-player.dto.js';
 import { PlayersService } from './players.service.js';
 
 @Controller('players')
@@ -28,19 +13,14 @@ export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
 
   @Post()
-  async create(
-    @Body() dto: CreatePlayerDto,
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<PlayerResponseDto> {
+  async create(@Body() dto: CreatePlayerDto, @Res({ passthrough: true }) response: Response): Promise<PlayerResponseDto> {
     const player = await this.playersService.create(dto);
     response.location(`/api/v1/players/${player.id}`);
     return new PlayerResponseDto(player);
   }
 
   @Get()
-  async findAll(
-    @Query() query: ListPlayersQueryDto,
-  ): Promise<Page<PlayerResponseDto>> {
+  async findAll(@Query() query: ListPlayersQueryDto): Promise<Page<PlayerResponseDto>> {
     const page = await this.playersService.findAll(query);
     return {
       data: page.data.map((player) => new PlayerResponseDto(player)),
@@ -55,23 +35,14 @@ export class PlayersController {
   }
 
   @Put(':id')
-  async update(
-    @IdParam() id: number,
-    @Body() dto: UpdatePlayerDto,
-  ): Promise<PlayerResponseDto> {
+  async update(@IdParam() id: number, @Body() dto: UpdatePlayerDto): Promise<PlayerResponseDto> {
     const player = await this.playersService.update(id, dto);
     return new PlayerResponseDto(player);
   }
 
   @Patch(':id/condition')
-  async changeCondition(
-    @IdParam() id: number,
-    @Body() dto: UpdatePlayerConditionDto,
-  ): Promise<PlayerResponseDto> {
-    const player = await this.playersService.changePlayerCondition(
-      id,
-      dto.condition,
-    );
+  async changeCondition(@IdParam() id: number, @Body() dto: UpdatePlayerConditionDto): Promise<PlayerResponseDto> {
+    const player = await this.playersService.changePlayerCondition(id, dto.condition);
     return new PlayerResponseDto(player);
   }
 

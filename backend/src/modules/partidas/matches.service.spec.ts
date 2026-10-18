@@ -1,13 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import {
-  aguiasDeltaMatchMock,
-  aguiasLineupMock,
-  deltaLineupMock,
-  standingsClubsMock,
-  standingsMatchesMock,
-} from '../../../test/mocks/matches.mock.js';
+import { aguiasDeltaMatchMock, aguiasLineupMock, deltaLineupMock, standingsClubsMock, standingsMatchesMock } from '../../../test/mocks/matches.mock.js';
 import { ClubsService } from '../clubes/clubs.service.js';
 import { LeagueService } from '../liga/league.service.js';
 import { MatchDuel } from './entities/match-duel.entity.js';
@@ -21,8 +15,7 @@ describe('MatchesService', () => {
   const clubsService = { find: vi.fn() };
   const leagueService = { findLineup: vi.fn() };
   const manager = {
-    create: (target: new () => object, data: object) =>
-      Object.assign(new target(), data),
+    create: (target: new () => object, data: object) => Object.assign(new target(), data),
     save: vi.fn((entity: object) => entity),
   };
 
@@ -35,8 +28,7 @@ describe('MatchesService', () => {
         {
           provide: DataSource,
           useValue: {
-            transaction: (work: (entityManager: typeof manager) => unknown) =>
-              work(manager),
+            transaction: (work: (entityManager: typeof manager) => unknown) => work(manager),
           },
         },
         { provide: ClubsService, useValue: clubsService },
@@ -50,12 +42,8 @@ describe('MatchesService', () => {
   });
 
   it('plays Águias FC 1 x 2 Delta FC with the 6 duels', async () => {
-    leagueService.findLineup
-      .mockResolvedValueOnce(aguiasLineupMock)
-      .mockResolvedValueOnce(deltaLineupMock);
-    vi.spyOn(matchesRepository, 'findOne').mockResolvedValue(
-      aguiasDeltaMatchMock,
-    );
+    leagueService.findLineup.mockResolvedValueOnce(aguiasLineupMock).mockResolvedValueOnce(deltaLineupMock);
+    vi.spyOn(matchesRepository, 'findOne').mockResolvedValue(aguiasDeltaMatchMock);
     vi.spyOn(matchDuelsRepository, 'find').mockResolvedValue([]);
 
     await service.playMatch({ home_club_id: 1, away_club_id: 2 });

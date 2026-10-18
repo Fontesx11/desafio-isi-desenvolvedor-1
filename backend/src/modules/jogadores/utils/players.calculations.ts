@@ -1,7 +1,4 @@
-import {
-  pointsInRange,
-  roundDivision,
-} from '../../../core/utils/math.utils.js';
+import { pointsInRange, roundDivision } from '../../../core/utils/math.utils.js';
 import type { Player } from '../entities/player.entity.js';
 import type { PlayerWithDynamicValues } from '../interfaces/player.interface.js';
 import { PlayerCondition, PlayerPosition } from '../enums/players.enum.js';
@@ -69,10 +66,7 @@ const MAX_DISCOUNT_BASIS_POINTS = -4000;
 const MIN_VALUE = 100;
 const YOUNG_PROSPECT_MAX_AGE = 21;
 
-export function calculateOverall(
-  position: PlayerPosition,
-  attributes: PlayerAttributes,
-): number {
+export function calculateOverall(position: PlayerPosition, attributes: PlayerAttributes): number {
   const weights = ATTRIBUTE_WEIGHTS[position];
   const attributeNames = Object.keys(weights) as (keyof PlayerAttributes)[];
 
@@ -86,15 +80,8 @@ export function calculateOverall(
   return roundDivision(weightedSum, 100);
 }
 
-export function calculateBaseValueCents(
-  overall: number,
-  potential: number,
-  age: number,
-): number {
-  let overallPart =
-    50 * pointsInRange(overall, 41, 60) +
-    200 * pointsInRange(overall, 61, 75) +
-    600 * pointsInRange(overall, 76, 99);
+export function calculateBaseValueCents(overall: number, potential: number, age: number): number {
+  let overallPart = 50 * pointsInRange(overall, 41, 60) + 200 * pointsInRange(overall, 61, 75) + 600 * pointsInRange(overall, 76, 99);
 
   if (age <= YOUNG_PROSPECT_MAX_AGE) {
     overallPart = roundDivision(overallPart * (100 + potential - overall), 100);
@@ -103,10 +90,7 @@ export function calculateBaseValueCents(
   return Math.max(overallPart, MIN_VALUE);
 }
 
-function conditionDiscountBasisPoints(
-  condition: PlayerCondition,
-  agility: number,
-): number {
+function conditionDiscountBasisPoints(condition: PlayerCondition, agility: number): number {
   const discount = CONDITION_DISCOUNT_BASIS_POINTS[condition];
   if (condition === PlayerCondition.APTO) return discount;
   if (agility >= 80) return discount / 2;
@@ -120,41 +104,21 @@ function ageAdjustmentBasisPoints(age: number): number {
   return 0;
 }
 
-export function calculateMarketValueCents(
-  baseValueCents: number,
-  condition: PlayerCondition,
-  agility: number,
-  age: number,
-): number {
+export function calculateMarketValueCents(baseValueCents: number, condition: PlayerCondition, agility: number, age: number): number {
   const discountBasisPoints = conditionDiscountBasisPoints(condition, agility);
   const totalBasisPoints = ageAdjustmentBasisPoints(age) - discountBasisPoints;
-  const cappedTotalBasisPoints = Math.max(
-    totalBasisPoints,
-    MAX_DISCOUNT_BASIS_POINTS,
-  );
+  const cappedTotalBasisPoints = Math.max(totalBasisPoints, MAX_DISCOUNT_BASIS_POINTS);
 
-  const marketValueCents = roundDivision(
-    baseValueCents * (HUNDRED_PERCENT_BASIS_POINTS + cappedTotalBasisPoints),
-    HUNDRED_PERCENT_BASIS_POINTS,
-  );
+  const marketValueCents = roundDivision(baseValueCents * (HUNDRED_PERCENT_BASIS_POINTS + cappedTotalBasisPoints), HUNDRED_PERCENT_BASIS_POINTS);
 
   return Math.max(marketValueCents, MIN_VALUE);
 }
 
-function calculatePlayerMarketValueCents(
-  player: Pick<Player, 'baseValue' | 'condition' | 'agility' | 'age'>,
-): number {
-  return calculateMarketValueCents(
-    Math.round(Number(player.baseValue) * 100),
-    player.condition,
-    player.agility,
-    player.age,
-  );
+function calculatePlayerMarketValueCents(player: Pick<Player, 'baseValue' | 'condition' | 'agility' | 'age'>): number {
+  return calculateMarketValueCents(Math.round(Number(player.baseValue) * 100), player.condition, player.agility, player.age);
 }
 
-export function calculatePlayerDynamicValues(
-  player: Player,
-): PlayerWithDynamicValues {
+export function calculatePlayerDynamicValues(player: Player): PlayerWithDynamicValues {
   return {
     ...player,
     overall: calculateOverall(player.position, player),

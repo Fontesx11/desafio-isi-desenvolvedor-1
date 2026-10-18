@@ -8,13 +8,7 @@ import { MarketController } from './market.controller.js';
 import { MarketService } from './market.service.js';
 
 @Module({
-  imports: [
-    PlayersModule,
-    ClubsModule,
-    ContractsModule,
-    TransactionsModule,
-    LineupsModule,
-  ],
+  imports: [PlayersModule, ClubsModule, ContractsModule, TransactionsModule, LineupsModule],
   controllers: [MarketController],
   providers: [MarketService],
 })

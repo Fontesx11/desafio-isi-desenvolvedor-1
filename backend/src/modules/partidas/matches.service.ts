@@ -1,48 +1,21 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  DataSource,
-  EntityManager,
-  FindOptionsWhere,
-  Repository,
-} from 'typeorm';
+import { DataSource, EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 import { roundDivision } from '../../core/utils/math.utils.js';
 import { ClubsService } from '../clubes/clubs.service.js';
 import { Club } from '../clubes/entities/club.entity.js';
 import { Player } from '../jogadores/entities/player.entity.js';
-import {
-  PlayerCondition,
-  PlayerPosition,
-} from '../jogadores/enums/players.enum.js';
+import { PlayerCondition, PlayerPosition } from '../jogadores/enums/players.enum.js';
 import { ClubLineup } from '../liga/interfaces/lineup.interface.js';
 import { LeagueService } from '../liga/league.service.js';
-import {
-  AWAY_FIRST_DUEL,
-  DUEL_PAIRS,
-  HOME_FIRST_DUEL,
-  MAL_CONDICIONADO_PERCENT,
-  POINTS_PER_DRAW,
-  POINTS_PER_WIN,
-} from './constants/matches.constants.js';
+import { AWAY_FIRST_DUEL, DUEL_PAIRS, HOME_FIRST_DUEL, MAL_CONDICIONADO_PERCENT, POINTS_PER_DRAW, POINTS_PER_WIN } from './constants/matches.constants.js';
 import { CreateMatchDto } from './dtos/create-match.dto.js';
 import { ListMatchesQueryDto } from './dtos/list-matches-query.dto.js';
 import { MatchDuel } from './entities/match-duel.entity.js';
 import { Match } from './entities/match.entity.js';
 import { DuelAttribute, MatchResult } from './enums/matches.enum.js';
-import {
-  CreateMatchData,
-  CreateMatchDuelData,
-  MatchDetails,
-  MatchSummary,
-} from './interfaces/match.interface.js';
-import {
-  ClubStanding,
-  ClubStandingStats,
-} from './interfaces/standing.interface.js';
+import { CreateMatchData, CreateMatchDuelData, MatchDetails, MatchSummary } from './interfaces/match.interface.js';
+import { ClubStanding, ClubStandingStats } from './interfaces/standing.interface.js';
 import { sortStandings } from './utils/standings.sorting.js';
 
 @Injectable()
@@ -61,25 +34,12 @@ export class MatchesService {
     const homeLineup = await this.leagueService.findLineup(dto.home_club_id);
     const awayLineup = await this.leagueService.findLineup(dto.away_club_id);
 
-    if (
-      !homeLineup.complete ||
-      !awayLineup.complete ||
-      homeLineup.formation === null ||
-      awayLineup.formation === null
-    ) {
+    if (!homeLineup.complete || !awayLineup.complete || homeLineup.formation === null || awayLineup.formation === null) {
       throw new ConflictException('both clubs must have a complete lineup');
     }
 
-    const homeAttacks = this.calculateAttacks(
-      homeLineup,
-      awayLineup,
-      HOME_FIRST_DUEL,
-    );
-    const awayAttacks = this.calculateAttacks(
-      awayLineup,
-      homeLineup,
-      AWAY_FIRST_DUEL,
-    );
+    const homeAttacks = this.calculateAttacks(homeLineup, awayLineup, HOME_FIRST_DUEL);
+    const awayAttacks = this.calculateAttacks(awayLineup, homeLineup, AWAY_FIRST_DUEL);
 
     const matchData: CreateMatchData = {
       homeClubId: homeLineup.clubId,
@@ -99,23 +59,13 @@ export class MatchesService {
     return this.findById(matchId);
   }
 
-  calculateAttacks(
-    attackingLineup: ClubLineup,
-    defendingLineup: ClubLineup,
-    firstOrder: number,
-  ): CreateMatchDuelData[] {
+  calculateAttacks(attackingLineup: ClubLineup, defendingLineup: ClubLineup, firstOrder: number): CreateMatchDuelData[] {
     return DUEL_PAIRS.map((pair, index) => {
       const attacker = attackingLineup.players[pair.attacker];
       const defender = defendingLineup.players[pair.defender];
       const attackAttribute = this.getAttackAttribute(attacker.position);
-      const attackValue = this.applyConditionPenalty(
-        attacker,
-        attacker[attackAttribute],
-      );
-      const defenseValue = this.applyConditionPenalty(
-        defender,
-        defender.defending,
-      );
+      const attackValue = this.applyConditionPenalty(attacker, attacker[attackAttribute]);
+      const defenseValue = this.applyConditionPenalty(defender, defender.defending);
 
       return {
         order: firstOrder + index,
@@ -157,17 +107,11 @@ export class MatchesService {
     return value;
   }
 
-  async create(
-    manager: EntityManager,
-    data: CreateMatchData,
-    duels: CreateMatchDuelData[],
-  ): Promise<Match> {
+  async create(manager: EntityManager, data: CreateMatchData, duels: CreateMatchDuelData[]): Promise<Match> {
     const match = manager.create(Match, data);
     await manager.save(match);
 
-    const matchDuels = duels.map((duel) =>
-      manager.create(MatchDuel, { ...duel, matchId: match.id }),
-    );
+    const matchDuels = duels.map((duel) => manager.create(MatchDuel, { ...duel, matchId: match.id }));
 
     await manager.save(matchDuels);
 
@@ -215,14 +159,9 @@ export class MatchesService {
   }
 
   async calculateStandings(): Promise<ClubStanding[]> {
-    const clubs = await this.clubsService.find(
-      { select: { id: true, name: true } },
-      'many',
-    );
+    const clubs = await this.clubsService.find({ select: { id: true, name: true } }, 'many');
     const matches = await this.matchesRepository.find();
-    const standings = clubs.map((club) =>
-      this.calculateClubStats(club, matches),
-    );
+    const standings = clubs.map((club) => this.calculateClubStats(club, matches));
 
     return sortStandings(standings).map((stats, index) => ({
       ...stats,
@@ -248,23 +187,11 @@ export class MatchesService {
       const result = this.calculateResult(match);
 
       if (match.homeClubId === club.id) {
-        this.addMatchResult(
-          stats,
-          match.homeGoals,
-          match.awayGoals,
-          result,
-          MatchResult.MANDANTE,
-        );
+        this.addMatchResult(stats, match.homeGoals, match.awayGoals, result, MatchResult.MANDANTE);
       }
 
       if (match.awayClubId === club.id) {
-        this.addMatchResult(
-          stats,
-          match.awayGoals,
-          match.homeGoals,
-          result,
-          MatchResult.VISITANTE,
-        );
+        this.addMatchResult(stats, match.awayGoals, match.homeGoals, result, MatchResult.VISITANTE);
       }
     }
 
@@ -274,13 +201,7 @@ export class MatchesService {
     return stats;
   }
 
-  addMatchResult(
-    stats: ClubStandingStats,
-    goalsFor: number,
-    goalsAgainst: number,
-    result: MatchResult,
-    winningResult: MatchResult,
-  ): void {
+  addMatchResult(stats: ClubStandingStats, goalsFor: number, goalsAgainst: number, result: MatchResult, winningResult: MatchResult): void {
     stats.played += 1;
     stats.goalsFor += goalsFor;
     stats.goalsAgainst += goalsAgainst;

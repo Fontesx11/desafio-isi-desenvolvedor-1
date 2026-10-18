@@ -1,20 +1,10 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import {
-  calculateRemainingDays,
-  MS_PER_DAY,
-} from '../../core/utils/date.utils.js';
+import { calculateRemainingDays, MS_PER_DAY } from '../../core/utils/date.utils.js';
 import { Contract } from './entities/contract.entity.js';
 import { ContractStatus } from './enums/contracts.enum.js';
-import {
-  ContractSummary,
-  CreateContractData,
-} from './interfaces/contract.interface.js';
+import { ContractSummary, CreateContractData } from './interfaces/contract.interface.js';
 
 const MAX_LOYALTY_DAYS = 1095;
 
@@ -25,10 +15,7 @@ export class ContractsService {
     private readonly contractsRepository: Repository<Contract>,
   ) {}
 
-  async create(
-    manager: EntityManager,
-    data: CreateContractData,
-  ): Promise<Contract> {
+  async create(manager: EntityManager, data: CreateContractData): Promise<Contract> {
     const now = Date.now();
     const loyaltyUntil = data.loyaltyUntil.getTime();
 
@@ -37,9 +24,7 @@ export class ContractsService {
     }
 
     if (loyaltyUntil > now + MAX_LOYALTY_DAYS * MS_PER_DAY) {
-      throw new BadRequestException(
-        `loyalty_until must be at most ${MAX_LOYALTY_DAYS} days after the purchase`,
-      );
+      throw new BadRequestException(`loyalty_until must be at most ${MAX_LOYALTY_DAYS} days after the purchase`);
     }
 
     const contract = manager.create(Contract, {
@@ -71,12 +56,7 @@ export class ContractsService {
     return contract;
   }
 
-  async close(
-    manager: EntityManager,
-    contract: Contract,
-    status: ContractStatus,
-    endedAt: Date,
-  ): Promise<void> {
+  async close(manager: EntityManager, contract: Contract, status: ContractStatus, endedAt: Date): Promise<void> {
     await manager.update(Contract, { id: contract.id }, { status, endedAt });
   }
 

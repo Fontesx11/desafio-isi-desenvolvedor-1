@@ -4,9 +4,7 @@ import { ToPositiveInteger } from '../../../core/transformers/to-positive-intege
 import { TransactionType } from '../../transacoes/enums/transactions.enum.js';
 
 export class ListTransactionsQueryDto {
-  @Transform(({ value }: { value: unknown }) =>
-    typeof value === 'string' ? value.split(',') : value,
-  )
+  @Transform(({ value }: { value: unknown }) => (typeof value === 'string' ? value.split(',') : value))
   @ArrayUnique()
   @IsEnum(TransactionType, { each: true })
   type: TransactionType[] = [TransactionType.COMPRA, TransactionType.VENDA];

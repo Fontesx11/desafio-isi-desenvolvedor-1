@@ -5,10 +5,7 @@ import { ClubFormation } from '../clubes/enums/clubs.enum.js';
 import { LINEUP_SIZE } from '../escalacoes/constants/lineups.constants.js';
 import { LineupsService } from '../escalacoes/lineups.service.js';
 import { Player } from '../jogadores/entities/player.entity.js';
-import {
-  PlayerCondition,
-  PlayerPosition,
-} from '../jogadores/enums/players.enum.js';
+import { PlayerCondition, PlayerPosition } from '../jogadores/enums/players.enum.js';
 import { PlayersService } from '../jogadores/players.service.js';
 import { FORMATION_SECTORS } from './constants/league.constants.js';
 import { UpdateLineupDto } from './dtos/update-lineup.dto.js';
@@ -23,10 +20,7 @@ export class LeagueService {
     private readonly lineupsService: LineupsService,
   ) {}
 
-  async updateLineup(
-    clubId: number,
-    dto: UpdateLineupDto,
-  ): Promise<ClubLineup> {
+  async updateLineup(clubId: number, dto: UpdateLineupDto): Promise<ClubLineup> {
     await this.clubsService.find({ where: { id: clubId } });
 
     const players: Player[] = [];
@@ -55,36 +49,16 @@ export class LeagueService {
     return this.findLineup(clubId);
   }
 
-  assertPositionsMatchFormation(
-    players: Player[],
-    formation: ClubFormation,
-  ): void {
+  assertPositionsMatchFormation(players: Player[], formation: ClubFormation): void {
     const sectors = FORMATION_SECTORS[formation];
 
-    const goalkeepers = players.filter(
-      (player) => player.position === PlayerPosition.GOL,
-    ).length;
-    const defenders = players.filter(
-      (player) =>
-        player.position === PlayerPosition.ZAG ||
-        player.position === PlayerPosition.LAT,
-    ).length;
-    const midfielders = players.filter(
-      (player) => player.position === PlayerPosition.MEI,
-    ).length;
-    const attackers = players.filter(
-      (player) => player.position === PlayerPosition.ATA,
-    ).length;
+    const goalkeepers = players.filter((player) => player.position === PlayerPosition.GOL).length;
+    const defenders = players.filter((player) => player.position === PlayerPosition.ZAG || player.position === PlayerPosition.LAT).length;
+    const midfielders = players.filter((player) => player.position === PlayerPosition.MEI).length;
+    const attackers = players.filter((player) => player.position === PlayerPosition.ATA).length;
 
-    if (
-      goalkeepers !== 1 ||
-      defenders !== sectors.defense ||
-      midfielders !== sectors.midfield ||
-      attackers !== sectors.attack
-    ) {
-      throw new ConflictException(
-        'the player positions do not match the formation',
-      );
+    if (goalkeepers !== 1 || defenders !== sectors.defense || midfielders !== sectors.midfield || attackers !== sectors.attack) {
+      throw new ConflictException('the player positions do not match the formation');
     }
   }
 
@@ -96,9 +70,7 @@ export class LeagueService {
     const lineup = await this.lineupsService.findByClub(clubId);
     const { squad } = this.clubsService.calculateDynamicValues(club);
 
-    const players = squad.filter((player) =>
-      lineup.some((item) => item.playerId === player.id),
-    );
+    const players = squad.filter((player) => lineup.some((item) => item.playerId === player.id));
 
     return {
       clubId: club.id,

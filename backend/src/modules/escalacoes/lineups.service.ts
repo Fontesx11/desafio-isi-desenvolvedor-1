@@ -14,16 +14,10 @@ export class LineupsService {
     return this.lineupsRepository.findBy({ clubId });
   }
 
-  async replace(
-    manager: EntityManager,
-    clubId: number,
-    playerIds: number[],
-  ): Promise<void> {
+  async replace(manager: EntityManager, clubId: number, playerIds: number[]): Promise<void> {
     await manager.delete(Lineup, { clubId });
 
-    const lineup = playerIds.map((playerId) =>
-      manager.create(Lineup, { clubId, playerId }),
-    );
+    const lineup = playerIds.map((playerId) => manager.create(Lineup, { clubId, playerId }));
 
     await manager.save(lineup);
   }

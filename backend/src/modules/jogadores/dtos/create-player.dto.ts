@@ -1,12 +1,4 @@
-import {
-  IsEnum,
-  IsInt,
-  IsString,
-  Length,
-  Matches,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsEnum, IsInt, IsString, Length, Matches, Max, Min } from 'class-validator';
 import { NormalizeSpaces } from '../../../core/transformers/normalize-spaces.decorator.js';
 import { CrossFieldRule } from '../../../core/validators/cross-field-rule.decorator.js';
 import { PlayerPosition } from '../enums/players.enum.js';
@@ -14,14 +6,7 @@ import { PlayerPosition } from '../enums/players.enum.js';
 const MAX_ATTRIBUTES_SUM = 480;
 
 function highestAttribute(dto: CreatePlayerDto): number {
-  return Math.max(
-    dto.pace,
-    dto.shooting,
-    dto.passing,
-    dto.dribbling,
-    dto.defending,
-    dto.physical,
-  );
+  return Math.max(dto.pace, dto.shooting, dto.passing, dto.dribbling, dto.defending, dto.physical);
 }
 
 export class CreatePlayerDto {
@@ -43,10 +28,7 @@ export class CreatePlayerDto {
   @IsInt()
   @Min(1)
   @Max(100)
-  @CrossFieldRule<CreatePlayerDto>(
-    (dto) => !(dto.age >= 35 && dto.agility > 85),
-    'agility must be at most 85 for players aged 35 or older',
-  )
+  @CrossFieldRule<CreatePlayerDto>((dto) => !(dto.age >= 35 && dto.agility > 85), 'agility must be at most 85 for players aged 35 or older')
   agility: number;
 
   @IsInt()
@@ -83,16 +65,7 @@ export class CreatePlayerDto {
   @Min(1)
   @Max(99)
   @CrossFieldRule<CreatePlayerDto>(
-    (dto) =>
-      !(
-        dto.pace +
-          dto.shooting +
-          dto.passing +
-          dto.dribbling +
-          dto.defending +
-          dto.physical >
-        MAX_ATTRIBUTES_SUM
-      ),
+    (dto) => !(dto.pace + dto.shooting + dto.passing + dto.dribbling + dto.defending + dto.physical > MAX_ATTRIBUTES_SUM),
     `the sum of the six attributes must be at most ${MAX_ATTRIBUTES_SUM}`,
   )
   physical: number;
@@ -100,10 +73,7 @@ export class CreatePlayerDto {
   @IsInt()
   @Min(1)
   @Max(99)
-  @CrossFieldRule<CreatePlayerDto>(
-    (dto) => !(dto.potential < highestAttribute(dto)),
-    'potential must be at least the highest attribute',
-  )
+  @CrossFieldRule<CreatePlayerDto>((dto) => !(dto.potential < highestAttribute(dto)), 'potential must be at least the highest attribute')
   @CrossFieldRule<CreatePlayerDto>(
     (dto) => !(dto.age >= 33 && dto.potential > highestAttribute(dto)),
     'potential must equal the highest attribute for players aged 33 or older',
