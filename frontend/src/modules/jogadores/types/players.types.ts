@@ -52,6 +52,11 @@ export type PlayersTab = 'all' | 'free' | 'in-clubs';
 
 export type PlayerAction = 'details' | 'edit' | 'condition' | 'delete' | 'buy';
 
+export type BuyPlayer = {
+  club_id: number;
+  loyalty_until: string;
+};
+
 export type PurchaseResult = {
   id: number;
   club_id: number;

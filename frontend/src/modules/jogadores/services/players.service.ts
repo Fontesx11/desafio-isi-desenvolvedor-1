@@ -1,8 +1,10 @@
 import { api } from '@/shared/api/api';
 import type {
+  BuyPlayer,
   CreatePlayer,
   Page,
   Player,
+  PurchaseResult,
   UpdatePlayer,
   UpdatePlayerCondition,
 } from '../types/players.types';
@@ -35,4 +37,12 @@ export const updatePlayerCondition = async (
 
 export const deletePlayer = async (id: number) => {
   await api.delete(`/players/${id}`);
+};
+
+export const buyPlayer = async (id: number, purchase: BuyPlayer) => {
+  const { data } = await api.post<PurchaseResult>(
+    `/players/${id}/buy`,
+    purchase,
+  );
+  return data;
 };
