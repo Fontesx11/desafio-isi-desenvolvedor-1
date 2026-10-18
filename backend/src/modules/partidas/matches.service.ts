@@ -12,6 +12,8 @@ import {
 } from 'typeorm';
 import { roundDivision } from '../../core/utils/math.utils.js';
 import { ClubsService } from '../clubes/clubs.service.js';
+import { Club } from '../clubes/entities/club.entity.js';
+import { ClubSort } from '../clubes/enums/clubs.enum.js';
 import { Player } from '../jogadores/entities/player.entity.js';
 import {
   PlayerCondition,
@@ -24,6 +26,8 @@ import {
   DUEL_PAIRS,
   HOME_FIRST_DUEL,
   MAL_CONDICIONADO_PERCENT,
+  POINTS_PER_DRAW,
+  POINTS_PER_WIN,
 } from './constants/matches.constants.js';
 import { CreateMatchDto } from './dtos/create-match.dto.js';
 import { ListMatchesQueryDto } from './dtos/list-matches-query.dto.js';
@@ -36,6 +40,11 @@ import {
   MatchDetails,
   MatchSummary,
 } from './interfaces/match.interface.js';
+import {
+  ClubStanding,
+  ClubStandingStats,
+} from './interfaces/standing.interface.js';
+import { sortStandings } from './utils/standings.sorting.js';
 
 @Injectable()
 export class MatchesService {
@@ -202,6 +211,87 @@ export class MatchesService {
       match,
       result: this.calculateResult(match),
     }));
+  }
+
+  async calculateStandings(): Promise<ClubStanding[]> {
+    const clubs = await this.clubsService.findAll({ sort: ClubSort.NAME });
+    const matches = await this.matchesRepository.find();
+    const standings = clubs.map((club) =>
+      this.calculateClubStats(club, matches),
+    );
+
+    return sortStandings(standings).map((stats, index) => ({
+      ...stats,
+      position: index + 1,
+    }));
+  }
+
+  calculateClubStats(club: Club, matches: Match[]): ClubStandingStats {
+    const stats: ClubStandingStats = {
+      clubId: club.id,
+      clubName: club.name,
+      played: 0,
+      wins: 0,
+      draws: 0,
+      losses: 0,
+      goalsFor: 0,
+      goalsAgainst: 0,
+      goalDifference: 0,
+      points: 0,
+    };
+
+    for (const match of matches) {
+      const result = this.calculateResult(match);
+
+      if (match.homeClubId === club.id) {
+        this.addMatchResult(
+          stats,
+          match.homeGoals,
+          match.awayGoals,
+          result,
+          MatchResult.MANDANTE,
+        );
+      }
+
+      if (match.awayClubId === club.id) {
+        this.addMatchResult(
+          stats,
+          match.awayGoals,
+          match.homeGoals,
+          result,
+          MatchResult.VISITANTE,
+        );
+      }
+    }
+
+    stats.goalDifference = stats.goalsFor - stats.goalsAgainst;
+    stats.points = stats.wins * POINTS_PER_WIN + stats.draws * POINTS_PER_DRAW;
+
+    return stats;
+  }
+
+  addMatchResult(
+    stats: ClubStandingStats,
+    goalsFor: number,
+    goalsAgainst: number,
+    result: MatchResult,
+    winningResult: MatchResult,
+  ): void {
+    stats.played += 1;
+    stats.goalsFor += goalsFor;
+    stats.goalsAgainst += goalsAgainst;
+
+    if (result === winningResult) {
+      stats.wins += 1;
+      return;
+    }
+
+    if (result === MatchResult.EMPATE) {
+      stats.draws += 1;
+      return;
+    }
+
+    stats.losses += 1;
   }
 
   calculateResult(match: Match): MatchResult {

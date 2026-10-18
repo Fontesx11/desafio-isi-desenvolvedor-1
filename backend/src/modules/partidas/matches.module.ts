@@ -6,6 +6,7 @@ import { MatchDuel } from './entities/match-duel.entity.js';
 import { Match } from './entities/match.entity.js';
 import { MatchesController } from './matches.controller.js';
 import { MatchesService } from './matches.service.js';
+import { StandingsController } from './standings.controller.js';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { MatchesService } from './matches.service.js';
     ClubsModule,
     LeagueModule,
   ],
-  controllers: [MatchesController],
+  controllers: [MatchesController, StandingsController],
   providers: [MatchesService],
 })
 export class MatchesModule {}

@@ -11,3 +11,7 @@ export const HOME_FIRST_DUEL = 1;
 export const AWAY_FIRST_DUEL = 4;
 
 export const MAL_CONDICIONADO_PERCENT = 85;
+
+export const POINTS_PER_WIN = 3;
+
+export const POINTS_PER_DRAW = 1;
