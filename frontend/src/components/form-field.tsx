@@ -8,11 +8,9 @@ import {
 } from '@/components/ui/field';
 
 type FormFieldProps = {
-  // Sem rótulo quando as opções já se explicam (ex.: escolha da condição)
   label?: ReactNode;
   htmlFor?: string;
   error?: string;
-  // Texto de ajuda, trocado pela mensagem de erro quando houver
   description?: ReactNode;
   className?: string;
   children: ReactNode;

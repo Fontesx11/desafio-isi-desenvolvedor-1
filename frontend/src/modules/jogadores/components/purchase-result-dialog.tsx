@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/dialog';
 import { formatCurrency, formatDate, formatTime } from '@/lib/format';
 import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
-import { PURCHASE_TOTAL_COST_MOCK } from '../mocks/players.mock';
 import type { Player, PurchaseResult } from '../types/players.types';
 
 type PurchaseResultDialogProps = {
@@ -46,8 +45,7 @@ export function PurchaseResultDialog({
     {
       label: 'Custo total',
       hint: 'Valor + taxa',
-      // simulacao: valor fixo do mockup
-      value: formatCurrency(PURCHASE_TOTAL_COST_MOCK),
+      value: formatCurrency(result.value + result.fee),
       highlight: true,
     },
     {
