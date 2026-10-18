@@ -78,7 +78,7 @@ export class Player {
   @UpdateDateColumn({ name: 'atualizado_em', type: 'timestamptz' })
   updatedAt: Date;
 
-   @ManyToOne(() => Club, (club) => club.players, { nullable: true })
+  @ManyToOne(() => Club, (club) => club.players, { nullable: true })
   @JoinColumn({ name: 'clube_id' })
-    club?: Relation<Club>;
+  club?: Relation<Club>;
 }

@@ -17,6 +17,7 @@ import { sortPlayers } from '../jogadores/utils/players.sorting.js';
 import { CreateClubDto } from './dtos/create-club.dto.js';
 import { ListClubsQueryDto } from './dtos/list-clubs-query.dto.js';
 import { Club } from './entities/club.entity.js';
+import { ClubFormation } from './enums/clubs.enum.js';
 import {
   ClubDetails,
   ClubWithDynamicValues,
@@ -100,6 +101,14 @@ export class ClubsService {
     await manager.update(Club, { id: club.id }, { cash });
 
     return cash;
+  }
+
+  async changeFormation(
+    manager: EntityManager,
+    clubId: number,
+    formation: ClubFormation,
+  ): Promise<void> {
+    await manager.update(Club, { id: clubId }, { formation });
   }
 
   async create(dto: CreateClubDto): Promise<ClubWithDynamicValues> {
