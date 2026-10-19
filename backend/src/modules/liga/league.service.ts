@@ -29,11 +29,11 @@ export class LeagueService {
       const player = await this.playersService.findOne({ id: playerId });
 
       if (player.clubId !== clubId) {
-        throw new ConflictException('the player does not belong to the club');
+        throw new ConflictException('o jogador não faz parte do elenco do clube');
       }
 
       if (player.condition === PlayerCondition.DOENTE) {
-        throw new ConflictException('a sick player cannot be in the lineup');
+        throw new ConflictException('um jogador DOENTE não pode ser escalado');
       }
 
       players.push(player);
@@ -58,7 +58,7 @@ export class LeagueService {
     const attackers = players.filter((player) => player.position === PlayerPosition.ATA).length;
 
     if (goalkeepers !== 1 || defenders !== sectors.defense || midfielders !== sectors.midfield || attackers !== sectors.attack) {
-      throw new ConflictException('the player positions do not match the formation');
+      throw new ConflictException('as posições dos jogadores não fecham a formação');
     }
   }
 

@@ -43,13 +43,13 @@ export class MarketService {
     });
 
     if (player.clubId !== null) {
-      throw new ConflictException('the player already has a club');
+      throw new ConflictException('o jogador não está livre');
     }
 
     const clubSoldPlayer = await this.transactionsService.hasSale(club.id, player.id);
 
     if (clubSoldPlayer) {
-      throw new ConflictException('the club cannot buy back a player it sold');
+      throw new ConflictException('o clube não pode comprar um jogador que ele mesmo já vendeu');
     }
 
     const marketValueCents = Math.round(player.marketValue * 100);
@@ -91,7 +91,7 @@ export class MarketService {
     const player = await this.playersService.findById(id);
 
     if (player.clubId === null) {
-      throw new ConflictException('the player has no club');
+      throw new ConflictException('um jogador livre não pode ser vendido');
     }
 
     const club = await this.clubsService.find({ where: { id: player.clubId } });
