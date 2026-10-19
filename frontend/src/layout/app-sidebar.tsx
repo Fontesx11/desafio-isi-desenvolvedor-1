@@ -1,13 +1,12 @@
 import { Link, useMatchRoute } from '@tanstack/react-router';
 import { cn } from 'cn';
-import { Clock, Plus, Swords, Trophy } from 'lucide-react';
+import { Clock, Swords, Trophy } from 'lucide-react';
 import type { ReactNode } from 'react';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,

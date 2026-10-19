@@ -1,5 +1,4 @@
 import { useMatches } from '@tanstack/react-router';
-import { RefreshCw } from 'lucide-react';
 import { Fragment } from 'react';
 import {
   Breadcrumb,
