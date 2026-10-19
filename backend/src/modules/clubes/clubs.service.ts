@@ -5,16 +5,13 @@ import { ContractsService } from '../contratos/contracts.service.js';
 import { PlayerSort } from '../jogadores/enums/players.enum.js';
 import { calculatePlayerDynamicValues } from '../jogadores/utils/players.calculations.js';
 import { sortPlayers } from '../jogadores/utils/players.sorting.js';
+import { CLUB_LIMIT, INITIAL_CASH, SQUAD_LIMIT } from './constants/clubs.constants.js';
 import { CreateClubDto } from './dtos/create-club.dto.js';
 import { ListClubsQueryDto } from './dtos/list-clubs-query.dto.js';
 import { Club } from './entities/club.entity.js';
 import { ClubFormation } from './enums/clubs.enum.js';
 import { ClubDetails, ClubWithDynamicValues } from './interfaces/club.interface.js';
 import { sortClubs } from './utils/clubs.sorting.js';
-
-const CLUB_LIMIT = 20;
-const INITIAL_CASH = '300.00';
-const SQUAD_LIMIT = 12;
 
 @Injectable()
 export class ClubsService {

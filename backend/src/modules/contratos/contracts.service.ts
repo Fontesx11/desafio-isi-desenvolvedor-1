@@ -20,11 +20,11 @@ export class ContractsService {
     const loyaltyUntil = data.loyaltyUntil.getTime();
 
     if (loyaltyUntil <= now) {
-      throw new BadRequestException('loyalty_until must be in the future');
+      throw new BadRequestException('o fim da fidelidade deve ser depois do momento da compra');
     }
 
     if (loyaltyUntil > now + MAX_LOYALTY_DAYS * MS_PER_DAY) {
-      throw new BadRequestException(`loyalty_until must be at most ${MAX_LOYALTY_DAYS} days after the purchase`);
+      throw new BadRequestException(`o fim da fidelidade deve ser de no máximo ${MAX_LOYALTY_DAYS} dias depois da compra`);
     }
 
     const contract = manager.create(Contract, {
@@ -50,7 +50,7 @@ export class ContractsService {
     });
 
     if (!contract) {
-      throw new NotFoundException('active contract not found');
+      throw new NotFoundException('contrato ativo não encontrado');
     }
 
     return contract;
