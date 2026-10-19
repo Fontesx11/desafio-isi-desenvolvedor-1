@@ -78,7 +78,7 @@ export class PlayersController {
     description: 'Falha ao encontrar jogador',
     schema: {
       example: {
-        message: 'Player not found',
+        message: 'Jogador não encontrado',
         error: 'Not Found',
         statusCode: 404,
       },
@@ -110,7 +110,7 @@ export class PlayersController {
     description: 'Falha ao encontrar jogador',
     schema: {
       example: {
-        message: 'Player not found',
+        message: 'Jogador não encontrado',
         error: 'Not Found',
         statusCode: 404,
       },
@@ -153,7 +153,7 @@ export class PlayersController {
     description: 'Falha ao encontrar jogador',
     schema: {
       example: {
-        message: 'Player not found',
+        message: 'Jogador não encontrado',
         error: 'Not Found',
         statusCode: 404,
       },
@@ -185,7 +185,7 @@ export class PlayersController {
     description: 'Falha ao encontrar jogador',
     schema: {
       example: {
-        message: 'Player not found',
+        message: 'Jogador não encontrado',
         error: 'Not Found',
         statusCode: 404,
       },

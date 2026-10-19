@@ -6,7 +6,7 @@ export function IsBrasiliaDateTime() {
     name: 'isBrasiliaDateTime',
     validator: {
       validate: (value: unknown) => typeof value === 'string' && isBrasiliaDateTime(value),
-      defaultMessage: (args) => `${args?.property} must be a date and time in the format YYYY-MM-DDTHH:MM-03:00`,
+      defaultMessage: (args) => `${args?.property} deve ser uma data e hora no formato YYYY-MM-DDTHH:MM-03:00`,
     },
   });
 }

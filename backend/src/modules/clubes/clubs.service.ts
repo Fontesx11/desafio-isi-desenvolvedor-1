@@ -34,7 +34,7 @@ export class ClubsService {
     const club = await this.clubsRepository.findOne(options);
 
     if (!club) {
-      throw new NotFoundException('Club not found');
+      throw new NotFoundException('Clube não encontrado');
     }
 
     return club;
@@ -69,11 +69,11 @@ export class ClubsService {
     const cashLimitCents = Math.round(Number(club.cash) * 100) / 2;
 
     if (totalCostCents > cashLimitCents) {
-      throw new ConflictException('the total cost cannot exceed 50% of the club cash');
+      throw new ConflictException('o custo total não pode exceder 50% do caixa do clube');
     }
 
     if (club.players.length >= SQUAD_LIMIT) {
-      throw new ConflictException(`a club can have at most ${SQUAD_LIMIT} players`);
+      throw new ConflictException(`um clube pode ter no máximo ${SQUAD_LIMIT} jogadores`);
     }
   }
 
@@ -94,7 +94,7 @@ export class ClubsService {
     const clubsCount = await this.clubsRepository.count();
 
     if (clubsCount >= CLUB_LIMIT) {
-      throw new ConflictException(`the league accepts at most ${CLUB_LIMIT} clubs`);
+      throw new ConflictException(`a liga aceita no máximo ${CLUB_LIMIT} clubes`);
     }
 
     const nameTaken = await this.clubsRepository
@@ -105,7 +105,7 @@ export class ClubsService {
       .getExists();
 
     if (nameTaken) {
-      throw new ConflictException('a club with this name already exists');
+      throw new ConflictException('já existe um clube com este nome');
     }
 
     const acronymTaken = await this.clubsRepository.existsBy({
@@ -113,7 +113,7 @@ export class ClubsService {
     });
 
     if (acronymTaken) {
-      throw new ConflictException('a club with this acronym already exists');
+      throw new ConflictException('já existe um clube com esta sigla');
     }
 
     const club = this.clubsRepository.create({

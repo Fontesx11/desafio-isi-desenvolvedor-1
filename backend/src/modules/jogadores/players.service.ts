@@ -111,7 +111,7 @@ export class PlayersService {
     const player = await this.playersRepository.findOneBy(condition);
 
     if (!player) {
-      throw new NotFoundException('Player not found');
+      throw new NotFoundException('Jogador não encontrado');
     }
 
     return player;

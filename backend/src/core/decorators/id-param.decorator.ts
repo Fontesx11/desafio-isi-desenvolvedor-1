@@ -8,7 +8,7 @@ export const IdParam = createParamDecorator((name: string = 'id', context: Execu
   const id = Number(value);
 
   if (typeof value !== 'string' || !/^[1-9][0-9]*$/.test(value) || id > MAX_ID) {
-    throw new NotFoundException('Resource not found');
+    throw new NotFoundException('Recurso não encontrado');
   }
 
   return id;
