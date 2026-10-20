@@ -32,7 +32,7 @@ export class PlayersController {
     description: 'Falha ao cadastrar jogador',
     schema: {
       example: {
-        message: 'the sum of the six attributes must be at most 480',
+        message: 'a soma dos seis atributos não pode passar de 480',
         error: 'Bad Request',
         statusCode: 400,
       },
@@ -55,7 +55,7 @@ export class PlayersController {
     description: 'Filtros inválidos',
     schema: {
       example: {
-        message: 'min_age must not be greater than max_age',
+        message: 'a idade mínima não pode ser maior que a idade máxima',
         error: 'Bad Request',
         statusCode: 400,
       },
@@ -99,7 +99,7 @@ export class PlayersController {
     description: 'Falha ao atualizar jogador',
     schema: {
       example: {
-        message: 'agility must not be greater than 100',
+        message: 'a agilidade deve estar entre 1 e 100',
         error: 'Bad Request',
         statusCode: 400,
       },
@@ -121,7 +121,7 @@ export class PlayersController {
     description: 'Jogador com clube não pode mudar de posição, e a idade não pode diminuir',
     schema: {
       example: {
-        message: 'a player with a club cannot change position',
+        message: 'jogador com clube não muda de posição',
         error: 'Conflict',
         statusCode: 409,
       },
@@ -142,7 +142,7 @@ export class PlayersController {
     description: 'Falha ao alterar condição do jogador',
     schema: {
       example: {
-        message: 'condition must be one of the following values: APTO, MAL_CONDICIONADO, DOENTE',
+        message: 'a condição deve ser um dos valores: APTO, MAL_CONDICIONADO, DOENTE',
         error: 'Bad Request',
         statusCode: 400,
       },
@@ -164,7 +164,7 @@ export class PlayersController {
     description: 'Jogador DOENTE não pode voltar direto para APTO',
     schema: {
       example: {
-        message: 'condition cannot change directly from DOENTE to APTO',
+        message: 'a condição não pode passar de DOENTE direto para APTO',
         error: 'Conflict',
         statusCode: 409,
       },
@@ -196,7 +196,7 @@ export class PlayersController {
     description: 'Jogador com clube não pode ser removido',
     schema: {
       example: {
-        message: 'a player with a club cannot be deleted',
+        message: 'só jogador livre pode ser excluído',
         error: 'Conflict',
         statusCode: 409,
       },

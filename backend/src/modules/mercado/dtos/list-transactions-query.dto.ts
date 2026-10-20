@@ -12,7 +12,7 @@ export class ListTransactionsQueryDto {
   })
   @Transform(({ value }: { value: unknown }) => (typeof value === 'string' ? value.split(',') : value))
   @ArrayUnique({ message: 'os tipos não podem se repetir' })
-  @IsEnum(TransactionType, { each: true, message: 'cada tipo deve ser um dos valores: $constraint2' })
+  @IsEnum(TransactionType, { each: true, message: 'cada tipo deve ser um dos valores: COMPRA, VENDA' })
   type: TransactionType[] = [TransactionType.COMPRA, TransactionType.VENDA];
 
   @ApiPropertyOptional({ description: 'Só as transações desse jogador no clube', example: 2 })

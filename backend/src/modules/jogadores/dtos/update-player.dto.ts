@@ -11,6 +11,6 @@ export class UpdatePlayerConditionDto {
     enum: PlayerCondition,
     example: PlayerCondition.MAL_CONDICIONADO,
   })
-  @IsEnum(PlayerCondition)
+  @IsEnum(PlayerCondition, { message: 'a condição deve ser um dos valores: APTO, MAL_CONDICIONADO, DOENTE' })
   condition: PlayerCondition;
 }

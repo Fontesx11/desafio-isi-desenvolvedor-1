@@ -54,7 +54,7 @@ export class PlayersService {
     const player = await this.findOne({ id });
 
     if (player.condition === PlayerCondition.DOENTE && condition === PlayerCondition.APTO) {
-      throw new ConflictException('condition cannot change directly from DOENTE to APTO');
+      throw new ConflictException('a condição não pode passar de DOENTE direto para APTO');
     }
 
     if (player.condition !== condition) {
@@ -76,11 +76,11 @@ export class PlayersService {
     const player = await this.findOne({ id });
 
     if (player.clubId !== null && dto.position !== player.position) {
-      throw new ConflictException('a player with a club cannot change position');
+      throw new ConflictException('jogador com clube não muda de posição');
     }
 
     if (dto.age < player.age) {
-      throw new ConflictException('age cannot be lower than the current age');
+      throw new ConflictException('a idade não pode ser menor que a idade atual');
     }
 
     this.playersRepository.merge(player, dto);
@@ -101,7 +101,7 @@ export class PlayersService {
     const player = await this.findOne({ id });
 
     if (player.clubId !== null) {
-      throw new ConflictException('a player with a club cannot be deleted');
+      throw new ConflictException('só jogador livre pode ser excluído');
     }
 
     await this.playersRepository.softRemove(player);
