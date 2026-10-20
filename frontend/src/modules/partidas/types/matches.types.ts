@@ -39,3 +39,8 @@ export type Match = {
   result: MatchResult;
   duels?: Duel[];
 };
+
+export type CreateMatch = {
+  home_club_id: number;
+  away_club_id: number;
+};

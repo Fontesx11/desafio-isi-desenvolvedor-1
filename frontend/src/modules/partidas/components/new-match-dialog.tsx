@@ -1,6 +1,7 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
 import { Info, Shield, Swords } from 'lucide-react';
-import { useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 import { FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
@@ -19,25 +20,54 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { CLUBS_MOCK } from '@/modules/clubes/mocks/clubs.mock';
-import { PLAYED_MATCH_MOCK } from '../mocks/matches.mock';
+import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
+import type { Club } from '@/modules/clubes/types/clubs.types';
+import { useMatchesQueries } from '../hooks/useMatchesQueries';
+import { newMatchSchema, type NewMatchValues } from '../schemas/matches.schema';
 
 export function NewMatchDialog({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
-  const [homeClubId, setHomeClubId] = useState('');
-  const [awayClubId, setAwayClubId] = useState('');
 
-  // simulacao
-  function handlePlay() {
-    const { home, away } = PLAYED_MATCH_MOCK;
-    toast.success('Partida jogada', {
-      description: `${home.club_name} ${home.goals} × ${away.goals} ${away.club_name}. Placar e duelos devolvidos pela API.`,
-    });
-    onClose();
-    navigate({
-      to: '/matches/$matchId',
-      params: { matchId: String(PLAYED_MATCH_MOCK.id) },
-    });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(newMatchSchema),
+    defaultValues: { homeClubId: '', awayClubId: '' },
+  });
+
+  const { useGetClubs } = useClubsQueries();
+  const { data: clubs = [] } = useGetClubs();
+
+  const homeClubId = useWatch({ control, name: 'homeClubId' });
+  const awayClubId = useWatch({ control, name: 'awayClubId' });
+  const homeOptions = clubs.filter((club) => String(club.id) !== awayClubId);
+  const awayOptions = clubs.filter((club) => String(club.id) !== homeClubId);
+
+  const { useCreateMatch } = useMatchesQueries();
+  const { mutate, isPending } = useCreateMatch();
+
+  function onSubmit(values: NewMatchValues) {
+    mutate(
+      {
+        home_club_id: Number(values.homeClubId),
+        away_club_id: Number(values.awayClubId),
+      },
+      {
+        onSuccess: (match) => {
+          const { home, away } = match;
+          toast.success('Partida jogada', {
+            description: `${home.club_name} ${home.goals} × ${away.goals} ${away.club_name}.`,
+          });
+          onClose();
+          navigate({
+            to: '/matches/$matchId',
+            params: { matchId: String(match.id) },
+          });
+        },
+      },
+    );
   }
 
   return (
@@ -51,29 +81,54 @@ export function NewMatchDialog({ onClose }: { onClose: () => void }) {
           </DialogDescription>
         </DialogHeader>
 
-        <FormField
-          label="Mandante"
-          htmlFor="match-home"
-          description="Faz os 3 primeiros ataques."
+        <form
+          id="new-match-form"
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-6"
         >
-          <ClubSelect
-            id="match-home"
-            value={homeClubId}
-            onChange={setHomeClubId}
-          />
-        </FormField>
+          <FormField
+            label="Mandante"
+            htmlFor="match-home"
+            error={errors.homeClubId?.message}
+            description="Faz os 3 primeiros ataques."
+          >
+            <Controller
+              control={control}
+              name="homeClubId"
+              render={({ field }) => (
+                <ClubSelect
+                  id="match-home"
+                  clubs={homeOptions}
+                  value={field.value}
+                  invalid={!!errors.homeClubId}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </FormField>
 
-        <FormField
-          label="Visitante"
-          htmlFor="match-away"
-          description="Precisa ser um clube diferente do mandante."
-        >
-          <ClubSelect
-            id="match-away"
-            value={awayClubId}
-            onChange={setAwayClubId}
-          />
-        </FormField>
+          <FormField
+            label="Visitante"
+            htmlFor="match-away"
+            error={errors.awayClubId?.message}
+            description="Precisa ser um clube diferente do mandante."
+          >
+            <Controller
+              control={control}
+              name="awayClubId"
+              render={({ field }) => (
+                <ClubSelect
+                  id="match-away"
+                  clubs={awayOptions}
+                  value={field.value}
+                  invalid={!!errors.awayClubId}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </FormField>
+        </form>
 
         <div className="space-y-2 rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-600">
           <p className="flex items-center gap-2 font-medium text-zinc-900">
@@ -98,7 +153,7 @@ export function NewMatchDialog({ onClose }: { onClose: () => void }) {
           <Button type="button" variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button type="button" onClick={handlePlay}>
+          <Button type="submit" form="new-match-form" disabled={isPending}>
             <Swords />
             Jogar partida
           </Button>
@@ -110,24 +165,29 @@ export function NewMatchDialog({ onClose }: { onClose: () => void }) {
 
 function ClubSelect({
   id,
+  clubs,
   value,
+  invalid,
   onChange,
 }: {
   id: string;
+  clubs: Club[];
   value: string;
+  invalid: boolean;
   onChange: (value: string) => void;
 }) {
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger
         id={id}
+        aria-invalid={invalid}
         className="w-full justify-start [&>svg:last-child]:ml-auto"
       >
         <Shield className="text-zinc-400" />
         <SelectValue placeholder="Escolha o clube" />
       </SelectTrigger>
-      <SelectContent>
-        {CLUBS_MOCK.map((club) => (
+      <SelectContent position="popper">
+        {clubs.map((club) => (
           <SelectItem key={club.id} value={String(club.id)}>
             {club.name} ({club.acronym})
           </SelectItem>
