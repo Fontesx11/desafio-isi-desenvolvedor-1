@@ -97,10 +97,7 @@ export function EditPlayerDialog({ player, onClose }: EditPlayerDialogProps) {
           <FormField
             label="Posição"
             error={errors.position?.message}
-            description={
-              hasClub &&
-              'Jogador com clube não muda de posição'
-            }
+            description={hasClub && 'Jogador com clube não muda de posição'}
           >
             <Controller
               control={control}

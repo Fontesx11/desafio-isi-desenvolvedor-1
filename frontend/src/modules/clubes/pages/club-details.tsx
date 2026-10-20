@@ -78,7 +78,11 @@ export default function ClubDetailsPage() {
           <h1 className="text-2xl font-semibold tracking-tight">{club.name}</h1>
           <Badge variant="outline">Sigla {club.acronym}</Badge>
         </div>
-        <Button type="button" className="h-10 gap-2 px-4" onClick={()=> navigate({ to: '/players' })}>
+        <Button
+          type="button"
+          className="h-10 gap-2 px-4"
+          onClick={() => navigate({ to: '/players' })}
+        >
           <ShoppingCart />
           Comprar jogadores
         </Button>

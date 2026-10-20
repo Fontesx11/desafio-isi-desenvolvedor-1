@@ -83,7 +83,7 @@ export function AppSidebar() {
 
         <SidebarGroup>
           <SidebarGroupLabel>Clubes</SidebarGroupLabel>
-        
+
           <SidebarMenu>
             {clubs.map((club) => {
               const params = { clubId: String(club.id) };
