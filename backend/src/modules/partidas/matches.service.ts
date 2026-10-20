@@ -35,7 +35,7 @@ export class MatchesService {
     const awayLineup = await this.leagueService.findLineup(dto.away_club_id);
 
     if (!homeLineup.complete || !awayLineup.complete || homeLineup.formation === null || awayLineup.formation === null) {
-      throw new ConflictException('both clubs must have a complete lineup');
+      throw new ConflictException('os dois clubes devem ter a escalação completa, com os 5 titulares');
     }
 
     const homeAttacks = this.calculateAttacks(homeLineup, awayLineup, HOME_FIRST_DUEL);
@@ -125,7 +125,7 @@ export class MatchesService {
     });
 
     if (!match) {
-      throw new NotFoundException('Match not found');
+      throw new NotFoundException('Partida não encontrada');
     }
 
     const duels = await this.matchDuelsRepository.find({
