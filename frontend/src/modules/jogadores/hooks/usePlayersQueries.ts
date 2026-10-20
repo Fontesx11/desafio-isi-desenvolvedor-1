@@ -51,7 +51,10 @@ export function usePlayersQueries() {
     useMutation({
       mutationFn: ({ id, data }: { id: number; data: UpdatePlayerCondition }) =>
         updatePlayerCondition(id, data),
-      onSuccess: refreshPlayers,
+      onSuccess: () => {
+        refreshPlayers();
+        queryClient.invalidateQueries({ queryKey: ['lineup'] });
+      },
       onError: showError,
     });
 

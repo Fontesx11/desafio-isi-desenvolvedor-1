@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { FORMATION_VALUES } from '../constants/clubs.constants';
 
 const NAME_MESSAGE = 'Use de 3 a 60 caracteres.';
 
@@ -8,3 +9,10 @@ export const createClubSchema = z.object({
 });
 
 export type CreateClubValues = z.infer<typeof createClubSchema>;
+
+export const lineupSchema = z.object({
+  formation: z.enum(FORMATION_VALUES, { error: 'Escolha a formação.' }),
+  player_ids: z.array(z.string().min(1, 'Escolha o titular.')),
+});
+
+export type LineupValues = z.infer<typeof lineupSchema>;

@@ -25,3 +25,5 @@ export type ClubDetails = Club & { players: SquadPlayer[] };
 export type ClubSort = 'name' | 'net_worth_desc' | 'net_worth_asc';
 
 export type Formation = '3-1' | '2-2' | '2-1-1' | '1-2-1';
+
+export type LineupSector = 'goalkeeper' | 'defense' | 'midfield' | 'attack';

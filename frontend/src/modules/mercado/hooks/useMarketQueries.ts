@@ -15,6 +15,7 @@ export function useMarketQueries() {
     queryClient.invalidateQueries({ queryKey: ['players'] });
     queryClient.invalidateQueries({ queryKey: ['clubs'] });
     queryClient.invalidateQueries({ queryKey: ['transactions'] });
+    queryClient.invalidateQueries({ queryKey: ['lineup'] });
   };
 
   const showError = (error: Error) => toast.error(error.message);
