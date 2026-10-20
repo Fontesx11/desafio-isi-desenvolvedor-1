@@ -3,6 +3,8 @@
 #
 FROM node:22-alpine
 
+RUN apk add --no-cache bash
+
 WORKDIR /home/node/app
 
 RUN chown node:node /home/node/app
