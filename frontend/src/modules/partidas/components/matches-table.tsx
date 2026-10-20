@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router';
 import { cn } from 'cn';
-import { ChevronRight, Shield } from 'lucide-react';
+import { ChevronRight, RefreshCw, ServerOff, Shield } from 'lucide-react';
 import { useState } from 'react';
 import { DataTable, type DataTableColumn } from '@/components/data-table';
+import { ListState } from '@/components/list-state';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,10 +14,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { formatDate, formatTime } from '@/lib/format';
-import { CLUBS_MOCK } from '@/modules/clubes/mocks/clubs.mock';
-import { findClub } from '@/modules/jogadores/utils/players.utils';
+import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
 import { RESULT_LABELS } from '../constants/matches.constants';
+import { useMatchesQueries } from '../hooks/useMatchesQueries';
 import type { Match } from '../types/matches.types';
+import { ClubAcronymBadge } from './club-acronym-badge';
 
 const columns: DataTableColumn<Match>[] = [
   {
@@ -38,9 +40,7 @@ const columns: DataTableColumn<Match>[] = [
         <span className={cn(match.result === 'MANDANTE' && 'font-semibold')}>
           {match.home.club_name}
         </span>
-        <Badge variant="secondary">
-          {findClub(match.home.club_id)?.acronym}
-        </Badge>
+        <ClubAcronymBadge clubId={match.home.club_id} />
       </span>
     ),
   },
@@ -59,9 +59,7 @@ const columns: DataTableColumn<Match>[] = [
     header: 'Visitante',
     cell: (match) => (
       <span className="inline-flex items-center gap-2">
-        <Badge variant="secondary">
-          {findClub(match.away.club_id)?.acronym}
-        </Badge>
+        <ClubAcronymBadge clubId={match.away.club_id} />
         <span className={cn(match.result === 'VISITANTE' && 'font-semibold')}>
           {match.away.club_name}
         </span>
@@ -90,9 +88,20 @@ const columns: DataTableColumn<Match>[] = [
   },
 ];
 
-export function MatchesTable({ matches }: { matches: Match[] }) {
-  // simulacao
+export function MatchesTable() {
   const [clubId, setClubId] = useState('all');
+
+  const { useGetClubs } = useClubsQueries();
+  const { data: clubs = [] } = useGetClubs();
+
+  const { useGetMatches } = useMatchesQueries();
+  const {
+    data: matches = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetMatches(clubId === 'all' ? undefined : Number(clubId));
 
   return (
     <section className="overflow-hidden rounded-xl border border-zinc-200">
@@ -114,7 +123,7 @@ export function MatchesTable({ matches }: { matches: Match[] }) {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">todos</SelectItem>
-            {CLUBS_MOCK.map((club) => (
+            {clubs.map((club) => (
               <SelectItem key={club.id} value={String(club.id)}>
                 {club.name}
               </SelectItem>
@@ -122,12 +131,36 @@ export function MatchesTable({ matches }: { matches: Match[] }) {
           </SelectContent>
         </Select>
       </div>
-      <DataTable
-        columns={columns}
-        rows={matches}
-        getRowKey={(match) => match.id}
-        emptyMessage="Nenhuma partida jogada."
-      />
+
+      {isError && (
+        <ListState
+          icon={ServerOff}
+          title="Não foi possível carregar o histórico"
+          description={error.message}
+          className="rounded-none border-x-0 border-b-0"
+          action={
+            <Button
+              type="button"
+              variant="outline"
+              className="gap-2"
+              onClick={() => refetch()}
+            >
+              <RefreshCw />
+              Tentar de novo
+            </Button>
+          }
+        />
+      )}
+
+      {!isError && (
+        <DataTable
+          columns={columns}
+          rows={matches}
+          getRowKey={(match) => match.id}
+          emptyMessage="Nenhuma partida jogada."
+          isLoading={isLoading}
+        />
+      )}
     </section>
   );
 }

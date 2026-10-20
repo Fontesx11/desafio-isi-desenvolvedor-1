@@ -6,12 +6,13 @@ import { PageHeader } from '@/layout/components/page-header';
 import { MatchScoreCard } from '../components/match-score-card';
 import { MatchesTable } from '../components/matches-table';
 import { NewMatchDialog } from '../components/new-match-dialog';
-import { MATCHES_MOCK } from '../mocks/matches.mock';
+import { useMatchesQueries } from '../hooks/useMatchesQueries';
 
 export default function MatchesPage() {
   const [isCreating, setIsCreating] = useState(false);
-  // A lista vem da mais recente para a mais antiga: a primeira é a última jogada
-  const lastMatch = MATCHES_MOCK[0];
+  const { useGetMatches } = useMatchesQueries();
+  const { data: matches = [] } = useGetMatches();
+  const lastMatch = matches[0];
 
   return (
     <div className="space-y-6">
@@ -51,7 +52,7 @@ export default function MatchesPage() {
         </div>
       )}
 
-      <MatchesTable matches={MATCHES_MOCK} />
+      <MatchesTable />
 
       {isCreating && <NewMatchDialog onClose={() => setIsCreating(false)} />}
     </div>

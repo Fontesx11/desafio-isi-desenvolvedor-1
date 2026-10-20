@@ -3,9 +3,9 @@ import { Goal } from 'lucide-react';
 import { DataTable, type DataTableColumn } from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
 import { PlayerAvatar } from '@/modules/jogadores/components/player-avatar';
-import { findClub } from '@/modules/jogadores/utils/players.utils';
 import { DUEL_ATTRIBUTE_LABELS } from '../constants/matches.constants';
 import type { Duel, DuelPlayer, Match } from '../types/matches.types';
+import { ClubAcronymBadge } from './club-acronym-badge';
 
 export function DuelsTable({ match }: { match: Match }) {
   const duels = match.duels ?? [];
@@ -81,7 +81,7 @@ export function DuelsTable({ match }: { match: Match }) {
     const side = isHome ? match.home : match.away;
     return (
       <span className="flex items-center gap-2 text-sm">
-        <Badge variant="secondary">{findClub(side.club_id)?.acronym}</Badge>
+        <ClubAcronymBadge clubId={side.club_id} />
         <span className="font-medium">
           Ataques do {side.club_name} ({isHome ? 'mandante' : 'visitante'})
         </span>

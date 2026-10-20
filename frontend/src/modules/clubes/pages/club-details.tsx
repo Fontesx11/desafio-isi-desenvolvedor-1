@@ -9,9 +9,9 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { ListState } from '@/components/list-state';
+import { LoadingState } from '@/components/loading-state';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PlayerDetailsSheet } from '@/modules/jogadores/components/player-details-sheet';
 import type { SaleResult } from '@/modules/mercado/types/market.types';
@@ -60,14 +60,7 @@ export default function ClubDetailsPage() {
   }
 
   if (!club) {
-    return (
-      <section className="space-y-3 rounded-xl border border-zinc-200 p-6">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-3/4" />
-        <Skeleton className="h-4 w-1/2" />
-        <p className="text-sm text-zinc-500">Carregando...</p>
-      </section>
-    );
+    return <LoadingState />;
   }
 
   return (

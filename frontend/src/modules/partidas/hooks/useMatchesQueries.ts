@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { saveMatch } from '../services/matches.service';
+import { getMatch, getMatches, saveMatch } from '../services/matches.service';
 import type { CreateMatch } from '../types/matches.types';
 
 export function useMatchesQueries() {
@@ -13,6 +13,18 @@ export function useMatchesQueries() {
 
   const showError = (error: Error) => toast.error(error.message);
 
+  const useGetMatches = (clubId?: number) =>
+    useQuery({
+      queryKey: ['matches', { clubId }],
+      queryFn: () => getMatches(clubId),
+    });
+
+  const useGetMatch = (id: number) =>
+    useQuery({
+      queryKey: ['matches', id],
+      queryFn: () => getMatch(id),
+    });
+
   const useCreateMatch = () =>
     useMutation({
       mutationFn: (data: CreateMatch) => saveMatch(data),
@@ -20,5 +32,5 @@ export function useMatchesQueries() {
       onError: showError,
     });
 
-  return { useCreateMatch };
+  return { useGetMatches, useGetMatch, useCreateMatch };
 }

@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { formatDate, formatTime } from '@/lib/format';
 import { ClubAcronym } from '@/modules/clubes/components/club-acronym';
-import { findClub } from '@/modules/jogadores/utils/players.utils';
+import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
 import { RESULT_LABELS } from '../constants/matches.constants';
 import type { Match, MatchSide } from '../types/matches.types';
 
@@ -19,11 +19,17 @@ export function MatchScoreCard({
   showFormations = false,
   action,
 }: MatchScoreCardProps) {
+  const { useGetClubs } = useClubsQueries();
+  const { data: clubs = [] } = useGetClubs();
+  const homeClub = clubs.find((club) => club.id === match.home.club_id);
+  const awayClub = clubs.find((club) => club.id === match.away.club_id);
+
   return (
     <div className="flex items-center gap-4 rounded-xl border border-zinc-200 p-5">
       <div className="flex flex-1 items-center justify-center gap-4">
         <Side
           side={match.home}
+          acronym={homeClub?.acronym ?? ''}
           label="Mandante"
           showFormation={showFormations}
           winner={match.result === 'MANDANTE'}
@@ -40,6 +46,7 @@ export function MatchScoreCard({
         </div>
         <Side
           side={match.away}
+          acronym={awayClub?.acronym ?? ''}
           label="Visitante"
           showFormation={showFormations}
           winner={match.result === 'VISITANTE'}
@@ -53,12 +60,14 @@ export function MatchScoreCard({
 
 function Side({
   side,
+  acronym,
   label,
   showFormation,
   winner,
   align,
 }: {
   side: MatchSide;
+  acronym: string;
   label: string;
   showFormation: boolean;
   winner: boolean;
@@ -71,10 +80,7 @@ function Side({
         align === 'right' && 'flex-row-reverse text-right',
       )}
     >
-      <ClubAcronym
-        acronym={findClub(side.club_id)?.acronym ?? ''}
-        className="h-12 w-12 rounded-xl"
-      />
+      <ClubAcronym acronym={acronym} className="h-12 w-12 rounded-xl" />
       <div>
         <p className={cn('text-lg', winner && 'font-semibold')}>
           {side.club_name}

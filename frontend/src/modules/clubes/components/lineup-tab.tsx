@@ -1,8 +1,8 @@
 import { RefreshCw, ServerOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { ListState } from '@/components/list-state';
+import { LoadingState } from '@/components/loading-state';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useLeagueQueries } from '@/modules/liga/hooks/useLeagueQueries';
 import type { SaveLineup } from '@/modules/liga/types/league.types';
 import type { ClubDetails } from '../types/clubs.types';
@@ -54,14 +54,7 @@ export function LineupTab({ club }: { club: ClubDetails }) {
   }
 
   if (!lineup || isFetching) {
-    return (
-      <section className="space-y-3 rounded-xl border border-zinc-200 p-6">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-3/4" />
-        <Skeleton className="h-4 w-1/2" />
-        <p className="text-sm text-zinc-500">Carregando...</p>
-      </section>
-    );
+    return <LoadingState />;
   }
 
   return (
