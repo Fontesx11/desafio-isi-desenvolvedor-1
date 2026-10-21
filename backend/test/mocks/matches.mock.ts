@@ -8,7 +8,6 @@ import { meiaLuaBeforeSaleMock } from './players.mock.js';
 
 const { GOL, ZAG, LAT, MEI, ATA } = PlayerPosition;
 
-// prettier-ignore
 export const aguiasLineupMock: ClubLineup = {
   clubId: 1,
   formation: ClubFormation.TWO_ONE_ONE,
@@ -22,7 +21,6 @@ export const aguiasLineupMock: ClubLineup = {
   ],
 };
 
-// prettier-ignore
 export const deltaLineupMock: ClubLineup = {
   clubId: 2,
   formation: ClubFormation.TWO_ONE_ONE,
@@ -36,7 +34,6 @@ export const deltaLineupMock: ClubLineup = {
   ],
 };
 
-// prettier-ignore
 export const standingsClubsMock: Club[] = [
   aguiasMock,
   { ...aguiasMock, id: 2, name: 'Delta FC' },

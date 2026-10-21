@@ -50,7 +50,6 @@ describe('MatchesService', () => {
 
     const [[match], [duels]] = manager.save.mock.calls;
     expect(match).toMatchObject({ homeGoals: 1, awayGoals: 2 });
-    // prettier-ignore
     expect(duels).toMatchObject([
       { attackerId: 34, attackValue: 75, defenderId: 40, defenseValue: 72, goal: true },
       { attackerId: 33, attackValue: 82, defenderId: 41, defenseValue: 84, goal: false },
