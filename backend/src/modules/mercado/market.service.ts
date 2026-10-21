@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { DataSource, FindOptionsWhere, In } from 'typeorm';
-import { roundDivision } from '../../core/utils/math.utils.js';
+import { centsToDecimal, roundDivision, toCents } from '../../core/utils/math.utils.js';
 import { ClubsService } from '../clubes/clubs.service.js';
 import { ContractsService } from '../contratos/contracts.service.js';
 import { ContractStatus } from '../contratos/enums/contracts.enum.js';
@@ -52,7 +52,7 @@ export class MarketService {
       throw new ConflictException('o clube não pode comprar um jogador que ele mesmo já vendeu');
     }
 
-    const marketValueCents = Math.round(player.marketValue * 100);
+    const marketValueCents = toCents(player.marketValue);
     const feeCents = this.calculatePurchaseFeeCents(marketValueCents);
     const totalCostCents = marketValueCents + feeCents;
 
@@ -61,7 +61,7 @@ export class MarketService {
     const contractData: CreateContractData = {
       playerId: player.id,
       clubId: club.id,
-      purchaseValue: (marketValueCents / 100).toFixed(2),
+      purchaseValue: centsToDecimal(marketValueCents),
       loyaltyUntil: new Date(dto.loyalty_until),
     };
 
@@ -70,11 +70,11 @@ export class MarketService {
       playerId: player.id,
       playerName: player.name,
       type: TransactionType.COMPRA,
-      value: (marketValueCents / 100).toFixed(2),
-      fee: (feeCents / 100).toFixed(2),
+      value: centsToDecimal(marketValueCents),
+      fee: centsToDecimal(feeCents),
       penalty: '0.00',
       profit: null,
-      cashChange: (-totalCostCents / 100).toFixed(2),
+      cashChange: centsToDecimal(-totalCostCents),
     };
 
     return this.dataSource.transaction(async (manager) => {
@@ -99,8 +99,8 @@ export class MarketService {
     const now = new Date();
     const { remainingDays, penaltyRate } = this.contractsService.calculateContractSummary(contract, now);
 
-    const marketValueCents = Math.round(player.marketValue * 100);
-    const purchaseValueCents = Math.round(Number(contract.purchaseValue) * 100);
+    const marketValueCents = toCents(player.marketValue);
+    const purchaseValueCents = toCents(contract.purchaseValue);
     const profitCents = marketValueCents - purchaseValueCents;
 
     const penaltyCents = this.calculatePenaltyCents(marketValueCents, penaltyRate);
@@ -118,11 +118,11 @@ export class MarketService {
       playerId: player.id,
       playerName: player.name,
       type: TransactionType.VENDA,
-      value: (marketValueCents / 100).toFixed(2),
-      fee: (commissionCents / 100).toFixed(2),
-      penalty: (penaltyCents / 100).toFixed(2),
-      profit: (profitCents / 100).toFixed(2),
-      cashChange: (creditCents / 100).toFixed(2),
+      value: centsToDecimal(marketValueCents),
+      fee: centsToDecimal(commissionCents),
+      penalty: centsToDecimal(penaltyCents),
+      profit: centsToDecimal(profitCents),
+      cashChange: centsToDecimal(creditCents),
     };
 
     return this.dataSource.transaction(async (manager) => {

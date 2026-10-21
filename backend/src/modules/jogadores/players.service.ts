@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, FindOptionsWhere, Repository } from 'typeorm';
+import { centsToDecimal } from '../../core/utils/math.utils.js';
 import { Page, paginate } from '../../core/utils/pagination.utils.js';
 import { ClubsService } from '../clubes/clubs.service.js';
 import { LineupsService } from '../escalacoes/lineups.service.js';
@@ -40,7 +41,7 @@ export class PlayersService {
       defending: dto.defending,
       physical: dto.physical,
       potential: dto.potential,
-      baseValue: (baseValueCents / 100).toFixed(2),
+      baseValue: centsToDecimal(baseValueCents),
       condition: PlayerCondition.APTO,
       clubId: null,
     });

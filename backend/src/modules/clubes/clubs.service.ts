@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { centsToDecimal, toCents } from '../../core/utils/math.utils.js';
 import { ContractsService } from '../contratos/contracts.service.js';
 import { PlayerSort } from '../jogadores/enums/players.enum.js';
 import { calculatePlayerDynamicValues } from '../jogadores/utils/players.calculations.js';
@@ -63,7 +64,7 @@ export class ClubsService {
   }
 
   assertCanBuy(club: Club, totalCostCents: number): void {
-    const cashLimitCents = Math.round(Number(club.cash) * 100) / 2;
+    const cashLimitCents = toCents(club.cash) / 2;
 
     if (totalCostCents > cashLimitCents) {
       throw new ConflictException('o custo total não pode exceder 50% do caixa do clube');
@@ -75,8 +76,8 @@ export class ClubsService {
   }
 
   async changeCash(manager: EntityManager, club: Club, changeCents: number): Promise<string> {
-    const cashCents = Math.round(Number(club.cash) * 100) + changeCents;
-    const cash = (cashCents / 100).toFixed(2);
+    const cashCents = toCents(club.cash) + changeCents;
+    const cash = centsToDecimal(cashCents);
 
     await manager.update(Club, { id: club.id }, { cash });
 
@@ -141,10 +142,10 @@ export class ClubsService {
 
     let squadValueCents = 0;
     for (const player of squad) {
-      squadValueCents += Math.round(player.marketValue * 100);
+      squadValueCents += toCents(player.marketValue);
     }
 
-    const cashCents = Math.round(Number(club.cash) * 100);
+    const cashCents = toCents(club.cash);
 
     return {
       ...club,

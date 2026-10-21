@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 import { escapeCsvValue, formatCsvDecimal } from '../../core/utils/csv.utils.js';
 import { formatBrasiliaDateTime } from '../../core/utils/date.utils.js';
+import { centsToDecimal, toCents } from '../../core/utils/math.utils.js';
 import { CSV_HEADER } from './constants/transactions.constants.js';
 import { Transaction } from './entities/transaction.entity.js';
 import { TransactionType } from './enums/transactions.enum.js';
@@ -44,26 +45,26 @@ export class TransactionsService {
     let profitCents = 0;
 
     for (const transaction of transactions) {
-      const valueCents = Math.round(Number(transaction.value) * 100);
-      const feeCents = Math.round(Number(transaction.fee) * 100);
+      const valueCents = toCents(transaction.value);
+      const feeCents = toCents(transaction.fee);
 
       feesCents += feeCents;
 
       if (transaction.type === TransactionType.COMPRA) {
         spentCents += valueCents + feeCents;
       } else {
-        receivedCents += Math.round(Number(transaction.cashChange) * 100);
-        penaltiesCents += Math.round(Number(transaction.penalty) * 100);
-        profitCents += Math.round(Number(transaction.profit) * 100);
+        receivedCents += toCents(transaction.cashChange);
+        penaltiesCents += toCents(transaction.penalty);
+        profitCents += toCents(transaction.profit ?? 0);
       }
     }
 
     return {
-      totalSpent: (spentCents / 100).toFixed(2),
-      totalReceived: (receivedCents / 100).toFixed(2),
-      totalFees: (feesCents / 100).toFixed(2),
-      totalPenalties: (penaltiesCents / 100).toFixed(2),
-      totalProfit: (profitCents / 100).toFixed(2),
+      totalSpent: centsToDecimal(spentCents),
+      totalReceived: centsToDecimal(receivedCents),
+      totalFees: centsToDecimal(feesCents),
+      totalPenalties: centsToDecimal(penaltiesCents),
+      totalProfit: centsToDecimal(profitCents),
     };
   }
 
