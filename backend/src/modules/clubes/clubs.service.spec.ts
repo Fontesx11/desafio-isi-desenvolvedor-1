@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { aguiasAfterPurchaseMock } from '../../../test/mocks/clubs.mock.js';
+import { aguiasAfterPurchaseMock, aguiasDto, aguiasMock, listClubsQueryMock } from '../../../test/mocks/clubs.mock.js';
 import { meiaLuaContractMock } from '../../../test/mocks/contracts.mock.js';
 import { ContractsService } from '../contratos/contracts.service.js';
 import { Contract } from '../contratos/entities/contract.entity.js';
@@ -30,6 +30,30 @@ describe('ClubsService', () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it('creates Águias FC with cash 300.00, squad value 0.00 and net worth 300.00', async () => {
+    vi.spyOn(clubsRepository, 'count').mockResolvedValue(0);
+    vi.spyOn(clubsRepository, 'createQueryBuilder').mockReturnValue({
+      where: () => ({ getExists: () => Promise.resolve(false) }),
+    } as never);
+    vi.spyOn(clubsRepository, 'existsBy').mockResolvedValue(false);
+    vi.spyOn(clubsRepository, 'create').mockReturnValue({ ...aguiasMock });
+    vi.spyOn(clubsRepository, 'save').mockResolvedValue(aguiasMock);
+
+    const club = await service.create(aguiasDto);
+
+    expect(clubsRepository.create).toHaveBeenCalledWith(expect.objectContaining({ cash: '300.00' }));
+    expect(club.squadValue).toBe(0);
+    expect(club.netWorth).toBe(300);
+  });
+
+  it('lists Águias FC with squad value 37.00 and net worth 298.15', async () => {
+    vi.spyOn(clubsRepository, 'find').mockResolvedValue([aguiasAfterPurchaseMock]);
+
+    const clubs = await service.findAll(listClubsQueryMock);
+
+    expect(clubs).toEqual([expect.objectContaining({ id: 1, squadValue: 37, netWorth: 298.15 })]);
   });
 
   it('shows Águias FC with squad value 37.00, net worth 298.15 and the contract with 120 days and 10% penalty right after the purchase', async () => {
