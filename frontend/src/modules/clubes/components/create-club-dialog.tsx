@@ -79,7 +79,7 @@ export function CreateClubDialog({
             label="Sigla"
             htmlFor="club-acronym"
             error={errors.acronym?.message}
-            description="3 letras de A a Z, maiúsculas, que aparecem no nome nessa ordem; a primeira é a primeira letra do nome."
+            description="3 letras de A a Z, maiúsculas, que aparecem no nome nessa ordem; a primeira é a primeira letra do nome, e as três não podem ser todas iguais."
           >
             <Input
               id="club-acronym"
