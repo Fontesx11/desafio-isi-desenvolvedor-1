@@ -14,10 +14,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { LEAGUE_MOCK } from '@/lib/mocks/league.mock';
 import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
 import { usePlayersQueries } from '@/modules/jogadores/hooks/usePlayersQueries';
-import { MENU_GROUPS } from './constants/menu.constants';
+import { useMatchesQueries } from '@/modules/partidas/hooks/useMatchesQueries';
+import { LEAGUE_NAME, MENU_GROUPS } from './constants/menu.constants';
 
 export function AppSidebar() {
   const matchRoute = useMatchRoute();
@@ -25,11 +25,18 @@ export function AppSidebar() {
   const playersTotal = useGetPlayersTotal();
   const { useGetClubs } = useClubsQueries();
   const { data: clubs = [] } = useGetClubs();
+  const { useGetMatches } = useMatchesQueries();
+  const { data: matches = [] } = useGetMatches();
+
+  const lastMatch = matches[0];
+  const lastMatchDescription = lastMatch
+    ? `${lastMatch.home.club_name} ${lastMatch.home.goals} × ${lastMatch.away.goals} ${lastMatch.away.club_name}`
+    : 'Nenhuma partida jogada.';
 
   const counts: Partial<Record<string, number>> = {
     '/players': playersTotal,
     '/clubs': clubs.length,
-    '/matches': LEAGUE_MOCK.matchesCount,
+    '/matches': matches.length,
   };
 
   return (
@@ -116,13 +123,13 @@ export function AppSidebar() {
         <div className="space-y-3 rounded-xl border border-zinc-200 bg-background p-3 text-sm">
           <FooterInfo
             icon={<Trophy />}
-            title={LEAGUE_MOCK.name}
+            title={LEAGUE_NAME}
             description={`${clubs.length} clubes · ${playersTotal} jogadores`}
           />
           <FooterInfo
             icon={<Swords />}
             title="Última partida"
-            description={LEAGUE_MOCK.lastMatch}
+            description={lastMatchDescription}
           />
           <p className="flex items-center gap-2 border-t border-zinc-200 pt-3 text-xs text-zinc-500">
             <Clock className="size-3.5" />

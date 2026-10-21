@@ -7,6 +7,8 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
+export const LEAGUE_NAME = 'Liga Fictícia 2026';
+
 type MenuItem = {
   title: string;
   icon: LucideIcon;
