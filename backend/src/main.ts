@@ -15,7 +15,7 @@ async function bootstrap() {
   app.enableCors({ origin: frontendUrl });
   app.enableShutdownHooks();
 
-  const port = Number(config.get('PORT', 13000));
+  const port = Number(config.get('PORT', 3000));
   setupSwagger(app);
   await app.listen(port);
 

@@ -13,4 +13,4 @@ USER node
 
 COPY --chown=node:node . .
 
-EXPOSE 13000
+EXPOSE 3000

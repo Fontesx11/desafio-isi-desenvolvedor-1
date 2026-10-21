@@ -6,7 +6,7 @@ services:
     entrypoint: ./.docker/entrypoint.sh
     container_name: fontes-desafio-api
     ports:
-      - 13000:13000
+      - 3000:3000
     environment:
       - DB_HOST=desafio-db
       - DB_PORT=5432
@@ -24,9 +24,9 @@ services:
     entrypoint: ./.docker/entrypoint.sh
     container_name: fontes-desafio-web
     ports:
-      - 15173:15173
+      - 5173:5173
     environment:
-      - VITE_API_URL=http://localhost:13000/api/v1
+      - VITE_API_URL=http://localhost:3000/api/v1
     volumes:
       - ./frontend:/home/node/app
       - web-node-modules:/home/node/app/node_modules
@@ -42,7 +42,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=desafio
     ports:
-      - 15432:5432
+      - 5432:5432
     volumes:
       - db-data:/var/lib/postgresql
 

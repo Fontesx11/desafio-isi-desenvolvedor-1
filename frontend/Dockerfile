@@ -17,11 +17,11 @@ RUN npm ci
 
 COPY --chown=node:node . .
 
-ARG VITE_API_URL=http://localhost:13000/api/v1
+ARG VITE_API_URL=http://localhost:3000/api/v1
 ENV VITE_API_URL=$VITE_API_URL
 
 RUN npm run build
 
-EXPOSE 15173
+EXPOSE 5173
 
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "15173", "--strictPort"]
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "5173", "--strictPort"]
