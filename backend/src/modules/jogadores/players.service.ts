@@ -119,7 +119,7 @@ export class PlayersService {
 
   async findAll(query: ListPlayersQueryDto): Promise<Page<PlayerWithDynamicValues>> {
     if (query.club_id !== undefined) {
-      await this.clubsService.find({ where: { id: query.club_id } });
+      await this.clubsService.find({ where: { id: query.club_id } }); // Retornar 404 quando o filtro club_id não existe
     }
 
     const players = await this.playersRepository.find();

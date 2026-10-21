@@ -1,7 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { meiaLuaDto, meiaLuaMock } from '../../../test/mocks/players.mock.js';
+import {
+  caioRochaMock,
+  daviMeloMock,
+  daviMeloUpdateDto,
+  meiaLuaDto,
+  meiaLuaMalCondicionadoMock,
+  meiaLuaMock,
+  searchLuaQueryMock,
+} from '../../../test/mocks/players.mock.js';
 import { ClubsService } from '../clubes/clubs.service.js';
 import { LineupsService } from '../escalacoes/lineups.service.js';
 import { Player } from './entities/player.entity.js';
@@ -53,5 +61,43 @@ describe('PlayersService', () => {
 
     expect(player.marketValue).toBe(37);
     expect(manager.save).toHaveBeenCalledOnce();
+  });
+
+  it('updates Davi Melo with agility 70 and age 23', async () => {
+    vi.spyOn(playersRepository, 'findOneBy').mockResolvedValue({ ...daviMeloMock });
+    vi.spyOn(playersRepository, 'merge').mockImplementation((player) => Object.assign(player, daviMeloUpdateDto));
+    vi.spyOn(playersRepository, 'save').mockResolvedValue(daviMeloMock);
+
+    const player = await service.update(4, daviMeloUpdateDto);
+
+    expect(playersRepository.save).toHaveBeenCalledOnce();
+    expect(player).toEqual(expect.objectContaining(daviMeloUpdateDto));
+  });
+
+  it('soft deletes the free player 9', async () => {
+    vi.spyOn(playersRepository, 'findOneBy').mockResolvedValue(caioRochaMock);
+    vi.spyOn(playersRepository, 'softRemove').mockResolvedValue(caioRochaMock);
+
+    await service.remove(9);
+
+    expect(playersRepository.softRemove).toHaveBeenCalledWith(caioRochaMock);
+  });
+
+  it('lists only Meia Lua with market value 37.00 when searching for lua among MEI players', async () => {
+    vi.spyOn(playersRepository, 'find').mockResolvedValue([meiaLuaMalCondicionadoMock]);
+
+    const page = await service.findAll(searchLuaQueryMock);
+
+    expect(page.data).toEqual([expect.objectContaining({ id: 2, marketValue: 37 })]);
+    expect(page.meta).toEqual({ page: 1, limit: 10, total_items: 1, total_pages: 1 });
+  });
+
+  it('returns Meia Lua with market value 37.00 and overall 75', async () => {
+    vi.spyOn(playersRepository, 'findOneBy').mockResolvedValue(meiaLuaMalCondicionadoMock);
+
+    const player = await service.findById(2);
+
+    expect(player.marketValue).toBe(37);
+    expect(player.overall).toBe(75);
   });
 });
