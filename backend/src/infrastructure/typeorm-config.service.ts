@@ -16,14 +16,6 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       database: this.configService.get('DB_NAME'),
       synchronize: false,
       autoLoadEntities: true,
-      logging: false,
-      extra: {
-        max: Number(this.configService.get('DATABASE_MAX_CONNECTIONS', 10)),
-        idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 5000,
-        statement_timeout: 60000,
-        keepAlive: true,
-      },
     };
   }
 }
