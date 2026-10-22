@@ -1,4 +1,5 @@
 import { Trash2 } from 'lucide-react';
+import { useRef } from 'react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -26,14 +27,20 @@ export function DeletePlayerDialog({
 }: DeletePlayerDialogProps) {
   const { useDeletePlayer } = usePlayersQueries();
   const { mutate, isPending } = useDeletePlayer();
+  const isSending = useRef(false);
 
   function handleConfirm() {
+    if (isSending.current) return;
+    isSending.current = true;
     mutate(player.id, {
       onSuccess: () => {
         toast.success('Jogador excluído', {
           description: `${player.name} saiu da lista. Transações e partidas antigas dele continuam gravadas.`,
         });
         onClose();
+      },
+      onSettled: () => {
+        isSending.current = false;
       },
     });
   }

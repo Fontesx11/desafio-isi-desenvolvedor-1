@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { toast } from 'sonner';
 import { ErrorState } from '@/components/error-state';
 import { LoadingState } from '@/components/loading-state';
@@ -16,8 +17,11 @@ export function LineupTab({ club }: { club: ClubDetails }) {
     refetch,
   } = useGetLineup(club.id);
   const { mutate, isPending } = useSaveLineup();
+  const isSending = useRef(false);
 
   function saveLineup(data: SaveLineup) {
+    if (isSending.current) return;
+    isSending.current = true;
     mutate(
       { clubId: club.id, data },
       {
@@ -25,6 +29,9 @@ export function LineupTab({ club }: { club: ClubDetails }) {
           toast.success('Escalação salva', {
             description: `${club.name} na formação ${saved.formation}.`,
           });
+        },
+        onSettled: () => {
+          isSending.current = false;
         },
       },
     );

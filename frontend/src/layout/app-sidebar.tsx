@@ -24,19 +24,22 @@ export function AppSidebar() {
   const { useGetPlayersTotal } = usePlayersQueries();
   const playersTotal = useGetPlayersTotal();
   const { useGetClubs } = useClubsQueries();
-  const { data: clubs = [] } = useGetClubs();
+  const { data: clubs } = useGetClubs();
   const { useGetMatches } = useMatchesQueries();
-  const { data: matches = [] } = useGetMatches();
+  const { data: matches } = useGetMatches();
 
-  const lastMatch = matches[0];
-  const lastMatchDescription = lastMatch
-    ? `${lastMatch.home.club_name} ${lastMatch.home.goals} × ${lastMatch.away.goals} ${lastMatch.away.club_name}`
-    : 'Nenhuma partida jogada.';
+  const lastMatch = matches?.[0];
+  let lastMatchDescription = '—';
+  if (lastMatch) {
+    lastMatchDescription = `${lastMatch.home.club_name} ${lastMatch.home.goals} × ${lastMatch.away.goals} ${lastMatch.away.club_name}`;
+  } else if (matches) {
+    lastMatchDescription = 'Nenhuma partida jogada.';
+  }
 
   const counts: Partial<Record<string, number>> = {
     '/players': playersTotal,
-    '/clubs': clubs.length,
-    '/matches': matches.length,
+    '/clubs': clubs?.length,
+    '/matches': matches?.length,
   };
 
   return (
@@ -85,7 +88,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Clubes</SidebarGroupLabel>
 
           <SidebarMenu>
-            {clubs.map((club) => {
+            {clubs?.map((club) => {
               const params = { clubId: String(club.id) };
               const isActive = !!matchRoute({ to: '/clubs/$clubId', params });
 
@@ -117,7 +120,7 @@ export function AppSidebar() {
           <FooterInfo
             icon={<Trophy />}
             title={LEAGUE_NAME}
-            description={`${clubs.length} clubes · ${playersTotal} jogadores`}
+            description={`${clubs?.length ?? '—'} clubes · ${playersTotal ?? '—'} jogadores`}
           />
           <FooterInfo
             icon={<Swords />}

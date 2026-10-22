@@ -29,7 +29,7 @@ export function usePlayersQueries() {
 
   const useGetPlayersTotal = () => {
     const { data } = useGetPlayers('limit=1');
-    return data?.meta.total_items ?? 0;
+    return data?.meta.total_items;
   };
 
   const useCreatePlayer = () =>
