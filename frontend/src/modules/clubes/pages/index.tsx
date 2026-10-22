@@ -1,7 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Plus, RefreshCw, ServerOff, Shield } from 'lucide-react';
+import { Plus, Shield } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { ErrorState } from '@/components/error-state';
 import { ListState } from '@/components/list-state';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/layout/components/page-header';
@@ -53,21 +54,10 @@ export default function ClubsPage() {
       />
 
       {isError && (
-        <ListState
-          icon={ServerOff}
+        <ErrorState
           title="Não foi possível carregar os clubes"
-          description={error.message}
-          action={
-            <Button
-              type="button"
-              variant="outline"
-              className="gap-2"
-              onClick={() => refetch()}
-            >
-              <RefreshCw />
-              Tentar de novo
-            </Button>
-          }
+          error={error}
+          onRetry={() => refetch()}
         />
       )}
 

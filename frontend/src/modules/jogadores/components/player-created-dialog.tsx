@@ -1,5 +1,5 @@
-import { cn } from 'cn';
 import { CircleCheck, Eye } from 'lucide-react';
+import { ResultList, type ResultRow } from '@/components/result-list';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -24,11 +24,12 @@ export function PlayerCreatedDialog({
   onClose,
   onShowDetails,
 }: PlayerCreatedDialogProps) {
-  const rows = [
+  const rows: ResultRow[] = [
     {
       label: 'Valor base',
       hint: 'Calculado no cadastro; não muda depois',
       value: formatCurrency(player.base_value),
+      highlight: true,
     },
     {
       label: 'Valor de mercado',
@@ -56,32 +57,7 @@ export function PlayerCreatedDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <dl className="divide-y divide-zinc-200 overflow-hidden rounded-xl border border-zinc-200">
-          {rows.map((row, index) => (
-            <div
-              key={row.label}
-              className={cn(
-                'flex items-center justify-between gap-4 px-4 py-3',
-                index === 0 && 'bg-zinc-50',
-              )}
-            >
-              <dt>
-                <span className={cn(index === 0 && 'font-semibold')}>
-                  {row.label}
-                </span>
-                <span className="block text-sm text-zinc-500">{row.hint}</span>
-              </dt>
-              <dd
-                className={cn(
-                  'tabular-nums',
-                  index === 0 && 'text-lg font-semibold',
-                )}
-              >
-                {row.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
+        <ResultList rows={rows} />
 
         <DialogFooter className="mx-0 mb-0 rounded-none bg-transparent px-0 pt-5 pb-0">
           <Button type="button" variant="outline" onClick={onShowDetails}>

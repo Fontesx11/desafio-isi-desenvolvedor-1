@@ -60,24 +60,17 @@ export function AppSidebar() {
             <SidebarMenu>
               {group.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  {item.to ? (
-                    <SidebarMenuButton
-                      asChild
-                      isActive={!!matchRoute({ to: item.to, fuzzy: true })}
-                      variant="nav"
-                    >
-                      <Link to={item.to}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  ) : (
-                    <SidebarMenuButton>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={!!matchRoute({ to: item.to, fuzzy: true })}
+                    variant="nav"
+                  >
+                    <Link to={item.to}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  )}
-                  {item.to && counts[item.to] !== undefined && (
+                    </Link>
+                  </SidebarMenuButton>
+                  {counts[item.to] !== undefined && (
                     <SidebarMenuBadge className="text-zinc-500">
                       {counts[item.to]}
                     </SidebarMenuBadge>

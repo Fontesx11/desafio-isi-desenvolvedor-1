@@ -12,8 +12,7 @@ export const LEAGUE_NAME = 'Liga Fictícia 2026';
 type MenuItem = {
   title: string;
   icon: LucideIcon;
-  // Sem rota enquanto a página não existe
-  to?: LinkProps['to'];
+  to: NonNullable<LinkProps['to']>;
 };
 
 export const MENU_GROUPS: { label: string; items: MenuItem[] }[] = [

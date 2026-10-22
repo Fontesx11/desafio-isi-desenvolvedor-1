@@ -1,6 +1,6 @@
 import { Link, useParams } from '@tanstack/react-router';
-import { ArrowLeft, RefreshCw, ServerOff } from 'lucide-react';
-import { ListState } from '@/components/list-state';
+import { ArrowLeft } from 'lucide-react';
+import { ErrorState } from '@/components/error-state';
 import { LoadingState } from '@/components/loading-state';
 import { Button } from '@/components/ui/button';
 import { DuelsTable } from '../components/duels-table';
@@ -14,21 +14,10 @@ export default function MatchDetailsPage() {
 
   if (isError) {
     return (
-      <ListState
-        icon={ServerOff}
+      <ErrorState
         title="Não foi possível carregar a partida"
-        description={error.message}
-        action={
-          <Button
-            type="button"
-            variant="outline"
-            className="gap-2"
-            onClick={() => refetch()}
-          >
-            <RefreshCw />
-            Tentar de novo
-          </Button>
-        }
+        error={error}
+        onRetry={() => refetch()}
       />
     );
   }

@@ -1,6 +1,6 @@
-import { Plus, RefreshCw, ServerOff, Users } from 'lucide-react';
+import { Plus, Users } from 'lucide-react';
 import { useState } from 'react';
-import { ListState } from '@/components/list-state';
+import { ErrorState } from '@/components/error-state';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/layout/components/page-header';
 import { ActiveFilters } from '../components/active-filters';
@@ -15,8 +15,13 @@ export default function PlayersPage() {
   const [panel, setPanel] = useState<OpenPanel | null>(null);
   const { filters, updateFilters, clearFilters, page, setPage, queryParams } =
     usePlayersFilters();
-  const { players, total, counts, isLoading, error, refetch } =
+  const { players, total, totalPages, counts, isLoading, error, refetch } =
     usePlayersList(queryParams);
+
+  const lastPage = Math.max(1, totalPages ?? page);
+  if (page > lastPage) {
+    setPage(lastPage);
+  }
 
   function openAction(action: PlayerAction, player: Player) {
     setPanel({ type: action, player });
@@ -63,21 +68,10 @@ export default function PlayersPage() {
       />
 
       {error && (
-        <ListState
-          icon={ServerOff}
+        <ErrorState
           title="Não foi possível carregar os jogadores"
-          description={error.message}
-          action={
-            <Button
-              type="button"
-              variant="outline"
-              className="gap-2"
-              onClick={() => refetch()}
-            >
-              <RefreshCw />
-              Tentar de novo
-            </Button>
-          }
+          error={error}
+          onRetry={() => refetch()}
         />
       )}
 

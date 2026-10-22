@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { ArrowRight, CircleCheck } from 'lucide-react';
-import { cn } from 'cn';
+import { ResultList, type ResultRow } from '@/components/result-list';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,7 +32,7 @@ export function PurchaseResultDialog({
   const clubName = clubs?.find((club) => club.id === result.club_id)?.name;
   const loyaltyUntil = result.contract.loyalty_until;
 
-  const rows = [
+  const rows: ResultRow[] = [
     {
       label: 'Valor',
       hint: 'Valor de mercado no momento da compra',
@@ -85,36 +85,7 @@ export function PurchaseResultDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <dl className="divide-y divide-zinc-200 overflow-hidden rounded-xl border border-zinc-200">
-          {rows.map((row) => (
-            <div
-              key={row.label}
-              className={cn(
-                'flex items-center justify-between gap-4 px-4 py-3',
-                row.highlight && 'bg-zinc-50',
-              )}
-            >
-              <dt>
-                <span className={cn(row.highlight && 'font-semibold')}>
-                  {row.label}
-                </span>
-                {row.hint && (
-                  <span className="block text-sm text-zinc-500">
-                    {row.hint}
-                  </span>
-                )}
-              </dt>
-              <dd
-                className={cn(
-                  'tabular-nums',
-                  row.highlight && 'text-lg font-semibold',
-                )}
-              >
-                {row.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
+        <ResultList rows={rows} />
 
         <DialogFooter className="mx-0 mb-0 rounded-none border-t border-zinc-200 bg-transparent px-0 pt-5 pb-0">
           <Button asChild variant="outline">

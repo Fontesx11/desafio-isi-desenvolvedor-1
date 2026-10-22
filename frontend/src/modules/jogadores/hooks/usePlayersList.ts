@@ -27,6 +27,7 @@ export function usePlayersList(queryParams: string) {
   return {
     players: playersPage?.data ?? [],
     total: playersPage?.meta.total_items ?? 0,
+    totalPages: playersPage?.meta.total_pages,
     counts,
     isLoading,
     error,

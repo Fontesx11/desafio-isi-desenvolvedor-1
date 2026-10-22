@@ -6,15 +6,13 @@ import {
   ShoppingCart,
   TrendingDown,
   TrendingUp,
-  RefreshCw,
-  ServerOff,
   TriangleAlert,
   User,
   type LucideIcon,
 } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { DataTable, type DataTableColumn } from '@/components/data-table';
-import { ListState } from '@/components/list-state';
+import { ErrorState } from '@/components/error-state';
 import { SignedValue } from '@/components/signed-value';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -223,22 +221,11 @@ export function TransactionsTab({ clubId }: { clubId: number }) {
       </div>
 
       {isError && (
-        <ListState
-          icon={ServerOff}
+        <ErrorState
           title="Não foi possível carregar o histórico"
-          description={error.message}
+          error={error}
           className="rounded-none border-x-0 border-b-0"
-          action={
-            <Button
-              type="button"
-              variant="outline"
-              className="gap-2"
-              onClick={() => refetch()}
-            >
-              <RefreshCw />
-              Tentar de novo
-            </Button>
-          }
+          onRetry={() => refetch()}
         />
       )}
 

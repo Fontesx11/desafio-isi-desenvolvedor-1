@@ -1,8 +1,6 @@
-import { RefreshCw, ServerOff } from 'lucide-react';
 import { toast } from 'sonner';
-import { ListState } from '@/components/list-state';
+import { ErrorState } from '@/components/error-state';
 import { LoadingState } from '@/components/loading-state';
-import { Button } from '@/components/ui/button';
 import { useLeagueQueries } from '@/modules/liga/hooks/useLeagueQueries';
 import type { SaveLineup } from '@/modules/liga/types/league.types';
 import type { ClubDetails } from '../types/clubs.types';
@@ -34,21 +32,10 @@ export function LineupTab({ club }: { club: ClubDetails }) {
 
   if (isError) {
     return (
-      <ListState
-        icon={ServerOff}
+      <ErrorState
         title="Não foi possível carregar a escalação"
-        description={error.message}
-        action={
-          <Button
-            type="button"
-            variant="outline"
-            className="gap-2"
-            onClick={() => refetch()}
-          >
-            <RefreshCw />
-            Tentar de novo
-          </Button>
-        }
+        error={error}
+        onRetry={() => refetch()}
       />
     );
   }

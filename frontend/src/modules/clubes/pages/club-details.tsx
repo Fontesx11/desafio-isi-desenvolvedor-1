@@ -1,14 +1,7 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
-import {
-  ClipboardList,
-  History,
-  RefreshCw,
-  ServerOff,
-  Shirt,
-  ShoppingCart,
-} from 'lucide-react';
+import { ClipboardList, History, Shirt, ShoppingCart } from 'lucide-react';
 import { useState } from 'react';
-import { ListState } from '@/components/list-state';
+import { ErrorState } from '@/components/error-state';
 import { LoadingState } from '@/components/loading-state';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -40,21 +33,10 @@ export default function ClubDetailsPage() {
 
   if (isError) {
     return (
-      <ListState
-        icon={ServerOff}
+      <ErrorState
         title="Não foi possível carregar o clube"
-        description={error.message}
-        action={
-          <Button
-            type="button"
-            variant="outline"
-            className="gap-2"
-            onClick={() => refetch()}
-          >
-            <RefreshCw />
-            Tentar de novo
-          </Button>
-        }
+        error={error}
+        onRetry={() => refetch()}
       />
     );
   }

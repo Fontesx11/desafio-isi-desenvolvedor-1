@@ -30,7 +30,7 @@ export function LineupForm({
     handleSubmit,
     setValue,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<LineupValues>({
     resolver: zodResolver(lineupSchema),
     defaultValues: toLineupFormValues(lineup),
@@ -38,10 +38,13 @@ export function LineupForm({
   const formation = useWatch({ control, name: 'formation' });
   const selectedIds = useWatch({ control, name: 'player_ids' });
   const slots = getFormationSlots(formation);
+  const isSaved = lineup.formation !== null;
 
   function changeFormation(next: Formation) {
-    setValue('formation', next, { shouldValidate: true });
-    setValue('player_ids', [selectedIds[0], '', '', '', '']);
+    setValue('formation', next, { shouldValidate: true, shouldDirty: true });
+    setValue('player_ids', [selectedIds[0], '', '', '', ''], {
+      shouldDirty: true,
+    });
   }
 
   function onSubmit(values: LineupValues) {
@@ -124,9 +127,9 @@ export function LineupForm({
           <Button type="button" variant="outline" onClick={() => reset()}>
             Cancelar
           </Button>
-          <Button type="submit" disabled={isSaving}>
+          <Button type="submit" disabled={isSaving || (isSaved && !isDirty)}>
             <Check />
-            Salvar escalação
+            {isSaved ? 'Atualizar escalação' : 'Salvar escalação'}
           </Button>
         </div>
       </form>

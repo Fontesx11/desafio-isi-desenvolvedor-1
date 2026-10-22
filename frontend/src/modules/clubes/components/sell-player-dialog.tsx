@@ -1,4 +1,5 @@
 import { Handshake, Info } from 'lucide-react';
+import { ResultList, type ResultRow } from '@/components/result-list';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -35,7 +36,7 @@ export function SellPlayerDialog({
 }: SellPlayerDialogProps) {
   const { contract } = player;
 
-  const rows = [
+  const rows: ResultRow[] = [
     {
       label: 'Valor de compra',
       value: formatCurrency(contract.purchase_value),
@@ -83,17 +84,7 @@ export function SellPlayerDialog({
           }
         />
 
-        <dl className="divide-y divide-zinc-200 overflow-hidden rounded-xl border border-zinc-200">
-          {rows.map((row) => (
-            <div
-              key={row.label}
-              className="flex items-center justify-between gap-4 px-4 py-3"
-            >
-              <dt className="text-zinc-600">{row.label}</dt>
-              <dd className="font-medium tabular-nums">{row.value}</dd>
-            </div>
-          ))}
-        </dl>
+        <ResultList rows={rows} />
 
         <p className="flex gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-zinc-600">
           <Info className="mt-0.5 size-4 shrink-0 text-zinc-500" />A venda é

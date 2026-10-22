@@ -1,9 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { cn } from 'cn';
-import { RefreshCw, ServerOff } from 'lucide-react';
 import { DataTable, type DataTableColumn } from '@/components/data-table';
-import { ListState } from '@/components/list-state';
-import { Button } from '@/components/ui/button';
+import { ErrorState } from '@/components/error-state';
 import { formatSignedInteger } from '@/lib/format';
 import { useClubsQueries } from '@/modules/clubes/hooks/useClubsQueries';
 import { useStandingsQueries } from '../hooks/useStandingsQueries';
@@ -79,22 +77,11 @@ export function StandingsTable() {
   return (
     <section className="overflow-hidden rounded-xl border border-zinc-200">
       {isError && (
-        <ListState
-          icon={ServerOff}
+        <ErrorState
           title="Não foi possível carregar a classificação"
-          description={error.message}
+          error={error}
           className="rounded-none border-0"
-          action={
-            <Button
-              type="button"
-              variant="outline"
-              className="gap-2"
-              onClick={() => refetch()}
-            >
-              <RefreshCw />
-              Tentar de novo
-            </Button>
-          }
+          onRetry={() => refetch()}
         />
       )}
 

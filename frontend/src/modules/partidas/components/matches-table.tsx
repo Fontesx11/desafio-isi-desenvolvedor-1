@@ -1,9 +1,9 @@
 import { Link } from '@tanstack/react-router';
 import { cn } from 'cn';
-import { ChevronRight, RefreshCw, ServerOff, Shield } from 'lucide-react';
+import { ChevronRight, Shield } from 'lucide-react';
 import { useState } from 'react';
 import { DataTable, type DataTableColumn } from '@/components/data-table';
-import { ListState } from '@/components/list-state';
+import { ErrorState } from '@/components/error-state';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -133,22 +133,11 @@ export function MatchesTable() {
       </div>
 
       {isError && (
-        <ListState
-          icon={ServerOff}
+        <ErrorState
           title="Não foi possível carregar o histórico"
-          description={error.message}
+          error={error}
           className="rounded-none border-x-0 border-b-0"
-          action={
-            <Button
-              type="button"
-              variant="outline"
-              className="gap-2"
-              onClick={() => refetch()}
-            >
-              <RefreshCw />
-              Tentar de novo
-            </Button>
-          }
+          onRetry={() => refetch()}
         />
       )}
 
