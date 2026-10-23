@@ -187,7 +187,6 @@ Pontos em que precisei interpretar o enunciado ou escolher um caminho, e o que d
 - Valores em moeda ficam em `DECIMAL` no banco, e os cálculos usam centavos inteiros.
 
 **Mercado**
-- Concorrência não é tratada: duas compras simultâneas do mesmo clube conferem o limite de caixa com o valor lido antes da transação. A correção seria travar a linha do clube (`SELECT ... FOR UPDATE`).
 - A recompra é recusada sempre que o clube já vendeu o jogador, sem prazo e independentemente de transferências posteriores. Outros clubes podem comprá-lo.
 
 **Liga**

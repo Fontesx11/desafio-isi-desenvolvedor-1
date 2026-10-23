@@ -35,7 +35,7 @@ docker compose up --build
 
 ## Como criar e recriar o banco do zero
 
-- **Criação:** acontece no `docker compose up`. Antes de subir, a API roda `npm run migration:run` (`backend/.docker/entrypoint.sh`), que espera o banco, cria o `desafio` e aplica as migrations de `backend/db/migrations/`. O banco começa vazio: sem jogadores, clubes, transações nem partidas.
+- **Criação:** acontece no `docker compose up`. Antes de subir, a API roda `npm run migration:run` (`backend/.docker/entrypoint.sh`), que espera o banco, cria o banco `desafio` e aplica as migrations de `backend/db/migrations/`. O banco começa vazio: sem jogadores, clubes, transações nem partidas.
 - **Recriação:** com os containers no ar, em outro terminal, a partir da raiz do repositório:
 
 ```bash
