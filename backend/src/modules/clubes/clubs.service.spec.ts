@@ -1,3 +1,4 @@
+import { ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -70,5 +71,10 @@ describe('ClubsService', () => {
       remainingDays: 120,
       penaltyRate: 10,
     });
+  });
+
+  it('lets Águias FC spend exactly 50% of the cash and refuses one cent more', () => {
+    expect(() => service.assertCanBuy(aguiasMock, 15000)).not.toThrow();
+    expect(() => service.assertCanBuy(aguiasMock, 15001)).toThrow(ConflictException);
   });
 });

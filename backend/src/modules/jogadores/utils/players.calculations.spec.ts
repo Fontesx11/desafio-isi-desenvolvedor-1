@@ -10,6 +10,7 @@ describe('calculateOverall', () => {
     [PlayerPosition.LAT, [72, 70, 78, 76, 70, 66], 72],
     [PlayerPosition.ZAG, [50, 90, 60, 40, 80, 75], 73],
     [PlayerPosition.GOL, [55, 30, 65, 40, 72, 68], 68],
+    [PlayerPosition.ATA, [50, 50, 55, 50, 1, 50], 51],
   ])('%s %j -> %i', (position, [pace, shooting, passing, dribbling, defending, physical], expected) => {
     expect(
       calculateOverall(position, {
@@ -47,9 +48,13 @@ describe('calculateMarketValueCents', () => {
     [8200, MAL_CONDICIONADO, 50, 25, 6970],
     [8200, MAL_CONDICIONADO, 80, 21, 8405],
     [8200, MAL_CONDICIONADO, 30, 33, 5330],
+    [8200, MAL_CONDICIONADO, 79, 25, 6970],
+    [8200, MAL_CONDICIONADO, 100, 22, 7585],
+    [8200, APTO, 1, 32, 7380],
     [8200, DOENTE, 90, 25, 6970],
     [8200, DOENTE, 30, 25, 4920],
     [8200, DOENTE, 10, 40, 4920],
+    [8200, DOENTE, 80, 45, 6150],
     [950, MAL_CONDICIONADO, 85, 25, 879],
     [100, MAL_CONDICIONADO, 50, 35, 100],
   ])('base %i, %s, agility %i, age %i -> %i cents', (base, condition, agility, age, expected) => {

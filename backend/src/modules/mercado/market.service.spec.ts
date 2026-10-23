@@ -100,4 +100,35 @@ describe('MarketService', () => {
     expect(sale.remainingDays).toBe(117);
     expect(sale.clubCash).toBe('296.85');
   });
+
+  describe('calculatePurchaseFeeCents', () => {
+    it.each([
+      [3000, 0],
+      [3001, 150],
+      [3700, 185],
+    ])('%i -> %i', (marketValueCents, expected) => {
+      expect(service.calculatePurchaseFeeCents(marketValueCents)).toBe(expected);
+    });
+  });
+
+  describe('calculatePenaltyCents', () => {
+    it.each([
+      [4000, 10, 400],
+      [20000, 20, 1000],
+    ])('%i at %i%% -> %i', (marketValueCents, penaltyRate, expected) => {
+      expect(service.calculatePenaltyCents(marketValueCents, penaltyRate)).toBe(expected);
+    });
+  });
+
+  describe('calculateCommissionCents', () => {
+    it.each([
+      [-100, 0],
+      [0, 0],
+      [385, 39],
+      [1000, 100],
+      [1500, 200],
+    ])('profit %i -> %i', (profitCents, expected) => {
+      expect(service.calculateCommissionCents(profitCents)).toBe(expected);
+    });
+  });
 });
