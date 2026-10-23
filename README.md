@@ -15,7 +15,7 @@ Estudo de caso SENAI/PE – CÓD. 237 Desenvolvedor I (Fullstack). Aplicação w
 
 | Ferramenta | Versão | Observação |
 | --- | --- | --- |
-| Docker com Docker Compose v2 | qualquer versão recente | Sobe o banco, a API e o frontend |
+| Docker Engine com Docker Compose v2 | testado com Docker 28.1 e Compose 2.35 | Sobe o banco, a API e o frontend |
 | Node.js (com npm) | 22.18 ou superior, na linha 22 LTS | Só para a recriação do banco e os comandos de qualidade, fora dos containers |
 | PostgreSQL | 18 | Imagem pública `postgres:18-alpine`, iniciada pelo `docker-compose.yaml`. Não precisa instalar |
 
@@ -66,7 +66,15 @@ npm run lint
 npm run format:check
 ```
 
-No frontend, os mesmos comandos, começando por `cd frontend`.
+No frontend, a partir da raiz do repositório:
+
+```bash
+cd frontend
+npm ci
+npm test
+npm run lint
+npm run format:check
+```
 
 | Comando | Backend | Frontend |
 | --- | --- | --- |

@@ -10,7 +10,7 @@ API REST do mercado de jogadores da liga, em NestJS com TypeScript e PostgreSQL.
 
 | Ferramenta | Versão | Observação |
 | --- | --- | --- |
-| Docker com Docker Compose v2 | qualquer versão recente | Sobe o banco, a API e o frontend pelo `docker-compose.yaml` da raiz |
+| Docker Engine com Docker Compose v2 | testado com Docker 28.1 e Compose 2.35 | Sobe o banco, a API e o frontend pelo `docker-compose.yaml` da raiz |
 | Node.js (com npm) | 22.18 ou superior, na linha 22 LTS | Só para a recriação do banco e os comandos de qualidade, fora dos containers |
 | PostgreSQL | 18 | Imagem pública `postgres:18-alpine`, iniciada pelo `docker-compose.yaml` da raiz. Não precisa instalar |
 
