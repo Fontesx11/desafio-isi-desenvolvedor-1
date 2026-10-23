@@ -5,15 +5,15 @@ Interface da liga em React 19 com TypeScript, criada com Vite. Consome a API do 
 - **URL do frontend:** `http://localhost:5173`
 - **API usada:** `http://localhost:3000/api/v1` (variável `VITE_API_URL`)
 
-## Como instalar e executar
-
-O frontend não sobe sozinho: ele sobe junto com o banco e a API pelo `docker compose up`, na raiz do repositório. Os passos estão no [`README.md`](../README.md#como-instalar-e-executar-ubuntu-2404) da raiz. A interface abre em `http://localhost:5173`.
-
 ## Pré-requisitos dos comandos de qualidade
 
 | Ferramenta        | Versão                             | Observação                                                             |
 | ----------------- | ---------------------------------- | ---------------------------------------------------------------------- |
 | Node.js (com npm) | 22.18 ou superior, na linha 22 LTS | Só para rodar os comandos abaixo fora do container, depois do `npm ci` |
+
+## Como instalar e executar
+
+O frontend não sobe sozinho: ele sobe junto com o banco e a API pelo `docker compose up`, na raiz do repositório. Os passos estão no [`README.md`](../README.md#como-instalar-e-executar-ubuntu-2404) da raiz. A interface abre em `http://localhost:5173`.
 
 ## Variáveis de ambiente
 

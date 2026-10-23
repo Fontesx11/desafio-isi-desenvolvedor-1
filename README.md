@@ -19,8 +19,6 @@ Estudo de caso SENAI/PE – CÓD. 237 Desenvolvedor I (Fullstack). Aplicação w
 | Node.js (com npm) | 22.18 ou superior, na linha 22 LTS | Só para a recriação do banco e os comandos de qualidade, fora dos containers |
 | PostgreSQL | 18 | Imagem pública `postgres:18-alpine`, iniciada pelo `docker-compose.yaml`. Não precisa instalar |
 
-Os arquivos de trava (`backend/package-lock.json` e `frontend/package-lock.json`) estão versionados.
-
 ## Como instalar e executar (Ubuntu 24.04)
 
 A partir da raiz do repositório:
@@ -33,7 +31,7 @@ docker compose up --build
 ```
 
 - O comando fica em execução e sobe três containers: o PostgreSQL (`fontes-desafio-db`, na porta `5432`), a API (`fontes-desafio-api`) e o frontend (`fontes-desafio-web`).
-- Na primeira vez, cada container instala as próprias dependências, o que leva alguns minutos.
+- Na primeira vez, cada container instala as próprias dependências pelos arquivos de trava versionados (`backend/package-lock.json` e `frontend/package-lock.json`), o que leva alguns minutos.
 
 ## Como criar e recriar o banco do zero
 
@@ -91,7 +89,7 @@ A lista de cada parte, com o motivo de cada biblioteca, está em [`backend/READM
 
 ## Decisões e premissas
 
-As decisões sobre detalhes que o enunciado não define estão em [`backend/README.md`](backend/README.md#decisões-e-premissas) e em [`frontend/README.md`](frontend/README.md#decisões-e-premissas). As que valem para o projeto todo:
+As decisões que tomei onde precisei interpretar o enunciado estão em [`backend/README.md`](backend/README.md#decisões-e-premissas) e em [`frontend/README.md`](frontend/README.md#decisões-e-premissas). As que valem para o projeto todo:
 
 - **Mensagens de erro em português:** o `message` de cada recusa da API é exibido como está pela interface.
 - **Interface só para desktop:** pensada para a janela da banca (1366 × 768) e para o mockup (1440 × 900), sem layout de 375 px.
@@ -124,7 +122,7 @@ Diferenciais não feitos: responsividade em 375 px (frontend) e registro de logs
 
 **Frontend**
 
-- **Telas (feitas pela IA):** a marcação JSX e o estilo (Tailwind CSS e componentes do shadcn/ui) foram gerados pela IA a partir do mockup do Figma; acompanhei a geração e fiz ajustes pontuais.
+- **Telas (feitas pela IA):** a marcação JSX e o estilo (Tailwind CSS e componentes do shadcn/ui) foram gerados pela IA a partir do mockup do Figma; fiz ajustes pontuais.
 - **Minha parte:** a camada de dados e a organização do React:
   - services com Axios;
   - hooks com TanStack Query: chaves, invalidação depois de cada ação e tratamento de erro;
